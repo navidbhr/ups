@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-11 14:19+0330\n"
+"POT-Creation-Date: 2026-05-11 15:19+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 #: main/models.py:27 main/models.py:357 main/models.py:385 main/models.py:413
 msgid "تاریخ ایجاد"
 msgstr ""
@@ -610,6 +611,10 @@ msgstr ""
 msgid "اسلایدر صفحه اصلی"
 msgstr ""
 
-#: templates/base.html:183 templates/base.html:233
+#: templates/base.html:231
 msgid "Toggle Theme"
+msgstr ""
+
+#: templates/base.html:281
+msgid "تغییر تم"
 msgstr ""
