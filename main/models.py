@@ -288,6 +288,27 @@ class ConsultationRequest(TimeStampedModel):
         verbose_name_plural = _("درخواست‌های مشاوره")
 
 
+class ProductConsultationRequest(TimeStampedModel):
+    """مدل برای درخواست مشاوره مخصوص هر محصول"""
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='consultation_requests', verbose_name=_("محصول"))
+    full_name = models.CharField(max_length=150, verbose_name=_("نام و نام خانوادگی"))
+    phone_number = models.CharField(max_length=20, verbose_name=_("شماره تماس"))
+    email = models.EmailField(blank=True, verbose_name=_("ایمیل"))
+    company_name = models.CharField(max_length=150, blank=True, verbose_name=_("نام شرکت/سازمان"))
+    quantity_needed = models.CharField(max_length=50, blank=True, verbose_name=_("تعداد مورد نیاز"))
+    application = models.CharField(max_length=200, blank=True, verbose_name=_("کاربرد مورد نظر"))
+    message = models.TextField(blank=True, verbose_name=_("پیام اضافی"))
+    is_checked = models.BooleanField(default=False, verbose_name=_("بررسی شده"))
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _("درخواست مشاوره محصول")
+        verbose_name_plural = _("درخواست‌های مشاوره محصولات")
+
+    def __str__(self):
+        return f"{self.full_name} - {self.product.name}"
+
+
 class Partner(models.Model):
     name = models.CharField(max_length=100, verbose_name=_("نام سازمان"))
     logo = models.ImageField(upload_to='partners/', verbose_name=_("لوگو"))

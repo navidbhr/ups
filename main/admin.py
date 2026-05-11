@@ -3,7 +3,7 @@ from .models import (
     Category, Product, ProductImage, SpecificationGroup,
     ProductSpecification, ProductDocument, Currency, SiteSettings,
     BlogCategory, Partner, FAQ, Agent, Project, ConsultationRequest, Article,
-    Branch, PageTranslation, HomepageImage, HomeSlider
+    Branch, PageTranslation, HomepageImage, HomeSlider, ProductConsultationRequest
 )
 
 
@@ -110,6 +110,14 @@ class ConsultationAdmin(admin.ModelAdmin):
     list_display = ('full_name', 'phone_number', 'is_checked', 'created_at')
     list_editable = ('is_checked',)
     list_filter = ('is_checked',)
+
+
+@admin.register(ProductConsultationRequest)
+class ProductConsultationAdmin(admin.ModelAdmin):
+    list_display = ('full_name', 'product', 'phone_number', 'is_checked', 'created_at')
+    list_editable = ('is_checked',)
+    list_filter = ('is_checked', 'product')
+    search_fields = ('full_name', 'phone_number', 'email', 'company_name')
 
 
 @admin.register(FAQ)

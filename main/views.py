@@ -1,6 +1,9 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
-from main.models import Product, Category, Article, Project, Partner
+from main.models import Product, Category, Article, Project, Partner, ProductConsultationRequest
 
 
 def home_view(request):
@@ -26,6 +29,39 @@ def home_view(request):
     }
     
     return render(request, 'main/home.html', context)
+
+
+@csrf_exempt
+def submit_product_consultation(request):
+    """پردازش درخواست مشاوره محصول از طریق AJAX"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            product_id = data.get('product_id')
+            product = get_object_or_404(Product, pk=product_id)
+            
+            consultation = ProductConsultationRequest.objects.create(
+                product=product,
+                full_name=data.get('full_name', ''),
+                phone_number=data.get('phone_number', ''),
+                email=data.get('email', ''),
+                company_name=data.get('company_name', ''),
+                quantity_needed=data.get('quantity_needed', ''),
+                application=data.get('application', ''),
+                message=data.get('message', '')
+            )
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'درخواست شما با موفقیت ثبت شد. کارشناسان ما به زودی با شما تماس خواهند گرفت.'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'خطا در ثبت درخواست: {str(e)}'
+            }, status=400)
+    
+    return JsonResponse({'success': False, 'message': 'متد نامعتبر'}, status=405)
 
 
 def category_detail_view(request, slug):
