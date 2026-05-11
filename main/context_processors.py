@@ -26,12 +26,18 @@ def get_text_by_key(key, lang='fa'):
 def site_settings(request):
     from django.utils.translation import get_language
 
-    current_lang = get_language() or 'fa'
+    # اولویت‌بندی برای تشخیص زبان:
+    # 1. زبان تنظیم شده در session توسط middleware
+    # 2. زبان فعلی Django
+    # 3. پیش‌فرض fa
+    current_lang = getattr(request, 'LANGUAGE_CODE', None) or get_language() or 'fa'
 
     # تبدیل کد زبان به فرمت مورد استفاده در مدل (fa, en, ar, ru)
     lang_map = {
         'fa-ir': 'fa',
         'en-us': 'en',
+        'en': 'en',
+        'fa': 'fa',
         'ar': 'ar',
         'ru': 'ru',
     }
@@ -41,9 +47,13 @@ def site_settings(request):
     if not main_branch:
         main_branch = Branch.objects.filter(is_active=True).first()
 
+    # دریافت تنظیمات سایت
+    settings_obj = SiteSettings.objects.first()
+
     # دریافت تمام متون استاتیک مورد نیاز برای قالب
     static_texts = {}
     for key in [
+        'hero_title', 'hero_subtitle', 'cta_text',
         'hero_stats_experience', 'hero_stats_projects', 'hero_stats_customers',
         'hero_badge_warranty', 'hero_badge_warranty_value', 'hero_badge_support', 'hero_badge_support_value',
         'categories_title', 'categories_subtitle',
@@ -68,7 +78,7 @@ def site_settings(request):
         static_texts[key] = get_text_by_key(key, lang)
 
     return {
-        'settings': SiteSettings.objects.first(),
+        'settings': settings_obj,
         'main_branch': main_branch,
         'categories': Category.objects.filter(parent__isnull=True),
         'current_lang': lang,
