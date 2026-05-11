@@ -1,4 +1,4 @@
-{% load static %}
+{% load static custom_filters %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl" class="scroll-smooth">
 <head>
@@ -144,27 +144,27 @@
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8 space-x-reverse">
                     <a href="#hero" class="hover:text-primary-500 transition-colors duration-300 relative group">
-                        {% get_text current_lang 'home_menu_home' %}
+                        {% get_text 'home_menu_home' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                     <a href="#categories" class="hover:text-primary-500 transition-colors duration-300 relative group">
-                        {% get_text current_lang 'home_menu_categories' %}
+                        {% get_text 'home_menu_categories' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                     <a href="#products" class="hover:text-primary-500 transition-colors duration-300 relative group">
-                        {% get_text current_lang 'home_menu_products' %}
+                        {% get_text 'home_menu_products' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                     <a href="#articles" class="hover:text-primary-500 transition-colors duration-300 relative group">
-                        {% get_text current_lang 'home_menu_articles' %}
+                        {% get_text 'home_menu_articles' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                     <a href="#projects" class="hover:text-primary-500 transition-colors duration-300 relative group">
-                        {% get_text current_lang 'home_menu_projects' %}
+                        {% get_text 'home_menu_projects' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                     <a href="#contact" class="hover:text-primary-500 transition-colors duration-300 relative group">
-                        {% get_text current_lang 'home_menu_contact' %}
+                        {% get_text 'home_menu_contact' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                 </div>
@@ -194,12 +194,12 @@
             
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 space-y-2">
-                <a href="#hero" class="block py-2 hover:text-primary-500 transition-colors">{% get_text current_lang 'home_menu_home' %}</a>
-                <a href="#categories" class="block py-2 hover:text-primary-500 transition-colors">{% get_text current_lang 'home_menu_categories' %}</a>
-                <a href="#products" class="block py-2 hover:text-primary-500 transition-colors">{% get_text current_lang 'home_menu_products' %}</a>
-                <a href="#articles" class="block py-2 hover:text-primary-500 transition-colors">{% get_text current_lang 'home_menu_articles' %}</a>
-                <a href="#projects" class="block py-2 hover:text-primary-500 transition-colors">{% get_text current_lang 'home_menu_projects' %}</a>
-                <a href="#contact" class="block py-2 hover:text-primary-500 transition-colors">{% get_text current_lang 'home_menu_contact' %}</a>
+                <a href="#hero" class="block py-2 hover:text-primary-500 transition-colors">{% get_text 'home_menu_home' %}</a>
+                <a href="#categories" class="block py-2 hover:text-primary-500 transition-colors">{% get_text 'home_menu_categories' %}</a>
+                <a href="#products" class="block py-2 hover:text-primary-500 transition-colors">{% get_text 'home_menu_products' %}</a>
+                <a href="#articles" class="block py-2 hover:text-primary-500 transition-colors">{% get_text 'home_menu_articles' %}</a>
+                <a href="#projects" class="block py-2 hover:text-primary-500 transition-colors">{% get_text 'home_menu_projects' %}</a>
+                <a href="#contact" class="block py-2 hover:text-primary-500 transition-colors">{% get_text 'home_menu_contact' %}</a>
                 <!-- Mobile Language Selector -->
                 <div class="pt-2 border-t border-gray-200 dark:border-gray-700 mt-2">
                     <select onchange="changeLanguage(this.value)" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">

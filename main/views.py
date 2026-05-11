@@ -12,9 +12,6 @@ def home_view(request):
     articles = Article.objects.filter(is_published=True)[:6]
     projects = Project.objects.all()[:6]
     partners = Partner.objects.all()
-    branches = Branch.objects.filter(is_active=True) if Branch.objects.exists() else []
-    homepage_images = HomepageImage.objects.filter(is_active=True)
-    slider_images = HomeSlider.objects.filter(is_active=True)
     
     # دریافت زبان فعلی
     current_lang = get_language() or 'fa'
@@ -25,9 +22,6 @@ def home_view(request):
         'articles': articles,
         'projects': projects,
         'partners': partners,
-        'branches': branches,
-        'homepage_images': homepage_images,
-        'slider_images': slider_images,
         'current_lang': current_lang,
     }
     
