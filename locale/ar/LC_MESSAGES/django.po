@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-11 14:19+0330\n"
+"POT-Creation-Date: 2026-05-11 15:38+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,599 +18,493 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
-#: main/models.py:27 main/models.py:357 main/models.py:385 main/models.py:413
+
+#: main/models.py:27 main/models.py:446 main/models.py:474 main/models.py:502
 msgid "تاریخ ایجاد"
-msgstr ""
-
-#: main/models.py:28 main/models.py:358
+msgstr "تاريخ الإنشاء"
+#: main/models.py:28 main/models.py:447
 msgid "تاریخ بروزرسانی"
-msgstr ""
-
+msgstr "تاريخ التحديث"
 #: main/models.py:36
 msgid "مثال: home_welcome_message یا footer_about"
-msgstr ""
-
-#: main/models.py:36
+msgstr "مثال: home_welcome_message أو footer_about"
+#: main/models.py:36 main/models.py:94
 msgid "کلید متن"
-msgstr ""
-
+msgstr "مفتاح النص"
 #: main/models.py:37
 msgid "متن (فارسی)"
-msgstr ""
-
+msgstr "النص (الفارسية)"
 #: main/models.py:38
 msgid "متن (انگلیسی)"
-msgstr ""
-
+msgstr "النص (الإنجليزية)"
 #: main/models.py:39
 msgid "متن (عربی)"
-msgstr ""
-
+msgstr "النص (العربية)"
 #: main/models.py:40
 msgid "متن (روسی)"
-msgstr ""
-
+msgstr "النص (الروسية)"
 #: main/models.py:43
 msgid "ترجمه متن صفحه"
-msgstr ""
-
+msgstr "ترجمة نص الصفحة"
 #: main/models.py:44
 msgid "ترجمه متون صفحات"
-msgstr ""
-
-#: main/models.py:52
+msgstr "ترجمات نصوص الصفحات"
+#: main/models.py:95 main/models.py:416 main/models.py:471
+msgid "توضیحات"
+msgstr "الوصف"
+#: main/models.py:104
+msgid "متن پیش‌فرض"
+msgstr "النص الافتراضي"
+#: main/models.py:109
+msgid "متن ثابت"
+msgstr "نص ثابت"
+#: main/models.py:110
+msgid "متون ثابت (ترجمه خودکار)"
+msgstr "النصوص الثابتة (ترجمة تلقائية)"
+#: main/models.py:141
 msgid "نام برند"
-msgstr ""
-
-#: main/models.py:53
+msgstr "اسم العلامة التجارية"
+#: main/models.py:142
 msgid "عنوان سئو (Title Tag)"
-msgstr ""
-
-#: main/models.py:54
+msgstr "عنوان SEO (وسم العنوان)"
+#: main/models.py:143
 msgid "توضیحات متا (Meta Description)"
-msgstr ""
-
-#: main/models.py:55
+msgstr "وصف الميتا"
+#: main/models.py:144
 msgid "کلمات کلیدی (با کاما جدا کنید)"
-msgstr ""
-
-#: main/models.py:56
+msgstr "الكلمات الرئيسية (مفصولة بفواصل)"
+#: main/models.py:145
 msgid "لوگوی رنگی (هدر)"
-msgstr ""
-
-#: main/models.py:57
+msgstr "الشعار (الرأس)"
+#: main/models.py:146
 msgid "لوگوی سفید (فوتر)"
-msgstr ""
-
-#: main/models.py:58
+msgstr "الشعار الفاتح (التذييل)"
+#: main/models.py:147
 msgid "فاوآیکون"
-msgstr ""
-
-#: main/models.py:60
+msgstr "أيقونة الموقع"
+#: main/models.py:149
 msgid "تیتر بزرگ صفحه اصلی"
-msgstr ""
-
-#: main/models.py:61
+msgstr "العنوان الرئيسي للصفحة الرئيسية"
+#: main/models.py:150
 msgid "متن زیر تیتر صفحه اصلی"
-msgstr ""
-
-#: main/models.py:62
+msgstr "العنوان الفرعي"
+#: main/models.py:151
 msgid "تصویر بخش Hero"
-msgstr ""
-
-#: main/models.py:63
+msgstr "صورة القسم الرئيسي"
+#: main/models.py:152
 msgid "متن دکمه فراخوان (CTA)"
-msgstr ""
-
-#: main/models.py:64
+msgstr "نص زر الدعوة لاتخاذ إجراء"
+#: main/models.py:153
 msgid "لینک دکمه فراخوان"
-msgstr ""
-
-#: main/models.py:66
+msgstr "رابط الدعوة لاتخاذ إجراء"
+#: main/models.py:155
 msgid "خلاصه درباره ما"
-msgstr ""
-
-#: main/models.py:70
+msgstr "ملخص من نحن"
+#: main/models.py:159
 msgid "اینستاگرام"
-msgstr ""
-
-#: main/models.py:71
+msgstr "إنستغرام"
+#: main/models.py:160
 msgid "تلگرام"
-msgstr ""
-
-#: main/models.py:72
+msgstr "تليغرام"
+#: main/models.py:161
 msgid "لینکدین"
-msgstr ""
-
-#: main/models.py:74
+msgstr "لينكد إن"
+#: main/models.py:163
 msgid "حالت تعمیر"
-msgstr ""
-
-#: main/models.py:75
+msgstr "وضع الصيانة"
+#: main/models.py:164
 msgid "متن کپی‌رایت"
-msgstr ""
-
-#: main/models.py:76
+msgstr "نص حقوق النشر"
+#: main/models.py:165
 msgid "Google Analytics ID"
-msgstr ""
-
-#: main/models.py:79 main/models.py:80
+msgstr "معرف Google Analytics"
+#: main/models.py:168 main/models.py:169
 msgid "تنظیمات کلی سایت"
 msgstr ""
 
-#: main/models.py:85
+#: main/models.py:174
 msgid "شما نمی‌توانید بیش از یک رکورد تنظیمات بسازید."
 msgstr ""
 
-#: main/models.py:93
+#: main/models.py:182
 msgid "نام شعبه (مثلا دفتر مرکزی)"
-msgstr ""
-
-#: main/models.py:94
+msgstr "اسم الفرع (مثل المكتب الرئيسي)"
+#: main/models.py:183
 msgid "آدرس فیزیکی"
-msgstr ""
-
-#: main/models.py:95 main/models.py:295
+msgstr "العنوان الفعلي"
+#: main/models.py:184 main/models.py:384
 msgid "شماره تماس"
-msgstr ""
-
-#: main/models.py:96
+msgstr "رقم الهاتف"
+#: main/models.py:185
 msgid "ایمیل شعبه"
-msgstr ""
-
-#: main/models.py:97
+msgstr "بريد الفرع الإلكتروني"
+#: main/models.py:186
 msgid "شماره مستقیم واتس‌اپ"
-msgstr ""
-
-#: main/models.py:98
+msgstr "رقم واتس‌آب المباشر"
+#: main/models.py:187
 msgid "کد Iframe نقشه گوگل"
-msgstr ""
-
-#: main/models.py:99
+msgstr "كود Iframe لخريطة جوجل"
+#: main/models.py:188
 msgid "شعبه مرکزی"
-msgstr ""
-
-#: main/models.py:100 main/models.py:384 main/models.py:412
+msgstr "الفرع الرئيسي"
+#: main/models.py:189 main/models.py:473 main/models.py:501
 msgid "فعال"
-msgstr ""
-
-#: main/models.py:101 main/models.py:200 main/models.py:383
+msgstr "نشط"
+#: main/models.py:190 main/models.py:289 main/models.py:472
 msgid "ترتیب نمایش"
-msgstr ""
-
-#: main/models.py:105
+msgstr "ترتيب العرض"
+#: main/models.py:194
 msgid "شعبه"
 msgstr ""
 
-#: main/models.py:106
+#: main/models.py:195
 msgid "شعب"
 msgstr ""
 
-#: main/models.py:114
+#: main/models.py:203
 msgid "تنها یک شعبه می‌تواند به عنوان شعبه مرکزی ثبت شود."
 msgstr ""
 
-#: main/models.py:122
+#: main/models.py:211
 msgid "نام واحد"
-msgstr ""
-
-#: main/models.py:123
+msgstr "اسم العملة"
+#: main/models.py:212
 msgid "نماد"
-msgstr ""
-
-#: main/models.py:124
+msgstr "الرمز"
+#: main/models.py:213
 msgid "نرخ تبدیل"
-msgstr ""
-
-#: main/models.py:125
+msgstr "سعر الصرف"
+#: main/models.py:214
 msgid "واحد پایه است؟"
-msgstr ""
-
-#: main/models.py:128 main/models.py:166
+msgstr "هل هي العملة الأساسية؟"
+#: main/models.py:217 main/models.py:255
 msgid "واحد پولی"
-msgstr ""
-
-#: main/models.py:129
+msgstr "عملة"
+#: main/models.py:218
 msgid "واحدهای پولی"
-msgstr ""
-
-#: main/models.py:136
+msgstr "عملات"
+#: main/models.py:225
 msgid "عنوان دسته‌بندی"
-msgstr ""
-
-#: main/models.py:137 main/models.py:160 main/models.py:239 main/models.py:259
+msgstr "عنوان الفئة"
+#: main/models.py:226 main/models.py:249 main/models.py:328 main/models.py:348
 msgid "نامک"
-msgstr ""
-
-#: main/models.py:139
+msgstr "المعرف"
+#: main/models.py:228
 msgid "دسته‌بندی والد"
-msgstr ""
-
-#: main/models.py:140 main/models.py:190 main/models.py:326 main/models.py:369
+msgstr "الفئة الأصلية"
+#: main/models.py:229 main/models.py:279 main/models.py:415 main/models.py:458
 msgid "تصویر"
-msgstr ""
-
-#: main/models.py:141
+msgstr "صورة"
+#: main/models.py:230
 msgid "توضیحات سئو"
-msgstr ""
-
-#: main/models.py:144 main/models.py:158 main/models.py:257
+msgstr "وصف SEO"
+#: main/models.py:233 main/models.py:247 main/models.py:346
 msgid "دسته‌بندی"
-msgstr ""
-
-#: main/models.py:145
+msgstr "فئة"
+#: main/models.py:234
 msgid "دسته‌بندی‌ها"
-msgstr ""
-
-#: main/models.py:159
+msgstr "فئات"
+#: main/models.py:248
 msgid "نام مدل دستگاه"
-msgstr ""
-
-#: main/models.py:161
+msgstr "اسم موديل المنتج"
+#: main/models.py:250
 msgid "کد محصول (SKU)"
-msgstr ""
-
-#: main/models.py:162
+msgstr "رمز المنتج (SKU)"
+#: main/models.py:251
 msgid "تصویر اصلی"
-msgstr ""
-
-#: main/models.py:163
+msgstr "الصورة الرئيسية"
+#: main/models.py:252
 msgid "لینک ویدیو"
-msgstr ""
-
-#: main/models.py:164
+msgstr "رابط الفيديو"
+#: main/models.py:253
 msgid "فایل ویدیو"
-msgstr ""
-
-#: main/models.py:165
+msgstr "ملف الفيديو"
+#: main/models.py:254
 msgid "قیمت پایه"
-msgstr ""
-
-#: main/models.py:167
+msgstr "السعر الأساسي"
+#: main/models.py:256
 msgid "نمایش قیمت؟"
-msgstr ""
-
-#: main/models.py:168
+msgstr "عرض السعر؟"
+#: main/models.py:257
 msgid "موجود؟"
-msgstr ""
-
-#: main/models.py:169
+msgstr "متوفر؟"
+#: main/models.py:258
 msgid "گارانتی (ماه)"
-msgstr ""
-
-#: main/models.py:170
+msgstr "الضمان (أشهر)"
+#: main/models.py:259
 msgid "توضیح کوتاه"
-msgstr ""
-
-#: main/models.py:171
+msgstr "وصف قصير"
+#: main/models.py:260
 msgid "نقد و بررسی"
-msgstr ""
-
-#: main/models.py:172 main/models.py:240 main/models.py:263
+msgstr "وصف كامل / مراجعة"
+#: main/models.py:261 main/models.py:329 main/models.py:352
 msgid "عنوان سئو"
-msgstr ""
-
-#: main/models.py:173 main/models.py:241 main/models.py:264
+msgstr "عنوان SEO"
+#: main/models.py:262 main/models.py:330 main/models.py:353
 msgid "توضیحات متا"
 msgstr ""
 
-#: main/models.py:176 main/models.py:189 main/models.py:212 main/models.py:224
-#: main/models.py:293 main/models.py:337
+#: main/models.py:265 main/models.py:278 main/models.py:301 main/models.py:313
+#: main/models.py:382 main/models.py:426
 msgid "محصول"
-msgstr ""
-
-#: main/models.py:177
+msgstr "منتج"
+#: main/models.py:266
 msgid "محصولات"
-msgstr ""
-
-#: main/models.py:191
+msgstr "منتجات"
+#: main/models.py:280
 msgid "متن جایگزین (Alt)"
-msgstr ""
-
-#: main/models.py:194
+msgstr "النص البديل"
+#: main/models.py:283
 msgid "تصویر گالری محصول"
-msgstr ""
-
-#: main/models.py:195
+msgstr "صورة معرض المنتج"
+#: main/models.py:284
 msgid "گالری تصاویر محصولات"
-msgstr ""
-
-#: main/models.py:199
+msgstr "صور معرض المنتجات"
+#: main/models.py:288
 msgid "نام گروه"
-msgstr ""
-
-#: main/models.py:204
+msgstr "اسم المجموعة"
+#: main/models.py:293
 msgid "گروه مشخصات فنی"
-msgstr ""
-
-#: main/models.py:205
+msgstr "مجموعة المواصفات"
+#: main/models.py:294
 msgid "گروه‌های مشخصات فنی"
-msgstr ""
-
-#: main/models.py:213
+msgstr "مجموعات المواصفات"
+#: main/models.py:302
 msgid "گروه مشخصات"
 msgstr ""
 
-#: main/models.py:214
+#: main/models.py:303
 msgid "عنوان ویژگی"
-msgstr ""
-
-#: main/models.py:215
+msgstr "عنوان الميزة"
+#: main/models.py:304
 msgid "مقدار"
-msgstr ""
-
-#: main/models.py:218
+msgstr "قيمة"
+#: main/models.py:307
 msgid "مشخصه فنی"
-msgstr ""
-
-#: main/models.py:219
+msgstr "المواصفة الفنية"
+#: main/models.py:308
 msgid "مشخصات فنی"
-msgstr ""
-
-#: main/models.py:225
+msgstr "المواصفات الفنية"
+#: main/models.py:314
 msgid "عنوان فایل"
-msgstr ""
-
-#: main/models.py:226
+msgstr "عنوان الملف"
+#: main/models.py:315
 msgid "فایل"
-msgstr ""
-
-#: main/models.py:229
+msgstr "ملف"
+#: main/models.py:318
 msgid "نوع مستند"
-msgstr ""
-
-#: main/models.py:232
+msgstr "نوع المستند"
+#: main/models.py:321
 msgid "مستند محصول"
-msgstr ""
-
-#: main/models.py:233
+msgstr "مستند المنتج"
+#: main/models.py:322
 msgid "مستندات محصولات"
-msgstr ""
-
-#: main/models.py:238 main/models.py:324
+msgstr "مستندات المنتجات"
+#: main/models.py:327 main/models.py:413
 msgid "عنوان"
-msgstr ""
-
-#: main/models.py:244
+msgstr "عنوان"
+#: main/models.py:333
 msgid "دسته‌بندی مقاله"
-msgstr ""
-
-#: main/models.py:245
+msgstr "فئة المقال"
+#: main/models.py:334
 msgid "دسته‌بندی‌های مقالات"
-msgstr ""
-
-#: main/models.py:258
+msgstr "فئات المقالات"
+#: main/models.py:347
 msgid "عنوان مقاله"
-msgstr ""
-
-#: main/models.py:260
+msgstr "عنوان المقال"
+#: main/models.py:349
 msgid "تصویر شاخص"
-msgstr ""
-
-#: main/models.py:262
+msgstr "صورة مميزة"
+#: main/models.py:351
 msgid "منتشر شده"
-msgstr ""
-
-#: main/models.py:267
+msgstr "منشور"
+#: main/models.py:356
 msgid "مقاله"
-msgstr ""
-
-#: main/models.py:268
+msgstr "مقال"
+#: main/models.py:357
 msgid "مقالات"
-msgstr ""
-
-#: main/models.py:278
+msgstr "مقالات"
+#: main/models.py:367
 msgid "نام"
 msgstr ""
 
-#: main/models.py:279
+#: main/models.py:368
 msgid "شماره"
 msgstr ""
 
-#: main/models.py:280
+#: main/models.py:369
 msgid "شرکت"
 msgstr ""
 
-#: main/models.py:281
+#: main/models.py:370
 msgid "توان (kVA)"
 msgstr ""
 
-#: main/models.py:282
+#: main/models.py:371
 msgid "پیام"
 msgstr ""
 
-#: main/models.py:283 main/models.py:301
+#: main/models.py:372 main/models.py:390
 msgid "بررسی شده"
-msgstr ""
-
-#: main/models.py:287
+msgstr "تمت المراجعة"
+#: main/models.py:376
 msgid "درخواست مشاوره"
 msgstr ""
 
-#: main/models.py:288
+#: main/models.py:377
 msgid "درخواست‌های مشاوره"
 msgstr ""
 
-#: main/models.py:294
+#: main/models.py:383
 msgid "نام و نام خانوادگی"
-msgstr ""
-
-#: main/models.py:296
+msgstr "الاسم الكامل"
+#: main/models.py:385
 msgid "ایمیل"
-msgstr ""
-
-#: main/models.py:297
+msgstr "بريد إلكتروني"
+#: main/models.py:386
 msgid "نام شرکت/سازمان"
-msgstr ""
-
-#: main/models.py:298
+msgstr "اسم الشركة/المؤسسة"
+#: main/models.py:387
 msgid "تعداد مورد نیاز"
-msgstr ""
-
-#: main/models.py:299
+msgstr "الكمية المطلوبة"
+#: main/models.py:388
 msgid "کاربرد مورد نظر"
-msgstr ""
-
-#: main/models.py:300
+msgstr "التطبيق المقصود"
+#: main/models.py:389
 msgid "پیام اضافی"
-msgstr ""
-
-#: main/models.py:305
+msgstr "رسالة إضافية"
+#: main/models.py:394
 msgid "درخواست مشاوره محصول"
 msgstr ""
 
-#: main/models.py:306
+#: main/models.py:395
 msgid "درخواست‌های مشاوره محصولات"
 msgstr ""
 
-#: main/models.py:313
+#: main/models.py:402
 msgid "نام سازمان"
-msgstr ""
-
-#: main/models.py:314
+msgstr "اسم المنظمة"
+#: main/models.py:403
 msgid "لوگو"
-msgstr ""
-
-#: main/models.py:315 main/models.py:328 main/models.py:340 main/models.py:411
+msgstr "شعار"
+#: main/models.py:404 main/models.py:417 main/models.py:429 main/models.py:500
 msgid "ترتیب"
-msgstr ""
-
-#: main/models.py:319
+msgstr "ترتيب"
+#: main/models.py:408
 msgid "همکار تجاری"
 msgstr ""
 
-#: main/models.py:320
+#: main/models.py:409
 msgid "همکاران"
 msgstr ""
 
-#: main/models.py:325
+#: main/models.py:414
 msgid "محل اجرا"
-msgstr ""
-
-#: main/models.py:327 main/models.py:382
-msgid "توضیحات"
-msgstr ""
-
-#: main/models.py:332
+msgstr "الموقع"
+#: main/models.py:421
 msgid "پروژه موفق"
 msgstr ""
 
-#: main/models.py:333
+#: main/models.py:422
 msgid "پروژه‌ها"
 msgstr ""
 
-#: main/models.py:338
+#: main/models.py:427
 msgid "پرسش"
-msgstr ""
-
-#: main/models.py:339
+msgstr "سؤال"
+#: main/models.py:428
 msgid "پاسخ"
-msgstr ""
-
-#: main/models.py:344
+msgstr "إجابة"
+#: main/models.py:433
 msgid "سوال متداول"
 msgstr ""
 
-#: main/models.py:345
+#: main/models.py:434
 msgid "سوالات متداول"
 msgstr ""
 
-#: main/models.py:349
+#: main/models.py:438
 msgid "استان"
-msgstr ""
-
-#: main/models.py:350
+msgstr "محافظة"
+#: main/models.py:439
 msgid "شهر"
-msgstr ""
-
-#: main/models.py:351
+msgstr "مدينة"
+#: main/models.py:440
 msgid "نام نماینده"
-msgstr ""
-
-#: main/models.py:352
+msgstr "اسم الممثل"
+#: main/models.py:441
 msgid "آدرس"
-msgstr ""
-
-#: main/models.py:353
+msgstr "عنوان"
+#: main/models.py:442
 msgid "تماس"
-msgstr ""
-
-#: main/models.py:354
+msgstr "اتصال"
+#: main/models.py:443
 msgid "لینک نقشه"
-msgstr ""
-
-#: main/models.py:361
+msgstr "رابط الخريطة"
+#: main/models.py:450
 msgid "نماینده"
 msgstr ""
 
-#: main/models.py:362
+#: main/models.py:451
 msgid "نمایندگان"
 msgstr ""
 
-#: main/models.py:368
+#: main/models.py:457
 msgid "عنوان تصویر"
-msgstr ""
-
-#: main/models.py:380
+msgstr "عنوان الصورة"
+#: main/models.py:469
 msgid "بخش در صفحه"
-msgstr ""
-
-#: main/models.py:389
+msgstr "قسم في الصفحة"
+#: main/models.py:478
 msgid "تصویر صفحه اصلی"
 msgstr ""
 
-#: main/models.py:390
+#: main/models.py:479
 msgid "تصاویر صفحه اصلی"
 msgstr ""
 
-#: main/models.py:399
+#: main/models.py:488
 msgid "عنوان (فارسی)"
-msgstr ""
-
-#: main/models.py:400
+msgstr "العنوان (الفارسية)"
+#: main/models.py:489
 msgid "عنوان (انگلیسی)"
-msgstr ""
-
-#: main/models.py:401
+msgstr "العنوان (الإنجليزية)"
+#: main/models.py:490
 msgid "عنوان (عربی)"
-msgstr ""
-
-#: main/models.py:402
+msgstr "العنوان (العربية)"
+#: main/models.py:491
 msgid "عنوان (روسی)"
-msgstr ""
-
-#: main/models.py:404
+msgstr "العنوان (الروسية)"
+#: main/models.py:493
 msgid "زیرعنوان (فارسی)"
-msgstr ""
-
-#: main/models.py:405
+msgstr "العنوان الفرعي (الفارسية)"
+#: main/models.py:494
 msgid "زیرعنوان (انگلیسی)"
-msgstr ""
-
-#: main/models.py:406
+msgstr "العنوان الفرعي (الإنجليزية)"
+#: main/models.py:495
 msgid "زیرعنوان (عربی)"
-msgstr ""
-
-#: main/models.py:407
+msgstr "العنوان الفرعي (العربية)"
+#: main/models.py:496
 msgid "زیرعنوان (روسی)"
-msgstr ""
-
-#: main/models.py:409
+msgstr "العنوان الفرعي (الروسية)"
+#: main/models.py:498
 msgid "تصویر اسلاید"
-msgstr ""
-
-#: main/models.py:410
+msgstr "صورة الشريحة"
+#: main/models.py:499
 msgid "لینک"
-msgstr ""
-
-#: main/models.py:417
+msgstr "رابط"
+#: main/models.py:506
 msgid "اسلاید صفحه اصلی"
 msgstr ""
 
-#: main/models.py:418
+#: main/models.py:507
 msgid "اسلایدر صفحه اصلی"
 msgstr ""
 
-#: templates/base.html:183 templates/base.html:233
+#: templates/base.html:231
 msgid "Toggle Theme"
+msgstr ""
+
+#: templates/base.html:281
+msgid "تغییر تم"
 msgstr ""
