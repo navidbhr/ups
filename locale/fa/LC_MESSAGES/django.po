@@ -613,4 +613,3 @@ msgstr ""
 #: templates/base.html:183 templates/base.html:233
 msgid "Toggle Theme"
 msgstr "تغییر تم"
-msgstr ""
