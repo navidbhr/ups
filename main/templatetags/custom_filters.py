@@ -1,6 +1,6 @@
 from django import template
 from django.contrib.humanize.templatetags.humanize import intcomma as django_intcomma
-from main.models import PageTranslation
+from main.models import PageTranslation, StaticText
 
 register = template.Library()
 
@@ -31,11 +31,18 @@ def get_text(context, key):
     lang_map = {
         'fa-ir': 'fa',
         'en-us': 'en',
+        'en': 'en',
         'ar': 'ar',
         'ru': 'ru',
     }
     lang = lang_map.get(lang.lower(), 'fa')
     
+    # اول در مدل StaticText جستجو کن
+    text = StaticText.get_text(key, lang)
+    if text and text != key:
+        return text
+    
+    # اگر نبود، در PageTranslation جستجو کن
     try:
         translation = PageTranslation.objects.get(key=key)
         field_name = f'text_{lang}'
