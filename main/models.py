@@ -97,6 +97,7 @@ class Branch(TimeStampedModel):
     whatsapp_number = models.CharField(max_length=20, blank=True, verbose_name=_("شماره مستقیم واتس‌اپ"))
     map_iframe = models.TextField(blank=True, verbose_name=_("کد Iframe نقشه گوگل"))
     is_main = models.BooleanField(default=False, verbose_name=_("شعبه مرکزی"))
+    is_active = models.BooleanField(default=True, verbose_name=_("فعال"))
     order = models.PositiveIntegerField(default=0, verbose_name=_("ترتیب نمایش"))
 
     class Meta:
@@ -338,3 +339,62 @@ class Agent(models.Model):
     class Meta:
         verbose_name = _("نماینده")
         verbose_name_plural = _("نمایندگان")
+
+
+# --- مدیریت تصاویر صفحه اصلی ---
+class HomepageImage(models.Model):
+    """مدل برای مدیریت عکس‌های صفحه اصلی از پنل ادمین"""
+    title = models.CharField(max_length=100, verbose_name=_("عنوان تصویر"))
+    image = models.ImageField(upload_to='homepage/', verbose_name=_("تصویر"))
+    section = models.CharField(
+        max_length=50,
+        choices=[
+            ('hero', 'بخش Hero'),
+            ('about', 'بخش درباره ما'),
+            ('products', 'بخش محصولات'),
+            ('projects', 'بخش پروژه‌ها'),
+            ('partners', 'بخش همکاران'),
+        ],
+        default='hero',
+        verbose_name=_("بخش در صفحه")
+    )
+    description = models.CharField(max_length=255, blank=True, verbose_name=_("توضیحات"))
+    order = models.PositiveIntegerField(default=0, verbose_name=_("ترتیب نمایش"))
+    is_active = models.BooleanField(default=True, verbose_name=_("فعال"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+
+    class Meta:
+        ordering = ['order', 'id']
+        verbose_name = _("تصویر صفحه اصلی")
+        verbose_name_plural = _("تصاویر صفحه اصلی")
+
+    def __str__(self):
+        return f"{self.title} - {self.get_section_display()}"
+
+
+# --- اسلایدر صفحه اصلی ---
+class HomeSlider(models.Model):
+    """مدل برای اسلایدر متحرک در صفحه اصلی"""
+    title_fa = models.CharField(max_length=200, verbose_name=_("عنوان (فارسی)"))
+    title_en = models.CharField(max_length=200, blank=True, verbose_name=_("عنوان (انگلیسی)"))
+    title_ar = models.CharField(max_length=200, blank=True, verbose_name=_("عنوان (عربی)"))
+    title_ru = models.CharField(max_length=200, blank=True, verbose_name=_("عنوان (روسی)"))
+    
+    subtitle_fa = models.TextField(blank=True, verbose_name=_("زیرعنوان (فارسی)"))
+    subtitle_en = models.TextField(blank=True, verbose_name=_("زیرعنوان (انگلیسی)"))
+    subtitle_ar = models.TextField(blank=True, verbose_name=_("زیرعنوان (عربی)"))
+    subtitle_ru = models.TextField(blank=True, verbose_name=_("زیرعنوان (روسی)"))
+    
+    image = models.ImageField(upload_to='slider/', verbose_name=_("تصویر اسلاید"))
+    link = models.CharField(max_length=200, blank=True, verbose_name=_("لینک"))
+    order = models.PositiveIntegerField(default=0, verbose_name=_("ترتیب"))
+    is_active = models.BooleanField(default=True, verbose_name=_("فعال"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+
+    class Meta:
+        ordering = ['order', 'id']
+        verbose_name = _("اسلاید صفحه اصلی")
+        verbose_name_plural = _("اسلایدر صفحه اصلی")
+
+    def __str__(self):
+        return self.title_fa
