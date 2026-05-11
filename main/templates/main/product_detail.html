@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<!-- Product Header Section -->
+<section class="relative py-20 bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary-300 dark:bg-primary-700 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-float"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-accent-300 dark:bg-accent-700 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-float" style="animation-delay: 2s;"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 relative z-10">
+        <!-- Breadcrumb -->
+        <nav class="flex justify-center items-center space-x-2 space-x-reverse text-sm text-gray-600 dark:text-gray-400 mb-8" data-aos="fade-down">
+            <a href="{% url 'home' %}" class="hover:text-primary-500 transition-colors">خانه</a>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            <a href="{% url 'category_detail' product.category.slug %}" class="hover:text-primary-500 transition-colors">{{ product.category.title }}</a>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            <span class="text-primary-500 font-bold">{{ product.name }}</span>
+        </nav>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <!-- Product Images -->
+            <div data-aos="fade-right" data-aos-duration="1000">
+                <div class="relative bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden">
+                    {% if product.main_image %}
+                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="w-full h-auto object-cover">
+                    {% else %}
+                    <div class="w-full aspect-square bg-gradient-to-br from-primary-300 to-accent-300 dark:from-primary-700 dark:to-accent-700 flex items-center justify-center">
+                        <svg class="w-48 h-48 text-white opacity-80" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                    
+                    {% if not product.is_in_stock %}
+                    <div class="absolute inset-0 bg-black/60 flex items-center justify-center">
+                        <span class="bg-red-500 text-white px-6 py-3 rounded-full font-bold text-xl">ناموجود</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Gallery Thumbnails -->
+                {% if product.gallery.exists %}
+                <div class="grid grid-cols-4 gap-4 mt-4">
+                    {% for image in product.gallery.all|slice:":4" %}
+                    <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-shadow">
+                        <img src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.name }}" class="w-full h-24 object-cover">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Product Info -->
+            <div data-aos="fade-left" data-aos-duration="1000">
+                <div class="mb-4">
+                    <span class="inline-block px-4 py-2 bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 rounded-full text-sm font-bold">
+                        {{ product.category.title }}
+                    </span>
+                    {% if product.is_in_stock %}
+                    <span class="inline-block px-4 py-2 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 rounded-full text-sm font-bold mr-2">
+                        موجود در انبار
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 gradient-text">{{ product.name }}</h1>
+                
+                <p class="text-lg text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">{{ product.short_description }}</p>
+                
+                <!-- Price Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl mb-6">
+                    {% if product.show_price and product.base_price > 0 %}
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-gray-600 dark:text-gray-400">قیمت:</span>
+                        <div class="text-3xl font-bold gradient-text">
+                            {{ product.base_price|intcomma }} {{ product.currency.symbol }}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <span class="text-gray-600 dark:text-gray-400 text-lg">برای اطلاع از قیمت تماس بگیرید</span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- CTA Buttons -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <a href="#consultation" class="px-6 py-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 font-bold text-center">
+                            درخواست مشاوره
+                        </a>
+                        <a href="tel:{{ branches.first.phone|default:'021-00000000' }}" class="px-6 py-4 border-2 border-primary-500 text-primary-500 dark:text-primary-400 rounded-xl hover:bg-primary-500 hover:text-white transition-all duration-300 font-bold text-center">
+                            تماس با ما
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Key Features -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg">
+                        <div class="flex items-center space-x-3 space-x-reverse">
+                            <div class="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">گارانتی</div>
+                                <div class="font-bold text-gray-900 dark:text-white">{{ product.warranty_months }} ماهه</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg">
+                        <div class="flex items-center space-x-3 space-x-reverse">
+                            <div class="w-10 h-10 bg-accent-500 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">کد محصول</div>
+                                <div class="font-bold text-gray-900 dark:text-white">{{ product.sku }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Video -->
+                {% if product.video_url or product.video_file %}
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg mb-6">
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-3">ویدیو محصول</h3>
+                    {% if product.video_url %}
+                    <div class="aspect-w-16 aspect-h-9">
+                        <iframe src="{{ product.video_url }}" class="w-full h-48 rounded-lg" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    {% elif product.video_file %}
+                    <video controls class="w-full rounded-lg">
+                        <source src="{{ product.video_file.url }}" type="video/mp4">
+                        مرورگر شما از ویدیو پشتیبانی نمی‌کند.
+                    </video>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Full Description Section -->
+<section class="py-20 bg-white dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold mb-8 text-center gradient-text" data-aos="fade-up">نقد و بررسی تخصصی</h2>
+            <div class="prose prose-lg dark:prose-invert max-w-none" data-aos="fade-up" data-aos-delay="100">
+                {{ product.full_description|linebreaks }}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Specifications Section -->
+{% if product.specifications.exists %}
+<section class="py-20 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold mb-8 text-center gradient-text" data-aos="fade-up">مشخصات فنی</h2>
+            
+            {% regroup product.specifications.all by group as spec_groups %}
+            {% for group in spec_groups %}
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl mb-6 overflow-hidden" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|mul:100 }}">
+                <div class="bg-gradient-to-r from-primary-500 to-accent-500 px-6 py-4">
+                    <h3 class="text-xl font-bold text-white">{{ group.grouper.name }}</h3>
+                </div>
+                <div class="p-6">
+                    <table class="w-full">
+                        <tbody>
+                            {% for spec in group.list %}
+                            <tr class="border-b border-gray-200 dark:border-gray-700 last:border-0">
+                                <td class="py-3 px-4 font-bold text-gray-700 dark:text-gray-300 w-1/3">{{ spec.key }}</td>
+                                <td class="py-3 px-4 text-gray-600 dark:text-gray-400">{{ spec.value }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Documents Section -->
+{% if product.documents.exists %}
+<section class="py-20 bg-white dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold mb-8 text-center gradient-text" data-aos="fade-up">مستندات و فایل‌ها</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for doc in product.documents.all %}
+                <a href="{{ doc.file.url }}" download class="bg-gray-50 dark:bg-gray-700 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|mul:100 }}">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-gray-900 dark:text-white mb-2">{{ doc.title }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ doc.get_document_type_display }}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- FAQ Section -->
+{% if product.faqs.exists %}
+<section class="py-20 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold mb-8 text-center gradient-text" data-aos="fade-up">سوالات متداول</h2>
+            
+            <div class="space-y-4">
+                {% for faq in product.faqs.all %}
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|mul:100 }}">
+                    <details class="group">
+                        <summary class="flex justify-between items-center cursor-pointer p-6">
+                            <h3 class="font-bold text-lg text-gray-900 dark:text-white">{{ faq.question }}</h3>
+                            <svg class="w-6 h-6 text-primary-500 transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </summary>
+                        <div class="px-6 pb-6 text-gray-600 dark:text-gray-400">
+                            {{ faq.answer|linebreaks }}
+                        </div>
+                    </details>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Related Products Section -->
+{% if related_products %}
+<section class="py-20 bg-white dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                <span class="gradient-text">محصولات مرتبط</span>
+            </h2>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {% for related in related_products %}
+            <div data-aos="flip-left" data-aos-delay="{{ forloop.counter0|mul:100 }}" class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                <div class="relative overflow-hidden">
+                    {% if related.main_image %}
+                    <img src="{{ related.main_image.url }}" alt="{{ related.name }}" class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    {% else %}
+                    <div class="w-full h-64 bg-gradient-to-br from-primary-300 to-accent-300 dark:from-primary-700 dark:to-accent-700 flex items-center justify-center">
+                        <svg class="w-24 h-24 text-white opacity-80" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="p-6">
+                    <h3 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">{{ related.name }}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">{{ related.short_description }}</p>
+                    
+                    <div class="flex items-center justify-between">
+                        {% if related.show_price and related.base_price > 0 %}
+                        <div class="text-primary-500 font-bold text-lg">
+                            {{ related.base_price|intcomma }} {{ related.currency.symbol }}
+                        </div>
+                        {% else %}
+                        <div class="text-gray-500 text-sm">تماس بگیرید</div>
+                        {% endif %}
+                        
+                        <a href="{% url 'product_detail' related.slug %}" class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-bold">
+                            جزئیات
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

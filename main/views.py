@@ -28,3 +28,42 @@ def home_view(request):
     return render(request, 'main/home.html', context)
 
 
+def category_detail_view(request, slug):
+    """نمایش جزئیات دسته‌بندی و محصولات آن"""
+    category = get_object_or_404(Category, slug=slug)
+    products = Product.objects.filter(category=category, is_in_stock=True).select_related('currency')
+    child_categories = Category.objects.filter(parent=category)
+    
+    context = {
+        'category': category,
+        'products': products,
+        'products_count': products.count(),
+        'child_categories': child_categories,
+    }
+    
+    return render(request, 'main/category_detail.html', context)
+
+
+def product_detail_view(request, slug):
+    """نمایش جزئیات محصول"""
+    product = get_object_or_404(
+        Product.objects.select_related('category', 'currency').prefetch_related(
+            'gallery', 'specifications__group', 'documents', 'faqs'
+        ),
+        slug=slug
+    )
+    
+    # محصولات مرتبط (همان دسته‌بندی به جز محصول فعلی)
+    related_products = Product.objects.filter(
+        category=product.category,
+        is_in_stock=True
+    ).exclude(pk=product.pk).select_related('currency')[:4]
+    
+    context = {
+        'product': product,
+        'related_products': related_products,
+    }
+    
+    return render(request, 'main/product_detail.html', context)
+
+

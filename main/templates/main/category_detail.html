@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<!-- Category Header Section -->
+<section class="relative py-20 bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary-300 dark:bg-primary-700 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-float"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-accent-300 dark:bg-accent-700 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-float" style="animation-delay: 2s;"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center" data-aos="fade-up">
+            {% if category.image %}
+            <img src="{{ category.image.url }}" alt="{{ category.title }}" class="w-32 h-32 object-cover rounded-full mx-auto mb-6 shadow-xl">
+            {% else %}
+            <div class="w-32 h-32 bg-gradient-to-br from-primary-400 to-accent-400 rounded-full mx-auto mb-6 shadow-xl flex items-center justify-center">
+                <svg class="w-16 h-16 text-white opacity-80" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+            </div>
+            {% endif %}
+            
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 gradient-text">{{ category.title }}</h1>
+            
+            {% if category.description %}
+            <p class="text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto mb-8">{{ category.description }}</p>
+            {% endif %}
+            
+            <!-- Breadcrumb -->
+            <nav class="flex justify-center items-center space-x-2 space-x-reverse text-sm text-gray-600 dark:text-gray-400">
+                <a href="{% url 'home' %}" class="hover:text-primary-500 transition-colors">خانه</a>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <span class="text-primary-500 font-bold">{{ category.title }}</span>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<!-- Products Grid Section -->
+<section class="py-20 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                <span class="gradient-text">محصولات این دسته‌بندی</span>
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400">
+                {% if products_count %}
+                {{ products_count }} محصول در این دسته‌بندی موجود است
+                {% else %}
+                محصولات این دسته‌بندی به زودی اضافه خواهند شد
+                {% endif %}
+            </p>
+        </div>
+        
+        {% if products %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {% for product in products %}
+            <div data-aos="flip-left" data-aos-delay="{{ forloop.counter0|add:1|mul:100 }}" class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                <div class="relative overflow-hidden">
+                    {% if product.main_image %}
+                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    {% else %}
+                    <div class="w-full h-64 bg-gradient-to-br from-primary-300 to-accent-300 dark:from-primary-700 dark:to-accent-700 flex items-center justify-center">
+                        <svg class="w-24 h-24 text-white opacity-80" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                    
+                    {% if not product.is_in_stock %}
+                    <div class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <span class="bg-red-500 text-white px-4 py-2 rounded-full font-bold">ناموجود</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="p-6">
+                    <h3 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">{{ product.name }}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">{{ product.short_description }}</p>
+                    
+                    <div class="flex items-center justify-between">
+                        {% if product.show_price and product.base_price > 0 %}
+                        <div class="text-primary-500 font-bold text-lg">
+                            {{ product.base_price|intcomma }} {{ product.currency.symbol }}
+                        </div>
+                        {% else %}
+                        <div class="text-gray-500 text-sm">تماس بگیرید</div>
+                        {% endif %}
+                        
+                        <a href="{% url 'product_detail' product.slug %}" class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-bold">
+                            جزئیات
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-20" data-aos="fade-up">
+            <div class="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-2">محصولی یافت نشد</h3>
+            <p class="text-gray-500 dark:text-gray-400">به زودی محصولات جدید در این دسته‌بندی اضافه خواهند شد</p>
+        </div>
+        {% endif %}
+        
+        <!-- Back to Categories Button -->
+        <div class="text-center mt-12">
+            <a href="{% url 'home' %}#categories" class="inline-block px-8 py-4 border-2 border-primary-500 text-primary-500 dark:text-primary-400 rounded-xl hover:bg-primary-500 hover:text-white transition-all duration-300 font-bold">
+                بازگشت به دسته‌بندی‌ها
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Child Categories Section (if exists) -->
+{% if child_categories %}
+<section class="py-20 bg-white dark:bg-gray-800">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                <span class="gradient-text">زیردسته‌بندی‌ها</span>
+            </h2>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for child in child_categories %}
+            <div data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|add:1|mul:100 }}" class="group relative bg-gray-50 dark:bg-gray-700 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                <div class="aspect-w-16 aspect-h-9 overflow-hidden">
+                    {% if child.image %}
+                    <img src="{{ child.image.url }}" alt="{{ child.title }}" class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    {% else %}
+                    <div class="w-full h-48 bg-gradient-to-br from-primary-400 to-accent-400 flex items-center justify-center">
+                        <svg class="w-20 h-20 text-white opacity-80" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors">{{ child.title }}</h3>
+                    {% if child.description %}
+                    <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">{{ child.description }}</p>
+                    {% endif %}
+                    <a href="{% url 'category_detail' child.slug %}" class="inline-flex items-center mt-4 text-primary-500 hover:text-primary-600 font-bold transition-colors">
+                        مشاهده محصولات
+                        <svg class="w-4 h-4 mr-2 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
