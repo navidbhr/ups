@@ -9,16 +9,16 @@ from main.models import Product, Category, Article, Project, Partner, ProductCon
 def home_view(request):
     from django.utils.translation import get_language
     from .models import Branch, HomepageImage, HomeSlider
-    
+
     categories = Category.objects.filter(parent__isnull=True)[:6]
     products = Product.objects.filter(is_in_stock=True)[:8]
     articles = Article.objects.filter(is_published=True)[:6]
     projects = Project.objects.all()[:6]
     partners = Partner.objects.all()
-    
+
     # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
     current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
-    
+
     # تبدیل کد زبان به فرمت کوتاه
     lang_map = {
         'fa-ir': 'fa',
@@ -29,10 +29,10 @@ def home_view(request):
         'en': 'en',
     }
     current_lang = lang_map.get(current_lang.lower(), 'fa')
-    
+
     # ذخیره زبان در سشن
     request.session['language'] = current_lang
-    
+
     context = {
         'categories': categories,
         'products': products,
@@ -81,7 +81,7 @@ def submit_product_consultation(request):
 def category_detail_view(request, slug):
     """نمایش جزئیات دسته‌بندی و محصولات آن"""
     from django.utils.translation import get_language
-    
+
     category = get_object_or_404(Category, slug=slug)
     products = Product.objects.filter(category=category, is_in_stock=True).select_related('currency')
     child_categories = Category.objects.filter(parent=category)
@@ -98,7 +98,7 @@ def category_detail_view(request, slug):
     }
     current_lang = lang_map.get(current_lang.lower(), 'fa')
     request.session['language'] = current_lang
-    
+
     context = {
         'category': category,
         'products': products,
@@ -113,7 +113,7 @@ def category_detail_view(request, slug):
 def product_detail_view(request, slug):
     """نمایش جزئیات محصول"""
     from django.utils.translation import get_language
-    
+
     product = get_object_or_404(
         Product.objects.select_related('category', 'currency').prefetch_related(
             'gallery', 'specifications__group', 'documents', 'faqs'
@@ -139,7 +139,7 @@ def product_detail_view(request, slug):
     }
     current_lang = lang_map.get(current_lang.lower(), 'fa')
     request.session['language'] = current_lang
-    
+
     context = {
         'product': product,
         'related_products': related_products,
@@ -152,7 +152,7 @@ def product_detail_view(request, slug):
 def product_list_view(request):
     """نمایش لیست همه محصولات"""
     from django.utils.translation import get_language
-    
+
     products = Product.objects.filter(is_in_stock=True).select_related('currency')
     
     # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
@@ -167,7 +167,7 @@ def product_list_view(request):
     }
     current_lang = lang_map.get(current_lang.lower(), 'fa')
     request.session['language'] = current_lang
-    
+
     context = {
         'products': products,
         'current_lang': current_lang,
