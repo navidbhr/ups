@@ -1,6 +1,6 @@
-{% load static custom_filters %}
+{% load static custom_filters i18n %}
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" class="scroll-smooth">
+<html lang="{{ current_lang|default:'fa' }}" dir="{% if current_lang == 'en' or current_lang == 'ru' %}ltr{% else %}rtl{% endif %}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -170,9 +170,17 @@
                 </div>
                 
                 <!-- Theme & Language Selector -->
-                <div class="hidden md:flex items-center space-x-2 space-x-reverse">
+                <div class="hidden md:flex items-center space-x-3 space-x-reverse">
+                    <!-- Language Selector -->
+                    <select id="language-selector" onchange="changeLanguage(this.value)" class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer hover:border-primary-500 transition-colors">
+                        <option value="fa" {% if current_lang == 'fa' %}selected{% endif %}>🇮🇷 فارسی</option>
+                        <option value="en" {% if current_lang == 'en' %}selected{% endif %}>🇬🇧 English</option>
+                        <option value="ar" {% if current_lang == 'ar' %}selected{% endif %}>🇸🇦 العربية</option>
+                        <option value="ru" {% if current_lang == 'ru' %}selected{% endif %}>🇷🇺 Русский</option>
+                    </select>
+                    
                     <!-- Theme Toggle Button -->
-                    <button id="header-theme-toggle" class="p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="تغییر تم">
+                    <button id="header-theme-toggle" class="p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-primary-500 transition-all duration-300" title="{% trans 'Toggle Theme' %}">
                         <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
                         </svg>
@@ -180,18 +188,10 @@
                             <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
                         </svg>
                     </button>
-                    
-                    <!-- Language Selector -->
-                    <select id="language-selector" onchange="changeLanguage(this.value)" class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500">
-                        <option value="fa" {% if current_lang == 'fa' %}selected{% endif %}>🇮🇷 فارسی</option>
-                        <option value="en" {% if current_lang == 'en' %}selected{% endif %}>🇬🇧 English</option>
-                        <option value="ar" {% if current_lang == 'ar' %}selected{% endif %}>🇸🇦 العربية</option>
-                        <option value="ru" {% if current_lang == 'ru' %}selected{% endif %}>🇷🇺 Русский</option>
-                    </select>
                 </div>
                 
                 <!-- CTA Button -->
-                <a href="{{ settings.cta_link|default:'#consultation' }}" class="hidden md:inline-block px-6 py-3 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                <a href="{{ settings.cta_link|default:'#consultation' }}" class="hidden md:inline-block px-6 py-2.5 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
                     {{ settings.cta_text|default:'درخواست مشاوره' }}
                 </a>
                 
@@ -204,33 +204,34 @@
             </div>
             
             <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 space-y-2">
-                <a href="#hero" class="block py-2 hover:text-primary-500 transition-colors">{% get_text 'home_menu_home' %}</a>
-                <a href="#categories" class="block py-2 hover:text-primary-500 transition-colors">{% get_text 'home_menu_categories' %}</a>
-                <a href="#products" class="block py-2 hover:text-primary-500 transition-colors">{% get_text 'home_menu_products' %}</a>
-                <a href="#articles" class="block py-2 hover:text-primary-500 transition-colors">{% get_text 'home_menu_articles' %}</a>
-                <a href="#projects" class="block py-2 hover:text-primary-500 transition-colors">{% get_text 'home_menu_projects' %}</a>
-                <a href="#contact" class="block py-2 hover:text-primary-500 transition-colors">{% get_text 'home_menu_contact' %}</a>
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 space-y-3">
+                <a href="#hero" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_home' %}</a>
+                <a href="#categories" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_categories' %}</a>
+                <a href="#products" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_products' %}</a>
+                <a href="#articles" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_articles' %}</a>
+                <a href="#projects" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_projects' %}</a>
+                <a href="#contact" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_contact' %}</a>
+                
                 <!-- Mobile Theme & Language Selector -->
-                <div class="pt-2 border-t border-gray-200 dark:border-gray-700 mt-2 space-y-2">
+                <div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4 space-y-3">
+                    <!-- Mobile Language Selector -->
+                    <select onchange="changeLanguage(this.value)" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer">
+                        <option value="fa" {% if current_lang == 'fa' %}selected{% endif %}>🇮🇷 فارسی</option>
+                        <option value="en" {% if current_lang == 'en' %}selected{% endif %}>🇬🇧 English</option>
+                        <option value="ar" {% if current_lang == 'ar' %}selected{% endif %}>🇸🇦 العربية</option>
+                        <option value="ru" {% if current_lang == 'ru' %}selected{% endif %}>🇷🇺 Русский</option>
+                    </select>
+                    
                     <!-- Mobile Theme Toggle -->
-                    <button id="mobile-theme-toggle" class="w-full flex items-center justify-center space-x-2 space-x-reverse px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                    <button id="mobile-theme-toggle" class="w-full flex items-center justify-center space-x-2 space-x-reverse px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                         <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
                         </svg>
                         <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
                         </svg>
-                        <span>تغییر تم</span>
+                        <span>{% trans 'Toggle Theme' %}</span>
                     </button>
-                    
-                    <!-- Mobile Language Selector -->
-                    <select onchange="changeLanguage(this.value)" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-                        <option value="fa" {% if current_lang == 'fa' %}selected{% endif %}>🇮🇷 فارسی</option>
-                        <option value="en" {% if current_lang == 'en' %}selected{% endif %}>🇬🇧 English</option>
-                        <option value="ar" {% if current_lang == 'ar' %}selected{% endif %}>🇸🇦 العربية</option>
-                        <option value="ru" {% if current_lang == 'ru' %}selected{% endif %}>🇷🇺 Русский</option>
-                    </select>
                 </div>
             </div>
         </nav>
@@ -385,19 +386,21 @@
             // Save language preference in localStorage
             localStorage.setItem('language', lang);
             
+            // Set cookie for Django i18n
+            document.cookie = `django_language=${lang}; path=/; max-age=31536000`;
+            
             // Create URL with language parameter
             const urlParams = new URLSearchParams(window.location.search);
             urlParams.set('lang', lang);
             
             // Reload page with new language
-            const newUrl = window.location.pathname + '?' + urlParams.toString() + window.location.hash;
+            const newUrl = window.location.pathname + '?' + urlParams.toString();
             window.location.href = newUrl;
         }
         
-        // Load saved language on page load (optional - can be used for future enhancements)
+        // Load saved language on page load
         const savedLang = localStorage.getItem('language');
         if (savedLang && savedLang !== '{{ current_lang }}') {
-            // Language changed, could redirect automatically if needed
             console.log('Saved language:', savedLang);
         }
         
