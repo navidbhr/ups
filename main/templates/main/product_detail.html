@@ -12,7 +12,7 @@
     
     <div class="container mx-auto px-4 relative z-10">
         <!-- Breadcrumb -->
-        <nav class="flex justify-center items-center space-x-2 space-x-reverse text-sm text-gray-600 dark:text-gray-400 mb-8" data-aos="fade-down">
+        <nav class="flex justify-center items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-8" data-aos="fade-down">
             <a href="{% url 'home' %}" class="hover:text-primary-500 transition-colors">خانه</a>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -112,7 +112,7 @@
                 <!-- Key Features -->
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg">
-                        <div class="flex items-center space-x-3 space-x-reverse">
+                        <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -126,7 +126,7 @@
                     </div>
                     
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg">
-                        <div class="flex items-center space-x-3 space-x-reverse">
+                        <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-accent-500 rounded-full flex items-center justify-center">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
@@ -322,7 +322,7 @@
         <div class="p-6">
             <!-- Product Info in Modal -->
             <div class="bg-primary-50 dark:bg-primary-900/30 rounded-xl p-4 mb-6">
-                <div class="flex items-center space-x-4 space-x-reverse">
+                <div class="flex items-center gap-4">
                     {% if product.main_image %}
                     <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="w-20 h-20 object-cover rounded-lg">
                     {% endif %}
