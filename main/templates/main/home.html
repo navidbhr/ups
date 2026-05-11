@@ -27,7 +27,7 @@
                         {{ settings.cta_text|default:'درخواست مشاوره رایگان' }}
                     </a>
                     <a href="#products" class="px-8 py-4 border-2 border-primary-500 text-primary-500 dark:text-primary-400 rounded-xl hover:bg-primary-500 hover:text-white transition-all duration-300 font-bold">
-                        مشاهده محصولات
+                        {{ static_texts.view_products|default:"مشاهده محصولات" }}
                     </a>
                 </div>
 
@@ -35,15 +35,15 @@
                 <div class="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
                     <div class="text-center">
                         <div class="text-3xl font-bold gradient-text">+۱۵</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">سال تجربه</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">{{ static_texts.hero_stats_experience|default:"سال تجربه" }}</div>
                     </div>
                     <div class="text-center">
                         <div class="text-3xl font-bold gradient-text">+۵۰۰</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">پروژه موفق</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">{{ static_texts.hero_stats_projects|default:"پروژه موفق" }}</div>
                     </div>
                     <div class="text-center">
                         <div class="text-3xl font-bold gradient-text">+۱۰۰۰</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">مشتری راضی</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">{{ static_texts.hero_stats_customers|default:"مشتری راضی" }}</div>
                     </div>
                 </div>
             </div>
@@ -70,8 +70,8 @@
                             </svg>
                         </div>
                         <div>
-                            <div class="font-bold text-gray-900 dark:text-white">گارانتی معتبر</div>
-                            <div class="text-sm text-gray-500">تا ۳۶ ماه</div>
+                            <div class="font-bold text-gray-900 dark:text-white">{{ static_texts.hero_badge_warranty|default:"گارانتی معتبر" }}</div>
+                            <div class="text-sm text-gray-500">{{ static_texts.hero_badge_warranty_value|default:"تا ۳۶ ماه" }}</div>
                         </div>
                     </div>
                 </div>
@@ -84,8 +84,8 @@
                             </svg>
                         </div>
                         <div>
-                            <div class="font-bold text-gray-900 dark:text-white">پشتیبانی</div>
-                            <div class="text-sm text-gray-500">۲۴/۷</div>
+                            <div class="font-bold text-gray-900 dark:text-white">{{ static_texts.hero_badge_support|default:"پشتیبانی" }}</div>
+                            <div class="text-sm text-gray-500">{{ static_texts.hero_badge_support_value|default:"۲۴/۷" }}</div>
                         </div>
                     </div>
                 </div>
@@ -106,9 +106,9 @@
     <div class="container mx-auto px-4">
         <div class="text-center mb-16" data-aos="fade-up">
             <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                <span class="gradient-text">دسته‌بندی محصولات</span>
+                <span class="gradient-text">{{ static_texts.categories_title|default:"دسته‌بندی محصولات" }}</span>
             </h2>
-            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">محصولات ما در دسته‌بندی‌های متنوع برای نیازهای مختلف صنعتی و خانگی</p>
+            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{{ static_texts.categories_subtitle|default:"محصولات ما در دسته‌بندی‌های متنوع برای نیازهای مختلف صنعتی و خانگی" }}</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -131,7 +131,7 @@
                     <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">{{ category.description }}</p>
                     {% endif %}
                     <a href="{% url 'category_detail' category.slug %}" class="inline-flex items-center mt-4 text-primary-500 hover:text-primary-600 font-bold transition-colors">
-                        مشاهده محصولات
+                        {{ static_texts.view_products|default:"مشاهده محصولات" }}
                         <svg class="w-4 h-4 mr-2 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                         </svg>
@@ -148,10 +148,10 @@
                     </svg>
                 </div>
                 <div class="p-6">
-                    <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors">دسته‌بندی {{ i }}</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">توضیحات نمونه برای دسته‌بندی محصولات</p>
+                    <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors">{{ static_texts.category_placeholder_title|default:"دسته‌بندی" }} {{ i }}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ static_texts.category_placeholder_desc|default:"توضیحات نمونه برای دسته‌بندی محصولات" }}</p>
                     <a href="#" class="inline-flex items-center mt-4 text-primary-500 hover:text-primary-600 font-bold transition-colors">
-                        مشاهده محصولات
+                        {{ static_texts.view_products|default:"مشاهده محصولات" }}
                         <svg class="w-4 h-4 mr-2 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                         </svg>
@@ -169,9 +169,9 @@
     <div class="container mx-auto px-4">
         <div class="text-center mb-16" data-aos="fade-up">
             <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                <span class="gradient-text">محصولات برگزیده</span>
+                <span class="gradient-text">{{ static_texts.products_title|default:"محصولات برگزیده" }}</span>
             </h2>
-            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">بهترین دستگاه‌های UPS با کیفیت عالی و گارانتی معتبر</p>
+            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{{ static_texts.products_subtitle|default:"بهترین دستگاه‌های UPS با کیفیت عالی و گارانتی معتبر" }}</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -190,7 +190,7 @@
 
                     {% if not product.is_in_stock %}
                     <div class="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <span class="bg-red-500 text-white px-4 py-2 rounded-full font-bold">ناموجود</span>
+                        <span class="bg-red-500 text-white px-4 py-2 rounded-full font-bold">{{ static_texts.not_in_stock|default:"ناموجود" }}</span>
                     </div>
                     {% endif %}
                 </div>
@@ -205,7 +205,7 @@
                             {{ product.base_price|intcomma }} {{ product.currency.symbol }}
                         </div>
                         {% else %}
-                        <div class="text-gray-500 text-sm">تماس بگیرید</div>
+                        <div class="text-gray-500 text-sm">{{ static_texts.contact_us|default:"تماس بگیرید" }}</div>
                         {% endif %}
 
                         <a href="{% url 'product_detail' product.slug %}" class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-bold">
@@ -224,11 +224,11 @@
                     </svg>
                 </div>
                 <div class="p-6">
-                    <h3 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">محصول نمونه {{ i }}</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">توضیحات کوتاه محصول نمونه برای نمایش در صفحه اصلی</p>
+                    <h3 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">{{ static_texts.product_placeholder_title|default:"محصول نمونه" }} {{ i }}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ static_texts.product_placeholder_desc|default:"توضیحات کوتاه محصول نمونه برای نمایش در صفحه اصلی" }}</p>
                     <div class="flex items-center justify-between">
-                        <div class="text-primary-500 font-bold text-lg">تماس بگیرید</div>
-                        <a href="#" class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-bold">جزئیات</a>
+                        <div class="text-primary-500 font-bold text-lg">{{ static_texts.contact_us|default:"تماس بگیرید" }}</div>
+                        <a href="#" class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-bold">{{ static_texts.details|default:"جزئیات" }}</a>
                     </div>
                 </div>
             </div>
@@ -249,9 +249,9 @@
     <div class="container mx-auto px-4">
         <div class="text-center mb-16" data-aos="fade-up">
             <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                <span class="gradient-text">مقالات آموزشی</span>
+                <span class="gradient-text">{{ static_texts.articles_title|default:"مقالات آموزشی" }}</span>
             </h2>
-            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">آخرین مقالات و اخبار مرتبط با صنعت UPS و برق اضطراری</p>
+            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{{ static_texts.articles_subtitle|default:"آخرین مقالات و اخبار مرتبط با صنعت UPS و برق اضطراری" }}</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -272,7 +272,7 @@
                     <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors line-clamp-2">{{ article.title }}</h3>
                     <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">{{ article.content|striptags|truncatewords:20 }}</p>
                     <a href="#" class="inline-flex items-center text-primary-500 hover:text-primary-600 font-bold transition-colors">
-                        ادامه مطلب
+                        {{ static_texts.read_more|default:"ادامه مطلب" }}
                         <svg class="w-4 h-4 mr-2 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                         </svg>
@@ -289,10 +289,10 @@
                     </svg>
                 </div>
                 <div class="p-6">
-                    <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors">عنوان مقاله نمونه {{ i }}</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">متن نمونه برای نمایش خلاصه مقاله در صفحه اصلی سایت قرار داده شده است.</p>
+                    <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors">{{ static_texts.article_placeholder_title|default:"عنوان مقاله نمونه" }} {{ i }}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ static_texts.article_placeholder_desc|default:"متن نمونه برای نمایش خلاصه مقاله در صفحه اصلی سایت قرار داده شده است." }}</p>
                     <a href="#" class="inline-flex items-center text-primary-500 hover:text-primary-600 font-bold transition-colors">
-                        ادامه مطلب
+                        {{ static_texts.read_more|default:"ادامه مطلب" }}
                         <svg class="w-4 h-4 mr-2 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                         </svg>
@@ -310,9 +310,9 @@
     <div class="container mx-auto px-4">
         <div class="text-center mb-16" data-aos="fade-up">
             <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                <span class="gradient-text">پروژه‌های موفق</span>
+                <span class="gradient-text">{{ static_texts.projects_title|default:"پروژه‌های موفق" }}</span>
             </h2>
-            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">نمونه‌ای از پروژه‌های اجرا شده توسط شرکت برهان در سراسر کشور</p>
+            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{{ static_texts.projects_subtitle|default:"نمونه‌ای از پروژه‌های اجرا شده توسط شرکت برهان در سراسر کشور" }}</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -348,9 +348,9 @@
 
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div class="absolute bottom-0 left-0 right-0 p-6">
-                        <h3 class="text-xl font-bold text-white mb-2">پروژه نمونه {{ i }}</h3>
-                        <p class="text-gray-300 text-sm mb-2">محل اجرا: شهر نمونه</p>
-                        <p class="text-gray-300 text-sm line-clamp-2">توضیحات نمونه برای پروژه اجرا شده توسط شرکت برهان</p>
+                        <h3 class="text-xl font-bold text-white mb-2">{{ static_texts.project_placeholder_title|default:"پروژه نمونه" }} {{ i }}</h3>
+                        <p class="text-gray-300 text-sm mb-2">{{ static_texts.project_placeholder_location|default:"محل اجرا: شهر نمونه" }}</p>
+                        <p class="text-gray-300 text-sm line-clamp-2">{{ static_texts.project_placeholder_desc|default:"توضیحات نمونه برای پروژه اجرا شده توسط شرکت برهان" }}</p>
                     </div>
                 </div>
             </div>
@@ -365,9 +365,9 @@
     <div class="container mx-auto px-4">
         <div class="text-center mb-16" data-aos="fade-up">
             <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                <span class="gradient-text">همکاران تجاری</span>
+                <span class="gradient-text">{{ static_texts.partners_title|default:"همکاران تجاری" }}</span>
             </h2>
-            <p class="text-gray-600 dark:text-gray-400">سازمان‌ها و شرکت‌هایی که به ما اعتماد کرده‌اند</p>
+            <p class="text-gray-600 dark:text-gray-400">{{ static_texts.partners_subtitle|default:"سازمان‌ها و شرکت‌هایی که به ما اعتماد کرده‌اند" }}</p>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
@@ -383,7 +383,7 @@
             <!-- Default Partners Placeholder -->
             {% for i in "123456"|make_list %}
             <div data-aos="zoom-in" data-aos-delay="{{ forloop.counter0|add:1|mul:100 }}" class="bg-gray-50 dark:bg-gray-700 p-6 rounded-2xl flex items-center justify-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                <div class="text-gray-400 font-bold">شرکت {{ i }}</div>
+                <div class="text-gray-400 font-bold">{{ static_texts.partner_placeholder|default:"شرکت" }} {{ i }}</div>
             </div>
             {% endfor %}
             {% endfor %}
@@ -395,8 +395,8 @@
 <section id="consultation" class="py-20 bg-gradient-to-r from-primary-500 to-accent-500">
     <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto text-center" data-aos="zoom-in">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">نیاز به مشاوره دارید؟</h2>
-            <p class="text-white/90 text-lg mb-8">کارشناسان ما آماده ارائه مشاوره رایگان برای انتخاب بهترین دستگاه UPS متناسب با نیاز شما هستند.</p>
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">{{ static_texts.consultation_title|default:"نیاز به مشاوره دارید؟" }}</h2>
+            <p class="text-white/90 text-lg mb-8">{{ static_texts.consultation_subtitle|default:"کارشناسان ما آماده ارائه مشاوره رایگان برای انتخاب بهترین دستگاه UPS متناسب با نیاز شما هستند." }}</p>
             <div class="flex flex-wrap justify-center gap-4">
                 <a href="tel:{{ main_branch.phone }}" class="px-8 py-4 bg-white text-primary-500 rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 font-bold flex items-center">
                     <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -420,9 +420,9 @@
     <div class="container mx-auto px-4">
         <div class="text-center mb-16" data-aos="fade-up">
             <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                <span class="gradient-text">تماس با ما</span>
+                <span class="gradient-text">{{ static_texts.contact_title|default:"تماس با ما" }}</span>
             </h2>
-            <p class="text-gray-600 dark:text-gray-400">برای دریافت اطلاعات بیشتر با ما در ارتباط باشید</p>
+            <p class="text-gray-600 dark:text-gray-400">{{ static_texts.contact_subtitle|default:"برای دریافت اطلاعات بیشتر با ما در ارتباط باشید" }}</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -458,7 +458,7 @@
             <!-- Contact Info & Map -->
             <div data-aos="fade-left" class="space-y-8">
                 <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
-                    <h3 class="text-2xl font-bold mb-6 gradient-text">اطلاعات تماس</h3>
+                    <h3 class="text-2xl font-bold mb-6 gradient-text">{{ static_texts.contact_info_title|default:"اطلاعات تماس" }}</h3>
                     <div class="space-y-4">
                         <div class="flex items-start gap-4">
                             <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -468,7 +468,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <h4 class="font-bold text-gray-900 dark:text-white mb-1">آدرس</h4>
+                                <h4 class="font-bold text-gray-900 dark:text-white mb-1">{{ static_texts.contact_address_label|default:"آدرس" }}</h4>
                                 <p class="text-gray-600 dark:text-gray-400">{{ main_branch.address }}</p>
                             </div>
                         </div>
@@ -479,7 +479,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <h4 class="font-bold text-gray-900 dark:text-white mb-1">تلفن</h4>
+                                <h4 class="font-bold text-gray-900 dark:text-white mb-1">{{ static_texts.contact_phone_label|default:"تلفن" }}</h4>
                                 <p class="text-gray-600 dark:text-gray-400">{{ main_branch.phone }}</p>
                             </div>
                         </div>
@@ -490,7 +490,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <h4 class="font-bold text-gray-900 dark:text-white mb-1">ایمیل</h4>
+                                <h4 class="font-bold text-gray-900 dark:text-white mb-1">{{ static_texts.contact_email_label|default:"ایمیل" }}</h4>
                                 <p class="text-gray-600 dark:text-gray-400">{{ main_branch.email }}</p>
                             </div>
                         </div>

@@ -1,13 +1,6 @@
 ```
-# Compiled Python files
-*.pyc
 __pycache__/
-
-# Django locale compiled files
-*.mo
-
-# Environment files
-.env
-.env.local
-*.env.*
+*.pyc
+*.pyo
+*.pyd
 ```
