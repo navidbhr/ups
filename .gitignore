@@ -1,28 +1,43 @@
 ```
-# Database
-db.sqlite3
-
-# Django migrations
-**/migrations/
-
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
 env/
 venv/
 .venv/
+.ENV
+.venv.bak/
 pip-log.txt
 pip-delete-this-directory.txt
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
+
+# Django/Python web development
 *.log
+*.pot
+*.pyc
+__pycache__/
+*.mo
+.sass-cache/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+*.env
+*.env.*
+!*.env.example
 ```
