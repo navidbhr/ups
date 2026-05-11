@@ -8,7 +8,7 @@ from main.models import Product, Category, Article, Project, Partner, ProductCon
 
 def home_view(request):
     from django.utils.translation import get_language
-    from .models import Branch, HomepageImage, HomeSlider, StaticText
+    from .models import Branch, HomepageImage, HomeSlider, StaticText, SiteSettings
 
     # بررسی اینکه آیا درخواست AJAX است یا نه
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
@@ -35,6 +35,29 @@ def home_view(request):
 
     # ذخیره زبان در سشن
     request.session['language'] = current_lang
+
+    # بارگذاری تنظیمات سایت
+    try:
+        settings = SiteSettings.objects.first()
+    except:
+        settings = None
+
+    # اگر SiteSettings وجود نداشت، یک آبجکت خالی با متدهای لازم بساز
+    if not settings:
+        class EmptySettings:
+            def get_hero_title(self):
+                return ''
+            def get_hero_subtitle(self):
+                return ''
+            def get_cta_text(self):
+                return ''
+            @property
+            def cta_link(self):
+                return '/contact/'
+            @property
+            def hero_image(self):
+                return ''
+        settings = EmptySettings()
 
     # بارگذاری تمام متون استاتیک برای اطمینان از لود صحیح
     static_texts = {}
@@ -79,6 +102,7 @@ def home_view(request):
         'partners': partners,
         'current_lang': current_lang,
         'static_texts': static_texts,
+        'settings': settings,
     }
     
     # اگر درخواست AJAX بود، فقط تکه‌ای از تمپلیت را برگردان
