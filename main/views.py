@@ -8,7 +8,7 @@ from main.models import Product, Category, Article, Project, Partner, ProductCon
 
 def home_view(request):
     from django.utils.translation import get_language
-    from .models import Branch, HomepageImage, HomeSlider
+    from .models import Branch, HomepageImage, HomeSlider, StaticText
 
     categories = Category.objects.filter(parent__isnull=True)[:6]
     products = Product.objects.filter(is_in_stock=True)[:8]
@@ -33,6 +33,41 @@ def home_view(request):
     # ذخیره زبان در سشن
     request.session['language'] = current_lang
 
+    # بارگذاری تمام متون استاتیک برای اطمینان از لود صحیح
+    static_texts = {}
+    for key in [
+        'hero_title', 'hero_subtitle', 'cta_text',
+        'hero_stats_experience', 'hero_stats_projects', 'hero_stats_customers',
+        'hero_badge_warranty', 'hero_badge_warranty_value', 'hero_badge_support', 'hero_badge_support_value',
+        'categories_title', 'categories_subtitle',
+        'view_products', 'category_placeholder_title', 'category_placeholder_desc',
+        'products_title', 'products_subtitle', 'contact_us', 'details',
+        'product_placeholder_price', 'product_placeholder_title', 'product_placeholder_desc',
+        'view_all_products',
+        'articles_title', 'articles_subtitle', 'read_more', 'article_placeholder_title', 'article_placeholder_desc',
+        'projects_title', 'projects_subtitle', 'project_placeholder_title', 'project_placeholder_location', 'project_placeholder_desc',
+        'partners_title', 'partners_subtitle', 'partner_placeholder',
+        'consultation_title', 'consultation_subtitle', 'whatsapp',
+        'contact_title', 'contact_subtitle',
+        'form_name_label', 'form_name_placeholder',
+        'form_phone_label', 'form_phone_placeholder',
+        'form_company_label', 'form_company_placeholder',
+        'form_power_label', 'form_power_placeholder',
+        'form_message_label', 'form_message_placeholder',
+        'form_submit',
+        'contact_info_title', 'contact_address_label', 'contact_phone_label', 'contact_email_label',
+        'not_in_stock',
+    ]:
+        try:
+            static_obj = StaticText.objects.get(key=key)
+            field_name = f'text_{current_lang}'
+            text = getattr(static_obj, field_name, None)
+            if not text and current_lang != 'fa':
+                text = getattr(static_obj, 'text_fa', '')
+            static_texts[key] = text or static_obj.default_text or ''
+        except StaticText.DoesNotExist:
+            static_texts[key] = ''
+
     context = {
         'categories': categories,
         'products': products,
@@ -40,6 +75,7 @@ def home_view(request):
         'projects': projects,
         'partners': partners,
         'current_lang': current_lang,
+        'static_texts': static_texts,
     }
     
     return render(request, 'main/home.html', context)

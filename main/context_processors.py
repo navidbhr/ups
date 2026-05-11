@@ -50,6 +50,18 @@ def site_settings(request):
     # دریافت تنظیمات سایت
     settings_obj = SiteSettings.objects.first()
 
+    # اگر settings_obj نبود، یک آبجکت خالی با مقادیر پیش‌فرض بساز
+    if not settings_obj:
+        class EmptySettings:
+            hero_title = ''
+            hero_subtitle = ''
+            cta_text = ''
+            cta_link = '#consultation'
+            def get_hero_title(self, lang_code='fa'): return ''
+            def get_hero_subtitle(self, lang_code='fa'): return ''
+            def get_cta_text(self, lang_code='fa'): return ''
+        settings_obj = EmptySettings()
+
     # دریافت تمام متون استاتیک مورد نیاز برای قالب
     static_texts = {}
     for key in [
