@@ -3,7 +3,7 @@ from .models import (
     Category, Product, ProductImage, SpecificationGroup,
     ProductSpecification, ProductDocument, Currency, SiteSettings,
     BlogCategory, Partner, FAQ, Agent, Project, ConsultationRequest, Article,
-    Branch, PageTranslation
+    Branch, PageTranslation, HomepageImage, HomeSlider
 )
 
 
@@ -61,12 +61,12 @@ class SiteSettingsAdmin(admin.ModelAdmin):
 
 @admin.register(Branch)
 class BranchAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_main', 'phone', 'order')
-    list_editable = ('is_main', 'order')
-    list_filter = ('is_main',)
+    list_display = ('name', 'is_main', 'is_active', 'phone', 'order')
+    list_editable = ('is_main', 'is_active', 'order')
+    list_filter = ('is_main', 'is_active')
     search_fields = ('name', 'address', 'phone')
     fieldsets = (
-        ('اطلاعات اصلی', {'fields': ('name', 'is_main', 'order')}),
+        ('اطلاعات اصلی', {'fields': ('name', 'is_main', 'is_active', 'order')}),
         ('اطلاعات تماس', {'fields': ('address', 'phone', 'email', 'whatsapp_number')}),
         ('نقشه', {'fields': ('map_iframe',), 'classes': ('collapse',)}),
     )
@@ -76,6 +76,22 @@ class BranchAdmin(admin.ModelAdmin):
 class PageTranslationAdmin(admin.ModelAdmin):
     list_display = ('key', 'text_fa')
     search_fields = ('key', 'text_fa', 'text_en')
+
+
+@admin.register(HomepageImage)
+class HomepageImageAdmin(admin.ModelAdmin):
+    list_display = ('title', 'section', 'order', 'is_active', 'created_at')
+    list_filter = ('section', 'is_active')
+    list_editable = ('order', 'is_active')
+    search_fields = ('title', 'description')
+
+
+@admin.register(HomeSlider)
+class HomeSliderAdmin(admin.ModelAdmin):
+    list_display = ('title_fa', 'order', 'is_active', 'created_at')
+    list_filter = ('is_active',)
+    list_editable = ('order', 'is_active')
+    search_fields = ('title_fa', 'title_en')
 
 
 @admin.register(Article)
