@@ -3,6 +3,16 @@ function changeLanguage(lang) {
     // ذخیره زبان در localStorage
     localStorage.setItem('selected_language', lang);
     
+    // تغییر direction بر اساس زبان
+    const html = document.documentElement;
+    if (lang === 'en' || lang === 'ru') {
+        html.setAttribute('dir', 'ltr');
+        html.setAttribute('lang', lang);
+    } else {
+        html.setAttribute('dir', 'rtl');
+        html.setAttribute('lang', lang);
+    }
+    
     // دریافت URL فعلی بدون پارامتر lang
     const url = new URL(window.location.href);
     url.searchParams.set('lang', lang);
