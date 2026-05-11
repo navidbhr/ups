@@ -46,6 +46,95 @@ class PageTranslation(TimeStampedModel):
     def __str__(self):
         return self.key
 
+    @classmethod
+    def get_text(cls, key, lang_code):
+        """دریافت متن بر اساس زبان"""
+        try:
+            obj = cls.objects.get(key=key)
+            field_map = {
+                'fa': 'text_fa',
+                'en': 'text_en',
+                'ar': 'text_ar',
+                'ru': 'text_ru',
+            }
+            field_name = field_map.get(lang_code, 'text_fa')
+            text = getattr(obj, field_name, None)
+            
+            if text:
+                return text
+            # اگر ترجمه نبود، متن فارسی را برگردان
+            return obj.text_fa or key
+        except cls.DoesNotExist:
+            return key
+
+
+# --- مدیریت خودکار متون ثابت ---
+class StaticTextManager(models.Manager):
+    """مدیریت خودکار برای ایجاد کلیدهای متون ثابت"""
+    
+    def get_or_create_from_code(self, key, default_text="", description=""):
+        """ایجاد خودکار کلید اگر وجود نداشته باشد"""
+        obj, created = self.get_or_create(
+            key=key,
+            defaults={
+                'default_text': default_text,
+                'description': description,
+                'text_fa': default_text,  # پیش‌فرض فارسی است
+            }
+        )
+        return obj
+
+
+class StaticText(TimeStampedModel):
+    """
+    مدل برای مدیریت تمام متون ثابت پروژه.
+    شما فقط نیاز دارید متن و ترجمه آن را در پنل ادمین وارد کنید.
+    کلیدها به صورت خودکار شناسایی می‌شوند.
+    """
+    key = models.CharField(max_length=255, unique=True, verbose_name=_("کلید متن"))
+    description = models.CharField(max_length=500, blank=True, verbose_name=_("توضیحات"))
+    
+    # فیلدهای ترجمه
+    text_fa = models.TextField(blank=True, null=True, verbose_name="فارسی")
+    text_en = models.TextField(blank=True, null=True, verbose_name="English")
+    text_ar = models.TextField(blank=True, null=True, verbose_name="العربية")
+    text_ru = models.TextField(blank=True, null=True, verbose_name="Русский")
+    
+    # فیلد پیش‌فرض (اگر ترجمه‌ای نباشد، این نمایش داده می‌شود)
+    default_text = models.TextField(blank=True, null=True, verbose_name=_("متن پیش‌فرض"))
+    
+    objects = StaticTextManager()
+
+    class Meta:
+        verbose_name = _("متن ثابت")
+        verbose_name_plural = _("متون ثابت (ترجمه خودکار)")
+        ordering = ['key']
+
+    def __str__(self):
+        display_text = self.default_text[:30] if self.default_text else 'No default'
+        return f"{self.key} - {display_text}"
+
+    @classmethod
+    def get_text(cls, key, lang_code):
+        """دریافت متن بر اساس زبان"""
+        try:
+            obj = cls.objects.get(key=key)
+            field_map = {
+                'fa': 'text_fa',
+                'en': 'text_en',
+                'ar': 'text_ar',
+                'ru': 'text_ru',
+            }
+            field_name = field_map.get(lang_code, 'default_text')
+            text = getattr(obj, field_name, None)
+            
+            if text:
+                return text
+            return obj.default_text or key
+        except cls.DoesNotExist:
+            # اگر رکورد وجود نداشت، کلید را برگردان
+            return key
+
 
 # --- تنظیمات سیستمی (Singleton) ---
 class SiteSettings(models.Model):

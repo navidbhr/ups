@@ -3,7 +3,7 @@ from .models import (
     Category, Product, ProductImage, SpecificationGroup,
     ProductSpecification, ProductDocument, Currency, SiteSettings,
     BlogCategory, Partner, FAQ, Agent, Project, ConsultationRequest, Article,
-    Branch, PageTranslation, HomepageImage, HomeSlider, ProductConsultationRequest
+    Branch, PageTranslation, HomepageImage, HomeSlider, ProductConsultationRequest, StaticText
 )
 
 
@@ -76,6 +76,41 @@ class BranchAdmin(admin.ModelAdmin):
 class PageTranslationAdmin(admin.ModelAdmin):
     list_display = ('key', 'text_fa')
     search_fields = ('key', 'text_fa', 'text_en')
+
+
+@admin.register(StaticText)
+class StaticTextAdmin(admin.ModelAdmin):
+    list_display = ('key', 'default_text', 'text_fa', 'text_en')
+    list_filter = ('text_fa', 'text_en', 'text_ar', 'text_ru')
+    search_fields = ('key', 'default_text', 'description', 'text_fa', 'text_en')
+    readonly_fields = ('created_at', 'updated_at')
+    
+    fieldsets = (
+        ('اطلاعات کلید', {
+            'fields': ('key', 'description'),
+            'description': 'کلید باید منحصر به فرد باشد. مثال: home_welcome_message'
+        }),
+        ('متن پیش‌فرض', {
+            'fields': ('default_text',),
+            'description': 'متنی که اگر ترجمه‌ای موجود نباشد نمایش داده می‌شود'
+        }),
+        ('ترجمه فارسی', {
+            'fields': ('text_fa',),
+        }),
+        ('English Translation', {
+            'fields': ('text_en',),
+        }),
+        ('الترجمة العربية', {
+            'fields': ('text_ar',),
+        }),
+        ('Русский перевод', {
+            'fields': ('text_ru',),
+        }),
+        ('زمان', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
 
 
 @admin.register(HomepageImage)
