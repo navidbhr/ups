@@ -67,3 +67,12 @@ def product_detail_view(request, slug):
     return render(request, 'main/product_detail.html', context)
 
 
+def product_list_view(request):
+    """نمایش لیست همه محصولات"""
+    products = Product.objects.filter(is_in_stock=True).select_related('currency')
+    
+    context = {
+        'products': products,
+    }
+    
+    return render(request, 'main/product_list.html', context)
