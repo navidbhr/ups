@@ -1,4 +1,4 @@
-from .models import SiteSettings, Category, PageTranslation, Branch
+from .models import SiteSettings, Category, PageTranslation, Branch, StaticText
 
 
 def get_text_by_key(key, lang='fa'):
@@ -11,14 +11,23 @@ def get_text_by_key(key, lang='fa'):
             text = getattr(translation, 'text_fa', '')
         return text or ''
     except PageTranslation.DoesNotExist:
-        return ''
+        # اگر PageTranslation نبود، StaticText را چک کن
+        try:
+            static = StaticText.objects.get(key=key)
+            field_name = f'text_{lang}'
+            text = getattr(static, field_name, None)
+            if not text and lang != 'fa':
+                text = getattr(static, 'text_fa', '')
+            return text or static.default_text or key
+        except StaticText.DoesNotExist:
+            return ''
 
 
 def site_settings(request):
     from django.utils.translation import get_language
-    
+
     current_lang = get_language() or 'fa'
-    
+
     # تبدیل کد زبان به فرمت مورد استفاده در مدل (fa, en, ar, ru)
     lang_map = {
         'fa-ir': 'fa',
@@ -27,14 +36,42 @@ def site_settings(request):
         'ru': 'ru',
     }
     lang = lang_map.get(current_lang.lower(), 'fa')
-    
+
     main_branch = Branch.objects.filter(is_main=True, is_active=True).first()
     if not main_branch:
         main_branch = Branch.objects.filter(is_active=True).first()
-    
+
+    # دریافت تمام متون استاتیک مورد نیاز برای قالب
+    static_texts = {}
+    for key in [
+        'hero_stats_experience', 'hero_stats_projects', 'hero_stats_customers',
+        'hero_badge_warranty', 'hero_badge_warranty_value', 'hero_badge_support', 'hero_badge_support_value',
+        'categories_title', 'categories_subtitle',
+        'view_products', 'category_placeholder_title', 'category_placeholder_desc',
+        'products_title', 'products_subtitle', 'contact_us', 'details',
+        'product_placeholder_price', 'product_placeholder_title', 'product_placeholder_desc',
+        'view_all_products',
+        'articles_title', 'articles_subtitle', 'read_more', 'article_placeholder_title', 'article_placeholder_desc',
+        'projects_title', 'projects_subtitle', 'project_placeholder_title', 'project_placeholder_location', 'project_placeholder_desc',
+        'partners_title', 'partners_subtitle', 'partner_placeholder',
+        'consultation_title', 'consultation_subtitle', 'whatsapp',
+        'contact_title', 'contact_subtitle',
+        'form_name_label', 'form_name_placeholder',
+        'form_phone_label', 'form_phone_placeholder',
+        'form_company_label', 'form_company_placeholder',
+        'form_power_label', 'form_power_placeholder',
+        'form_message_label', 'form_message_placeholder',
+        'form_submit',
+        'contact_info_title', 'contact_address_label', 'contact_phone_label', 'contact_email_label',
+        'not_in_stock',
+    ]:
+        static_texts[key] = get_text_by_key(key, lang)
+
     return {
         'settings': SiteSettings.objects.first(),
         'main_branch': main_branch,
         'categories': Category.objects.filter(parent__isnull=True),
         'current_lang': lang,
+        'static_texts': static_texts,
+        'get_text': lambda key: get_text_by_key(key, lang),
     }
