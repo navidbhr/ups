@@ -117,11 +117,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-# اصلاح شد: زبان روی فارسی و زمان روی تهران تنظیم شد
-LANGUAGE_CODE = 'fa-ir'
+# اصلاح شد: زبان پیش‌فرض روی انگلیسی تنظیم شد (پنل ادمین و سایت انگلیسی است)
+LANGUAGE_CODE = 'en-us'
 LANGUAGES = [
-    ('fa', 'Persian'),
     ('en', 'English'),
+    ('fa', 'Persian'),
     ('ar', 'Arabic'),
     ('ru', 'Russian'),
 ]
