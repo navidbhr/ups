@@ -2,7 +2,8 @@ from django.contrib import admin
 from .models import (
     Category, Product, ProductImage, SpecificationGroup,
     ProductSpecification, ProductDocument, Currency, SiteSettings,
-    BlogCategory, Partner, FAQ, Agent, Project, ConsultationRequest, Article
+    BlogCategory, Partner, FAQ, Agent, Project, ConsultationRequest, Article,
+    Branch, PageTranslation
 )
 
 
@@ -51,10 +52,30 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         ('برند 🏷️',
          {'fields': ('site_name', 'site_title', 'site_description', 'keywords', 'logo', 'logo_light', 'favicon')}),
         ('Hero 🚀', {'fields': ('hero_title', 'hero_subtitle', 'hero_image', 'cta_text', 'cta_link')}),
-        ('تماس 📞', {'fields': ('address', 'phone', 'email', 'whatsapp_number', 'map_iframe')}),
+        ('درباره ما 🏢', {'fields': ('about_summary',)}),
+        ('شبکه‌های اجتماعی 📱', {'fields': ('instagram', 'telegram', 'linkedin')}),
         ('سیستم ⚙️',
          {'fields': ('is_maintenance_mode', 'footer_copy_right', 'google_analytics_id'), 'classes': ('collapse',)}),
     )
+
+
+@admin.register(Branch)
+class BranchAdmin(admin.ModelAdmin):
+    list_display = ('name', 'is_main', 'phone', 'order')
+    list_editable = ('is_main', 'order')
+    list_filter = ('is_main',)
+    search_fields = ('name', 'address', 'phone')
+    fieldsets = (
+        ('اطلاعات اصلی', {'fields': ('name', 'is_main', 'order')}),
+        ('اطلاعات تماس', {'fields': ('address', 'phone', 'email', 'whatsapp_number')}),
+        ('نقشه', {'fields': ('map_iframe',), 'classes': ('collapse',)}),
+    )
+
+
+@admin.register(PageTranslation)
+class PageTranslationAdmin(admin.ModelAdmin):
+    list_display = ('key', 'text_fa')
+    search_fields = ('key', 'text_fa', 'text_en')
 
 
 @admin.register(Article)

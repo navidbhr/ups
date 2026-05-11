@@ -1,4 +1,3 @@
-```
 __pycache__/
 *.pyc
 *.pyo
@@ -23,4 +22,8 @@ coverage/
 htmlcov/
 .mypy_cache/
 .pytest_cache/
-```
+
+# Database
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
