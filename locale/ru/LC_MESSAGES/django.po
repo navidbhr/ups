@@ -1,0 +1,617 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-11 14:19+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+#: main/models.py:27 main/models.py:357 main/models.py:385 main/models.py:413
+msgid "تاریخ ایجاد"
+msgstr ""
+
+#: main/models.py:28 main/models.py:358
+msgid "تاریخ بروزرسانی"
+msgstr ""
+
+#: main/models.py:36
+msgid "مثال: home_welcome_message یا footer_about"
+msgstr ""
+
+#: main/models.py:36
+msgid "کلید متن"
+msgstr ""
+
+#: main/models.py:37
+msgid "متن (فارسی)"
+msgstr ""
+
+#: main/models.py:38
+msgid "متن (انگلیسی)"
+msgstr ""
+
+#: main/models.py:39
+msgid "متن (عربی)"
+msgstr ""
+
+#: main/models.py:40
+msgid "متن (روسی)"
+msgstr ""
+
+#: main/models.py:43
+msgid "ترجمه متن صفحه"
+msgstr ""
+
+#: main/models.py:44
+msgid "ترجمه متون صفحات"
+msgstr ""
+
+#: main/models.py:52
+msgid "نام برند"
+msgstr ""
+
+#: main/models.py:53
+msgid "عنوان سئو (Title Tag)"
+msgstr ""
+
+#: main/models.py:54
+msgid "توضیحات متا (Meta Description)"
+msgstr ""
+
+#: main/models.py:55
+msgid "کلمات کلیدی (با کاما جدا کنید)"
+msgstr ""
+
+#: main/models.py:56
+msgid "لوگوی رنگی (هدر)"
+msgstr ""
+
+#: main/models.py:57
+msgid "لوگوی سفید (فوتر)"
+msgstr ""
+
+#: main/models.py:58
+msgid "فاوآیکون"
+msgstr ""
+
+#: main/models.py:60
+msgid "تیتر بزرگ صفحه اصلی"
+msgstr ""
+
+#: main/models.py:61
+msgid "متن زیر تیتر صفحه اصلی"
+msgstr ""
+
+#: main/models.py:62
+msgid "تصویر بخش Hero"
+msgstr ""
+
+#: main/models.py:63
+msgid "متن دکمه فراخوان (CTA)"
+msgstr ""
+
+#: main/models.py:64
+msgid "لینک دکمه فراخوان"
+msgstr ""
+
+#: main/models.py:66
+msgid "خلاصه درباره ما"
+msgstr ""
+
+#: main/models.py:70
+msgid "اینستاگرام"
+msgstr ""
+
+#: main/models.py:71
+msgid "تلگرام"
+msgstr ""
+
+#: main/models.py:72
+msgid "لینکدین"
+msgstr ""
+
+#: main/models.py:74
+msgid "حالت تعمیر"
+msgstr ""
+
+#: main/models.py:75
+msgid "متن کپی‌رایت"
+msgstr ""
+
+#: main/models.py:76
+msgid "Google Analytics ID"
+msgstr ""
+
+#: main/models.py:79 main/models.py:80
+msgid "تنظیمات کلی سایت"
+msgstr ""
+
+#: main/models.py:85
+msgid "شما نمی‌توانید بیش از یک رکورد تنظیمات بسازید."
+msgstr ""
+
+#: main/models.py:93
+msgid "نام شعبه (مثلا دفتر مرکزی)"
+msgstr ""
+
+#: main/models.py:94
+msgid "آدرس فیزیکی"
+msgstr ""
+
+#: main/models.py:95 main/models.py:295
+msgid "شماره تماس"
+msgstr ""
+
+#: main/models.py:96
+msgid "ایمیل شعبه"
+msgstr ""
+
+#: main/models.py:97
+msgid "شماره مستقیم واتس‌اپ"
+msgstr ""
+
+#: main/models.py:98
+msgid "کد Iframe نقشه گوگل"
+msgstr ""
+
+#: main/models.py:99
+msgid "شعبه مرکزی"
+msgstr ""
+
+#: main/models.py:100 main/models.py:384 main/models.py:412
+msgid "فعال"
+msgstr ""
+
+#: main/models.py:101 main/models.py:200 main/models.py:383
+msgid "ترتیب نمایش"
+msgstr ""
+
+#: main/models.py:105
+msgid "شعبه"
+msgstr ""
+
+#: main/models.py:106
+msgid "شعب"
+msgstr ""
+
+#: main/models.py:114
+msgid "تنها یک شعبه می‌تواند به عنوان شعبه مرکزی ثبت شود."
+msgstr ""
+
+#: main/models.py:122
+msgid "نام واحد"
+msgstr ""
+
+#: main/models.py:123
+msgid "نماد"
+msgstr ""
+
+#: main/models.py:124
+msgid "نرخ تبدیل"
+msgstr ""
+
+#: main/models.py:125
+msgid "واحد پایه است؟"
+msgstr ""
+
+#: main/models.py:128 main/models.py:166
+msgid "واحد پولی"
+msgstr ""
+
+#: main/models.py:129
+msgid "واحدهای پولی"
+msgstr ""
+
+#: main/models.py:136
+msgid "عنوان دسته‌بندی"
+msgstr ""
+
+#: main/models.py:137 main/models.py:160 main/models.py:239 main/models.py:259
+msgid "نامک"
+msgstr ""
+
+#: main/models.py:139
+msgid "دسته‌بندی والد"
+msgstr ""
+
+#: main/models.py:140 main/models.py:190 main/models.py:326 main/models.py:369
+msgid "تصویر"
+msgstr ""
+
+#: main/models.py:141
+msgid "توضیحات سئو"
+msgstr ""
+
+#: main/models.py:144 main/models.py:158 main/models.py:257
+msgid "دسته‌بندی"
+msgstr ""
+
+#: main/models.py:145
+msgid "دسته‌بندی‌ها"
+msgstr ""
+
+#: main/models.py:159
+msgid "نام مدل دستگاه"
+msgstr ""
+
+#: main/models.py:161
+msgid "کد محصول (SKU)"
+msgstr ""
+
+#: main/models.py:162
+msgid "تصویر اصلی"
+msgstr ""
+
+#: main/models.py:163
+msgid "لینک ویدیو"
+msgstr ""
+
+#: main/models.py:164
+msgid "فایل ویدیو"
+msgstr ""
+
+#: main/models.py:165
+msgid "قیمت پایه"
+msgstr ""
+
+#: main/models.py:167
+msgid "نمایش قیمت؟"
+msgstr ""
+
+#: main/models.py:168
+msgid "موجود؟"
+msgstr ""
+
+#: main/models.py:169
+msgid "گارانتی (ماه)"
+msgstr ""
+
+#: main/models.py:170
+msgid "توضیح کوتاه"
+msgstr ""
+
+#: main/models.py:171
+msgid "نقد و بررسی"
+msgstr ""
+
+#: main/models.py:172 main/models.py:240 main/models.py:263
+msgid "عنوان سئو"
+msgstr ""
+
+#: main/models.py:173 main/models.py:241 main/models.py:264
+msgid "توضیحات متا"
+msgstr ""
+
+#: main/models.py:176 main/models.py:189 main/models.py:212 main/models.py:224
+#: main/models.py:293 main/models.py:337
+msgid "محصول"
+msgstr ""
+
+#: main/models.py:177
+msgid "محصولات"
+msgstr ""
+
+#: main/models.py:191
+msgid "متن جایگزین (Alt)"
+msgstr ""
+
+#: main/models.py:194
+msgid "تصویر گالری محصول"
+msgstr ""
+
+#: main/models.py:195
+msgid "گالری تصاویر محصولات"
+msgstr ""
+
+#: main/models.py:199
+msgid "نام گروه"
+msgstr ""
+
+#: main/models.py:204
+msgid "گروه مشخصات فنی"
+msgstr ""
+
+#: main/models.py:205
+msgid "گروه‌های مشخصات فنی"
+msgstr ""
+
+#: main/models.py:213
+msgid "گروه مشخصات"
+msgstr ""
+
+#: main/models.py:214
+msgid "عنوان ویژگی"
+msgstr ""
+
+#: main/models.py:215
+msgid "مقدار"
+msgstr ""
+
+#: main/models.py:218
+msgid "مشخصه فنی"
+msgstr ""
+
+#: main/models.py:219
+msgid "مشخصات فنی"
+msgstr ""
+
+#: main/models.py:225
+msgid "عنوان فایل"
+msgstr ""
+
+#: main/models.py:226
+msgid "فایل"
+msgstr ""
+
+#: main/models.py:229
+msgid "نوع مستند"
+msgstr ""
+
+#: main/models.py:232
+msgid "مستند محصول"
+msgstr ""
+
+#: main/models.py:233
+msgid "مستندات محصولات"
+msgstr ""
+
+#: main/models.py:238 main/models.py:324
+msgid "عنوان"
+msgstr ""
+
+#: main/models.py:244
+msgid "دسته‌بندی مقاله"
+msgstr ""
+
+#: main/models.py:245
+msgid "دسته‌بندی‌های مقالات"
+msgstr ""
+
+#: main/models.py:258
+msgid "عنوان مقاله"
+msgstr ""
+
+#: main/models.py:260
+msgid "تصویر شاخص"
+msgstr ""
+
+#: main/models.py:262
+msgid "منتشر شده"
+msgstr ""
+
+#: main/models.py:267
+msgid "مقاله"
+msgstr ""
+
+#: main/models.py:268
+msgid "مقالات"
+msgstr ""
+
+#: main/models.py:278
+msgid "نام"
+msgstr ""
+
+#: main/models.py:279
+msgid "شماره"
+msgstr ""
+
+#: main/models.py:280
+msgid "شرکت"
+msgstr ""
+
+#: main/models.py:281
+msgid "توان (kVA)"
+msgstr ""
+
+#: main/models.py:282
+msgid "پیام"
+msgstr ""
+
+#: main/models.py:283 main/models.py:301
+msgid "بررسی شده"
+msgstr ""
+
+#: main/models.py:287
+msgid "درخواست مشاوره"
+msgstr ""
+
+#: main/models.py:288
+msgid "درخواست‌های مشاوره"
+msgstr ""
+
+#: main/models.py:294
+msgid "نام و نام خانوادگی"
+msgstr ""
+
+#: main/models.py:296
+msgid "ایمیل"
+msgstr ""
+
+#: main/models.py:297
+msgid "نام شرکت/سازمان"
+msgstr ""
+
+#: main/models.py:298
+msgid "تعداد مورد نیاز"
+msgstr ""
+
+#: main/models.py:299
+msgid "کاربرد مورد نظر"
+msgstr ""
+
+#: main/models.py:300
+msgid "پیام اضافی"
+msgstr ""
+
+#: main/models.py:305
+msgid "درخواست مشاوره محصول"
+msgstr ""
+
+#: main/models.py:306
+msgid "درخواست‌های مشاوره محصولات"
+msgstr ""
+
+#: main/models.py:313
+msgid "نام سازمان"
+msgstr ""
+
+#: main/models.py:314
+msgid "لوگو"
+msgstr ""
+
+#: main/models.py:315 main/models.py:328 main/models.py:340 main/models.py:411
+msgid "ترتیب"
+msgstr ""
+
+#: main/models.py:319
+msgid "همکار تجاری"
+msgstr ""
+
+#: main/models.py:320
+msgid "همکاران"
+msgstr ""
+
+#: main/models.py:325
+msgid "محل اجرا"
+msgstr ""
+
+#: main/models.py:327 main/models.py:382
+msgid "توضیحات"
+msgstr ""
+
+#: main/models.py:332
+msgid "پروژه موفق"
+msgstr ""
+
+#: main/models.py:333
+msgid "پروژه‌ها"
+msgstr ""
+
+#: main/models.py:338
+msgid "پرسش"
+msgstr ""
+
+#: main/models.py:339
+msgid "پاسخ"
+msgstr ""
+
+#: main/models.py:344
+msgid "سوال متداول"
+msgstr ""
+
+#: main/models.py:345
+msgid "سوالات متداول"
+msgstr ""
+
+#: main/models.py:349
+msgid "استان"
+msgstr ""
+
+#: main/models.py:350
+msgid "شهر"
+msgstr ""
+
+#: main/models.py:351
+msgid "نام نماینده"
+msgstr ""
+
+#: main/models.py:352
+msgid "آدرس"
+msgstr ""
+
+#: main/models.py:353
+msgid "تماس"
+msgstr ""
+
+#: main/models.py:354
+msgid "لینک نقشه"
+msgstr ""
+
+#: main/models.py:361
+msgid "نماینده"
+msgstr ""
+
+#: main/models.py:362
+msgid "نمایندگان"
+msgstr ""
+
+#: main/models.py:368
+msgid "عنوان تصویر"
+msgstr ""
+
+#: main/models.py:380
+msgid "بخش در صفحه"
+msgstr ""
+
+#: main/models.py:389
+msgid "تصویر صفحه اصلی"
+msgstr ""
+
+#: main/models.py:390
+msgid "تصاویر صفحه اصلی"
+msgstr ""
+
+#: main/models.py:399
+msgid "عنوان (فارسی)"
+msgstr ""
+
+#: main/models.py:400
+msgid "عنوان (انگلیسی)"
+msgstr ""
+
+#: main/models.py:401
+msgid "عنوان (عربی)"
+msgstr ""
+
+#: main/models.py:402
+msgid "عنوان (روسی)"
+msgstr ""
+
+#: main/models.py:404
+msgid "زیرعنوان (فارسی)"
+msgstr ""
+
+#: main/models.py:405
+msgid "زیرعنوان (انگلیسی)"
+msgstr ""
+
+#: main/models.py:406
+msgid "زیرعنوان (عربی)"
+msgstr ""
+
+#: main/models.py:407
+msgid "زیرعنوان (روسی)"
+msgstr ""
+
+#: main/models.py:409
+msgid "تصویر اسلاید"
+msgstr ""
+
+#: main/models.py:410
+msgid "لینک"
+msgstr ""
+
+#: main/models.py:417
+msgid "اسلاید صفحه اصلی"
+msgstr ""
+
+#: main/models.py:418
+msgid "اسلایدر صفحه اصلی"
+msgstr ""
+
+#: templates/base.html:183 templates/base.html:233
+msgid "Toggle Theme"
+msgstr ""

@@ -58,6 +58,7 @@ NPM_BIN_PATH = f"C:\\Program Files\\nodejs\\npm.cmd"
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -117,7 +118,16 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 # اصلاح شد: زبان روی فارسی و زمان روی تهران تنظیم شد
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fa-ir'
+LANGUAGES = [
+    ('fa', 'Persian'),
+    ('en', 'English'),
+    ('ar', 'Arabic'),
+    ('ru', 'Russian'),
+]
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 TIME_ZONE = 'Asia/Tehran'
 USE_I18N = True
 USE_TZ = True
