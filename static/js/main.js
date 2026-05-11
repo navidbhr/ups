@@ -13,6 +13,11 @@ function changeLanguage(lang) {
         html.setAttribute('lang', lang);
     }
 
+    // به‌روزرسانی تمام سلکتورهای زبان در صفحه
+    document.querySelectorAll('select[onchange*="changeLanguage"]').forEach(select => {
+        select.value = lang;
+    });
+
     // ارسال درخواست AJAX به endpoint تنظیم زبان Django
     fetch('/i18n/setlang/', {
         method: 'POST',
@@ -26,8 +31,53 @@ function changeLanguage(lang) {
         const url = new URL(window.location.href);
         url.searchParams.delete('lang');
         
-        // ریلود صفحه برای اعمال تغییرات
-        window.location.href = url.toString();
+        // اضافه کردن پارامتر lang جدید به URL برای ویو
+        url.searchParams.set('lang', lang);
+        
+        // فچ کردن محتوای جدید فقط برای بخش اصلی صفحه
+        fetch(url.toString(), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html fragment'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            // استخراج فقط بخش main content از پاسخ
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newMain = doc.querySelector('main') || doc.querySelector('body');
+            const currentMain = document.querySelector('main') || document.querySelector('body');
+            
+            if (newMain && currentMain) {
+                // جایگزینی محتوای اصلی بدون ریلود کامل
+                currentMain.innerHTML = newMain.innerHTML;
+                
+                // اجرای مجدد اسکریپت‌های داخل محتوای جدید
+                const scripts = currentMain.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => {
+                        newScript.setAttribute(attr.name, attr.value);
+                    });
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+                
+                // اجرای مجدد AOS برای انیمیشن‌ها
+                if (typeof AOS !== 'undefined') {
+                    AOS.refresh();
+                }
+            }
+            
+            // به‌روزرسانی URL بدون ریلود
+            window.history.pushState({ lang: lang }, '', url.toString());
+        })
+        .catch(error => {
+            console.log('Error fetching content:', error);
+            // در صورت خطا، ریلود معمولی انجام می‌شود
+            window.location.href = url.toString();
+        });
     });
 }
 
