@@ -67,8 +67,27 @@
     
     <!-- Custom CSS -->
     <style>
+        /* IranSans Font Faces from local files */
+        @font-face {
+            font-family: 'IRANSans';
+            src: url('{% static "fonts/IRANSansWeb.woff2" %}') format('woff2'),
+                 url('{% static "fonts/IRANSansWeb.woff" %}') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        @font-face {
+            font-family: 'IRANSans';
+            src: url('{% static "fonts/IRANSansWeb_Bold.woff2" %}') format('woff2'),
+                 url('{% static "fonts/IRANSansWeb_Bold.woff" %}') format('woff');
+            font-weight: bold;
+            font-style: normal;
+            font-display: swap;
+        }
+    
         body {
-            font-family: 'Vazirmatn', sans-serif;
+            font-family: 'IRANSans', 'Vazirmatn', Tahoma, sans-serif;
         }
         
         /* RTL/LTR Support */
