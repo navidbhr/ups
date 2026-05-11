@@ -146,13 +146,14 @@ class SiteSettings(models.Model):
     logo_light = models.ImageField(upload_to='settings/', blank=True, null=True, verbose_name=_("لوگوی سفید (فوتر)"))
     favicon = models.ImageField(upload_to='settings/', verbose_name=_("فاوآیکون"))
 
-    hero_title = models.CharField(max_length=200, default="تامین انرژی پایدار با برهان", blank=True, verbose_name=_("تیتر بزرگ صفحه اصلی"))
-    hero_subtitle = models.TextField(default="ارائه دهنده پیشرفته‌ترین سیستم‌های تامین برق اضطراری", blank=True, verbose_name=_("متن زیر تیتر صفحه اصلی"))
+    # فیلدهای Hero - حالا از StaticText استفاده می‌شود اما برای سازگگی با عقب نگه داشته شده‌اند
+    hero_title = models.CharField(max_length=200, blank=True, verbose_name=_("تیتر بزرگ صفحه اصلی (قدیمی - از متون ثابت استفاده کنید)"))
+    hero_subtitle = models.TextField(blank=True, verbose_name=_("متن زیر تیتر صفحه اصلی (قدیمی - از متون ثابت استفاده کنید)"))
     hero_image = models.ImageField(upload_to='settings/', blank=True, verbose_name=_("تصویر بخش Hero"))
-    cta_text = models.CharField(max_length=50, default="درخواست مشاوره", blank=True, verbose_name=_("متن دکمه فراخوان (CTA)"))
+    cta_text = models.CharField(max_length=50, blank=True, verbose_name=_("متن دکمه فراخوان CTA (قدیمی - از متون ثابت استفاده کنید)"))
     cta_link = models.CharField(max_length=200, default="#consultation", blank=True, verbose_name=_("لینک دکمه فراخوان"))
 
-    about_summary = models.TextField(default="شرکت برهان پیشرو در ارائه راهکارهای برق اضطراری...", blank=True, verbose_name=_("خلاصه درباره ما"))
+    about_summary = models.TextField(blank=True, verbose_name=_("خلاصه درباره ما (قدیمی - از متون ثابت استفاده کنید)"))
 
     # فیلدهای مربوط به آدرس و شماره تماس حذف و به مدل Branch منتقل شدند
 
@@ -175,6 +176,21 @@ class SiteSettings(models.Model):
 
     def __str__(self):
         return self.site_name
+
+    def get_hero_title(self, lang_code='fa'):
+        """دریافت hero_title از StaticText یا fallback به فیلد قدیمی"""
+        from .models import StaticText
+        return StaticText.get_text('hero_title', lang_code) or self.hero_title or ''
+    
+    def get_hero_subtitle(self, lang_code='fa'):
+        """دریافت hero_subtitle از StaticText یا fallback به فیلد قدیمی"""
+        from .models import StaticText
+        return StaticText.get_text('hero_subtitle', lang_code) or self.hero_subtitle or ''
+    
+    def get_cta_text(self, lang_code='fa'):
+        """دریافت cta_text از StaticText یا fallback به فیلد قدیمی"""
+        from .models import StaticText
+        return StaticText.get_text('cta_text', lang_code) or self.cta_text or ''
 
 
 # --- مدیریت شعب شرکت ---
