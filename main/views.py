@@ -10,6 +10,9 @@ def home_view(request):
     from django.utils.translation import get_language
     from .models import Branch, HomepageImage, HomeSlider, StaticText
 
+    # بررسی اینکه آیا درخواست AJAX است یا نه
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    
     categories = Category.objects.filter(parent__isnull=True)[:6]
     products = Product.objects.filter(is_in_stock=True)[:8]
     articles = Article.objects.filter(is_published=True)[:6]
@@ -77,6 +80,10 @@ def home_view(request):
         'current_lang': current_lang,
         'static_texts': static_texts,
     }
+    
+    # اگر درخواست AJAX بود، فقط تکه‌ای از تمپلیت را برگردان
+    if is_ajax:
+        return render(request, 'main/home_content.html', context)
     
     return render(request, 'main/home.html', context)
 
