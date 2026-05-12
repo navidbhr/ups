@@ -537,6 +537,8 @@ class Project(TimeStampedModel):
     description_ar = models.TextField(blank=True, verbose_name=_("الوصف (عربی)"))
     description_ru = models.TextField(blank=True, verbose_name=_("Описание (روسی)"))
     
+    slug = models.SlugField(unique=True, allow_unicode=True, blank=True, verbose_name=_("نامک"))
+    
     order = models.PositiveIntegerField(default=0, verbose_name=_("ترتیب"))
     is_published = models.BooleanField(default=True, verbose_name=_("منتشر شده"))
     
@@ -544,6 +546,13 @@ class Project(TimeStampedModel):
         ordering = ['order', '-created_at']
         verbose_name = _("پروژه موفق")
         verbose_name_plural = _("پروژه‌ها")
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if not self.slug:
+            # استفاده از عنوان فارسی برای تولید slug
+            self.slug = generate_unique_slug(Project, self.title_fa, self.pk)
+            super().save(update_fields=['slug'], *args, **kwargs)
     
     def get_title(self, lang_code='fa'):
         """دریافت عنوان بر اساس زبان"""
