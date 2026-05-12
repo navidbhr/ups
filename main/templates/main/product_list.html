@@ -1,42 +1,42 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static custom_filters %}
 
-{% block title %}لیست محصولات | {{ site_settings.site_name }}{% endblock %}
+{% block title %}{% get_text 'product_list_title'|default:'لیست محصولات' %} | {{ settings.site_name|default:'برهان یو پی اس' }}{% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-4 py-8 mt-24">
-    <h1 class="text-3xl font-bold text-center mb-8">لیست محصولات</h1>
+    <h1 class="text-3xl font-bold text-center mb-8">{% get_text 'product_list_title'|default:'لیست محصولات' %}</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {% for product in products %}
         <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 transition-transform hover:-translate-y-1">
-            <a href="{% url 'product_detail' product.slug %}">
+            <a href="{% url 'product_detail' product.slug %}?lang={{ current_lang }}">
                 {% if product.main_image %}
                 <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="w-full h-48 object-cover">
                 {% else %}
                 <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-                    <span class="text-gray-400">بدون تصویر</span>
+                    <span class="text-gray-400">{% get_text 'no_image'|default:'بدون تصویر' %}</span>
                 </div>
                 {% endif %}
             </a>
             <div class="p-4">
-                <a href="{% url 'product_detail' product.slug %}">
+                <a href="{% url 'product_detail' product.slug %}?lang={{ current_lang }}">
                     <h3 class="text-lg font-bold text-gray-800 mb-2 hover:text-primary-600 transition-colors">{{ product.name }}</h3>
                 </a>
                 <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ product.short_description }}</p>
                 <div class="flex justify-between items-center mt-auto">
                     {% if product.show_price and product.base_price > 0 %}
-                    <span class="font-bold text-primary-600">{{ product.base_price }} {{ product.currency.symbol }}</span>
+                    <span class="font-bold text-primary-600">{{ product.base_price|intcomma }} {{ product.currency.symbol }}</span>
                     {% else %}
-                    <span class="font-bold text-gray-500 text-sm">تماس بگیرید</span>
+                    <span class="font-bold text-gray-500 text-sm">{% get_text 'contact_for_price'|default:'تماس بگیرید' %}</span>
                     {% endif %}
-                    <a href="{% url 'product_detail' product.slug %}" class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded text-sm transition-colors">مشاهده</a>
+                    <a href="{% url 'product_detail' product.slug %}?lang={{ current_lang }}" class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded text-sm transition-colors">{% get_text 'view_details'|default:'مشاهده' %}</a>
                 </div>
             </div>
         </div>
         {% empty %}
         <div class="col-span-full text-center py-12">
-            <p class="text-xl text-gray-500">هیچ محصولی یافت نشد.</p>
+            <p class="text-xl text-gray-500">{% get_text 'no_products'|default:'هیچ محصولی یافت نشد.' %}</p>
         </div>
         {% endfor %}
     </div>
