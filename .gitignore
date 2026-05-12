@@ -1,53 +1,47 @@
 ```
-# Database
-db.sqlite3
-
-# Static files
-static/js/main.js
-
 # Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Environment
-.env
-.env.local
-.env.*
-
-# Dependencies
-venv/
-.venv/
-.env/
-node_modules/
-
-# Logs
+# Django
 *.log
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Coverage
-.coverage
-coverage/
-htmlcov/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*.tmp
 
-# Build artifacts
-build/
-dist/
-*.egg-info/
-target/
-.gradle/
+# Environment
+.env
+.env.local
+*.env.*
 
-# Cache
-.mypy_cache/
-.pytest_cache/
+# OS
+.DS_Store
+Thumbs.db
 ```

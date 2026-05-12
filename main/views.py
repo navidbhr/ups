@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-from main.models import Product, Category, Article, Project, Partner, ProductConsultationRequest, BlogCategory, ContactMessage
+from main.models import Product, Category, Article, Project, Partner, ProductConsultationRequest, BlogCategory, ContactMessage, FAQ, Agent, HomepageImage, HomeSlider
 
 
 def home_view(request):
@@ -18,6 +18,19 @@ def home_view(request):
     articles = Article.objects.filter(is_published=True)[:6]
     projects = Project.objects.all()[:6]
     partners = Partner.objects.all()
+    
+    # مدل‌های جدید برای صفحه اصلی
+    faqs = FAQ.objects.filter(product__isnull=True).order_by('order')[:10]  # سوالات متداول عمومی
+    agents = Agent.objects.order_by('province', 'city')[:20]  # نمایندگان برتر
+    homepage_images = HomepageImage.objects.filter(is_active=True).order_by('order')
+    slider_images = HomeSlider.objects.filter(is_active=True).order_by('order')
+    
+    # گروه‌بندی تصاویر صفحه اصلی بر اساس section
+    hero_images = homepage_images.filter(section='hero')[:3]
+    about_images = homepage_images.filter(section='about')[:3]
+    products_images = homepage_images.filter(section='products')[:3]
+    projects_images = homepage_images.filter(section='projects')[:3]
+    partners_images = homepage_images.filter(section='partners')[:3]
 
     # دریافت زبان فعلی - اولویت با پارامتر URL است، سپس سشن، سپس زبان پیش‌فرض جنگو
     # در درخواست AJAX، زبان از پارامتر URL خوانده می‌شود که توسط JS اضافه شده
@@ -112,6 +125,14 @@ def home_view(request):
         'articles': articles,
         'projects': projects,
         'partners': partners,
+        'faqs': faqs,
+        'agents': agents,
+        'hero_images': hero_images,
+        'about_images': about_images,
+        'products_images': products_images,
+        'projects_images': projects_images,
+        'partners_images': partners_images,
+        'slider_images': slider_images,
         'current_lang': current_lang,
         'static_texts': static_texts,
         'settings': settings,
