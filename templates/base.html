@@ -1,4 +1,4 @@
-{% load static custom_filters i18n %}
+{% load static custom_filters %}
 <!DOCTYPE html>
 <html lang="{{ current_lang|default:'fa' }}" dir="{% if current_lang == 'en' or current_lang == 'ru' %}ltr{% else %}rtl{% endif %}" class="scroll-smooth">
 <head>
@@ -192,27 +192,27 @@
                 <!-- Desktop Menu -->
                 <div class="hidden lg:flex items-center gap-6 flex-1 justify-center">
                     <a href="{% url 'home' %}?lang={{ current_lang }}#hero" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
-                        {% trans "خانه" %}
+                        {% get_text 'menu_home' as menu_home_val %}{{ menu_home_val|default:'خانه' }}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                     <a href="{% url 'category_list' %}?lang={{ current_lang }}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
-                        {% trans "دسته‌بندی‌ها" %}
+                        {% get_text 'menu_categories' as menu_categories_val %}{{ menu_categories_val|default:'دسته‌بندی‌ها' }}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                     <a href="{% url 'product_list' %}?lang={{ current_lang }}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
-                        {% trans "محصولات" %}
+                        {% get_text 'menu_products' as menu_products_val %}{{ menu_products_val|default:'محصولات' }}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                     <a href="{% url 'article_list' %}?lang={{ current_lang }}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
-                        {% trans "مقالات" %}
+                        {% get_text 'menu_articles' as menu_articles_val %}{{ menu_articles_val|default:'مقالات' }}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                     <a href="{% url 'project_list' %}?lang={{ current_lang }}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
-                        {% trans "پروژه‌ها" %}
+                        {% get_text 'menu_projects' as menu_projects_val %}{{ menu_projects_val|default:'پروژه‌ها' }}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                     <a href="{% url 'contact' %}?lang={{ current_lang }}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
-                        {% trans "تماس با ما" %}
+                        {% get_text 'menu_contact' as menu_contact_val %}{{ menu_contact_val|default:'تماس با ما' }}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                 </div>
@@ -241,7 +241,7 @@
                             <!-- Products Section -->
                             <div id="search-products-section" class="hidden">
                                 <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300">{% trans "محصولات" %}</h4>
+                                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300">{% get_text 'menu_products' as sp_val %}{{ sp_val|default:'محصولات' }}</h4>
                                 </div>
                                 <ul id="search-products-list" class="max-h-40 overflow-y-auto"></ul>
                             </div>
@@ -249,7 +249,7 @@
                             <!-- Categories Section -->
                             <div id="search-categories-section" class="hidden">
                                 <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300">{% trans "دسته‌بندی‌ها" %}</h4>
+                                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300">{% get_text 'menu_categories' as sc_val %}{{ sc_val|default:'دسته‌بندی‌ها' }}</h4>
                                 </div>
                                 <ul id="search-categories-list" class="max-h-40 overflow-y-auto"></ul>
                             </div>
@@ -257,7 +257,7 @@
                             <!-- Articles Section -->
                             <div id="search-articles-section" class="hidden">
                                 <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300">{% trans "مقالات" %}</h4>
+                                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300">{% get_text 'menu_articles' as sa_val %}{{ sa_val|default:'مقالات' }}</h4>
                                 </div>
                                 <ul id="search-articles-list" class="max-h-40 overflow-y-auto"></ul>
                             </div>
@@ -265,7 +265,7 @@
                             <!-- Projects Section -->
                             <div id="search-projects-section" class="hidden">
                                 <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300">{% trans "پروژه‌ها" %}</h4>
+                                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300">{% get_text 'menu_projects' as sj_val %}{{ sj_val|default:'پروژه‌ها' }}</h4>
                                 </div>
                                 <ul id="search-projects-list" class="max-h-40 overflow-y-auto"></ul>
                             </div>
@@ -286,7 +286,7 @@
                     </select>
                     
                     <!-- Theme Toggle Button -->
-                    <button id="header-theme-toggle" class="p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-primary-500 transition-all duration-300" title="{% trans 'Toggle Theme' %}">
+                    <button id="header-theme-toggle" class="p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-primary-500 transition-all duration-300" title="{% get_text 'toggle_theme' as htt_val %}{{ htt_val|default:'تغییر تم' }}">
                         <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
                         </svg>
@@ -311,12 +311,12 @@
             
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden lg:hidden mt-4 pb-4 space-y-3 border-t border-gray-200 dark:border-gray-700 pt-4">
-                <a href="{% url 'home' %}?lang={{ current_lang }}#hero" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% trans "خانه" %}</a>
-                <a href="{% url 'home' %}?lang={{ current_lang }}#categories" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% trans "دسته‌بندی‌ها" %}</a>
-                <a href="{% url 'home' %}?lang={{ current_lang }}#products" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% trans "محصولات" %}</a>
-                <a href="{% url 'article_list' %}?lang={{ current_lang }}" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% trans "مقالات" %}</a>
-                <a href="{% url 'project_list' %}?lang={{ current_lang }}" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% trans "پروژه‌ها" %}</a>
-                <a href="{% url 'contact' %}?lang={{ current_lang }}" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% trans "تماس با ما" %}</a>
+                <a href="{% url 'home' %}?lang={{ current_lang }}#hero" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'menu_home' as mmh_val %}{{ mmh_val|default:'خانه' }}</a>
+                <a href="{% url 'home' %}?lang={{ current_lang }}#categories" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'menu_categories' as mmc_val %}{{ mmc_val|default:'دسته‌بندی‌ها' }}</a>
+                <a href="{% url 'home' %}?lang={{ current_lang }}#products" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'menu_products' as mmp_val %}{{ mmp_val|default:'محصولات' }}</a>
+                <a href="{% url 'article_list' %}?lang={{ current_lang }}" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'menu_articles' as mma_val %}{{ mma_val|default:'مقالات' }}</a>
+                <a href="{% url 'project_list' %}?lang={{ current_lang }}" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'menu_projects' as mmj_val %}{{ mmj_val|default:'پروژه‌ها' }}</a>
+                <a href="{% url 'contact' %}?lang={{ current_lang }}" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'menu_contact' as mmc2_val %}{{ mmc2_val|default:'تماس با ما' }}</a>
                 
                 <!-- Mobile Theme & Language Selector -->
                 <div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4 space-y-3">
@@ -336,7 +336,7 @@
                         <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
                         </svg>
-                        <span>{% trans 'تغییر تم' %}</span>
+                        <span>{% get_text 'toggle_theme' as tt_val %}{{ tt_val|default:'تغییر تم' }}</span>
                     </button>
                     
                     <!-- Mobile CTA -->
@@ -384,11 +384,11 @@
                 <div data-aos="fade-up" data-aos-delay="100">
                     <h3 class="text-xl font-bold mb-4">{% get_text 'footer_quick_links' %}</h3>
                     <ul class="space-y-2">
-                        <li><a href="{% url 'product_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors">{% trans "محصولات" %}</a></li>
-                        <li><a href="{% url 'category_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors">{% trans "دسته‌بندی‌ها" %}</a></li>
-                        <li><a href="{% url 'article_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors">{% trans "مقالات" %}</a></li>
-                        <li><a href="{% url 'project_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors">{% trans "پروژه‌ها" %}</a></li>
-                        <li><a href="{% url 'contact' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors">{% trans "تماس با ما" %}</a></li>
+                        <li><a href="{% url 'product_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors">{% get_text 'menu_products' as flp_val %}{{ flp_val|default:'محصولات' }}</a></li>
+                        <li><a href="{% url 'category_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors">{% get_text 'menu_categories' as flc_val %}{{ flc_val|default:'دسته‌بندی‌ها' }}</a></li>
+                        <li><a href="{% url 'article_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors">{% get_text 'menu_articles' as fla_val %}{{ fla_val|default:'مقالات' }}</a></li>
+                        <li><a href="{% url 'project_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors">{% get_text 'menu_projects' as flj_val %}{{ flj_val|default:'پروژه‌ها' }}</a></li>
+                        <li><a href="{% url 'contact' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors">{% get_text 'menu_contact' as flco_val %}{{ flco_val|default:'تماس با ما' }}</a></li>
                     </ul>
                 </div>
                 
