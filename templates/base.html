@@ -11,10 +11,10 @@
     {% if settings.favicon %}
     <link rel="icon" href="{{ settings.favicon.url }}">
     {% endif %}
-    
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Tailwind Config for Dark Mode & Custom Colors -->
     <script>
         tailwind.config = {
@@ -58,13 +58,13 @@
             }
         }
     </script>
-    
+
     <!-- Vazirmatn Font -->
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    
+
     <!-- AOS Animation Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
+
     <!-- Custom CSS -->
     <style>
         /* IranSans Font Faces from local files */
@@ -76,7 +76,7 @@
             font-style: normal;
             font-display: swap;
         }
-        
+
         @font-face {
             font-family: 'IRANSans';
             src: url('{% static "fonts/IRANSansWeb_Bold.woff2" %}') format('woff2'),
@@ -85,68 +85,24 @@
             font-style: normal;
             font-display: swap;
         }
-    
-        body {
+
+        body, html {
             font-family: 'IRANSans', 'Vazirmatn', Tahoma, sans-serif;
             overflow-x: hidden;
             max-width: 100vw;
         }
 
-        html {
-            overflow-x: hidden;
-            max-width: 100vw;
-        }
-        body {
-            font-family: 'IRANSans', 'Vazirmatn', Tahoma, sans-serif;
-            overflow-x: hidden;
-            max-width: 100vw;
-        }
-
-        html {
-            overflow-x: hidden;
-            max-width: 100vw;
-        }
-        body {
-            font-family: 'IRANSans', 'Vazirmatn', Tahoma, sans-serif;
-            overflow-x: hidden;
-            max-width: 100vw;
-        }
-
-        html {
-            overflow-x: hidden;
-            max-width: 100vw;
-        }
-        
         /* RTL/LTR Support */
-        [dir="rtl"] {
-            text-align: right;
-        }
-        [dir="ltr"] {
-            text-align: left;
-        }
-        
+        [dir="rtl"] { text-align: right; }
+        [dir="ltr"] { text-align: left; }
+
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        
-        .dark ::-webkit-scrollbar-track {
-            background: #1f2937;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #0ea5e9;
-            border-radius: 5px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #0284c7;
-        }
-        
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        .dark ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #0ea5e9; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0284c7; }
+
         /* Gradient Text */
         .gradient-text {
             background: linear-gradient(135deg, #0ea5e9, #f59e0b);
@@ -154,45 +110,49 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
         /* Glass Effect */
         .glass {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
+
         .dark .glass {
             background: rgba(31, 41, 55, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         /* Header Styles */
         header {
             transition: all 0.3s ease;
         }
-        
-        header.scrolled {
+
+        .header-bg {
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled .header-bg {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
-        
-        .dark header.scrolled {
+
+        .dark header.scrolled .header-bg {
             background: rgba(31, 41, 55, 0.95);
         }
-        
+
         /* Font for different languages */
         html[lang="en"] body,
         html[lang="ru"] body {
             font-family: 'Tahoma', sans-serif;
         }
     </style>
-    
+
     {% block extra_css %}{% endblock %}
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-    
+
     <!-- Dark Mode Toggle Button (Fixed) -->
     <button id="theme-toggle" class="fixed bottom-6 left-6 z-50 p-4 rounded-full bg-primary-500 dark:bg-primary-600 text-white shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 animate-bounce-slow">
         <svg class="w-6 h-6 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
@@ -202,10 +162,14 @@
             <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
         </svg>
     </button>
-    
+
     <!-- Header / Navigation -->
-    <header class="fixed top-0 left-0 right-0 z-40 glass shadow-md transition-all duration-300">
-        <nav class="container mx-auto px-2 sm:px-3 md:px-4 py-2 sm:py-3">
+    <header class="fixed top-0 left-0 right-0 z-40 transition-all duration-300">
+
+        <!-- Background Layer to prevent filter stacking context issues on children -->
+        <div class="header-bg absolute inset-0 glass shadow-md -z-10 pointer-events-none"></div>
+
+        <nav class="container mx-auto px-2 sm:px-3 md:px-4 py-2 sm:py-3 relative z-10">
             <div class="flex items-center justify-between gap-1 sm:gap-2 md:gap-3">
                 <!-- Logo -->
                 <a href="/" class="flex-shrink-0 flex items-center gap-1.5 sm:gap-2 md:gap-3 group min-w-0">
@@ -215,48 +179,48 @@
                     <div class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold gradient-text whitespace-nowrap">{% if settings %}{{ settings.site_name|default:'برهان یو پی اس' }}{% else %}برهان یو پی اس{% endif %}</div>
                     {% endif %}
                 </a>
-                
+
                 <!-- Desktop Menu -->
                 <div id="desktop-menu" class="hidden 2xl:flex items-center gap-3 xl:gap-4 2xl:gap-6 flex-1 justify-center overflow-x-auto">
-                    <a href="{% url 'home' %}?lang={{ current_lang }}#hero" class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0">
+                    <a href="{% url 'home' %}?lang={{ current_lang }}#hero" class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0 font-medium">
                         {% get_text 'menu_home' as menu_home_val %}{{ menu_home_val|default:'خانه' }}
-                        <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
+                        <span class="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
-                    <a href="{% url 'category_list' %}?lang={{ current_lang }}" class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0">
+                    <a href="{% url 'category_list' %}?lang={{ current_lang }}" class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0 font-medium">
                         {% get_text 'menu_categories' as menu_categories_val %}{{ menu_categories_val|default:'دسته‌بندی‌ها' }}
-                        <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
+                        <span class="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
-                    <a href="{% url 'product_list' %}?lang={{ current_lang }}" class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0">
+                    <a href="{% url 'product_list' %}?lang={{ current_lang }}" class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0 font-medium">
                         {% get_text 'menu_products' as menu_products_val %}{{ menu_products_val|default:'محصولات' }}
-                        <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
+                        <span class="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
-                    <a href="{% url 'article_list' %}?lang={{ current_lang }}" class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0">
+                    <a href="{% url 'article_list' %}?lang={{ current_lang }}" class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0 font-medium">
                         {% get_text 'menu_articles' as menu_articles_val %}{{ menu_articles_val|default:'مقالات' }}
-                        <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
+                        <span class="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
-                    <a href="{% url 'project_list' %}?lang={{ current_lang }}" class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0">
+                    <a href="{% url 'project_list' %}?lang={{ current_lang }}" class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0 font-medium">
                         {% get_text 'menu_projects' as menu_projects_val %}{{ menu_projects_val|default:'پروژه‌ها' }}
-                        <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
+                        <span class="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
-                    <a href="{% url 'contact' %}?lang={{ current_lang }}" class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0">
+                    <a href="{% url 'contact' %}?lang={{ current_lang }}" class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0 font-medium">
                         {% get_text 'menu_contact' as menu_contact_val %}{{ menu_contact_val|default:'تماس با ما' }}
-                        <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
+                        <span class="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
                 </div>
-                
+
                 <!-- Theme & Language Selector + CTA -->
                 <div class="flex items-center gap-0.5 sm:gap-1 md:gap-2 flex-shrink-0">
                     <!-- Search Field - Desktop Only -->
                     <div class="relative hidden lg:block" id="header-search-container">
-                        <input type="text" id="header-search-input" placeholder="{% get_text 'search_placeholder' %}" 
-                               class="w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 pr-7 sm:pr-9 text-xs sm:text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-300"
+                        <input type="text" id="header-search-input" placeholder="{% get_text 'search_placeholder' %}"
+                               class="w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 px-4 py-2 pr-10 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white dark:focus:bg-gray-900 transition-all duration-300 shadow-sm"
                                autocomplete="off">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
-                        
+
                         <!-- Search Results Dropdown -->
-                        <div id="search-results-dropdown" class="hidden absolute top-full left-0 mt-2 w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+                        <div id="search-results-dropdown" class="hidden absolute top-full left-0 mt-2 w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
                             <div id="search-loading" class="hidden p-4 text-center text-gray-500">
                                 <svg class="animate-spin h-5 w-5 mx-auto" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -264,245 +228,315 @@
                                 </svg>
                                 <span class="text-xs mt-2 block">{% get_text 'search_loading' %}</span>
                             </div>
-                            
+
                             <!-- Products Section -->
                             <div id="search-products-section" class="hidden">
-                                <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300">{% get_text 'menu_products' as sp_val %}{{ sp_val|default:'محصولات' }}</h4>
+                                <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
+                                    <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400">{% get_text 'menu_products' as sp_val %}{{ sp_val|default:'محصولات' }}</h4>
                                 </div>
                                 <ul id="search-products-list" class="max-h-40 overflow-y-auto"></ul>
                             </div>
-                            
+
                             <!-- Categories Section -->
                             <div id="search-categories-section" class="hidden">
-                                <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300">{% get_text 'menu_categories' as sc_val %}{{ sc_val|default:'دسته‌بندی‌ها' }}</h4>
+                                <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
+                                    <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400">{% get_text 'menu_categories' as sc_val %}{{ sc_val|default:'دسته‌بندی‌ها' }}</h4>
                                 </div>
                                 <ul id="search-categories-list" class="max-h-40 overflow-y-auto"></ul>
                             </div>
-                            
+
                             <!-- Articles Section -->
                             <div id="search-articles-section" class="hidden">
-                                <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300">{% get_text 'menu_articles' as sa_val %}{{ sa_val|default:'مقالات' }}</h4>
+                                <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
+                                    <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400">{% get_text 'menu_articles' as sa_val %}{{ sa_val|default:'مقالات' }}</h4>
                                 </div>
                                 <ul id="search-articles-list" class="max-h-40 overflow-y-auto"></ul>
                             </div>
-                            
+
                             <!-- Projects Section -->
                             <div id="search-projects-section" class="hidden">
-                                <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                                    <h4 class="text-xs font-bold text-gray-700 dark:text-gray-300">{% get_text 'menu_projects' as sj_val %}{{ sj_val|default:'پروژه‌ها' }}</h4>
+                                <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
+                                    <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400">{% get_text 'menu_projects' as sj_val %}{{ sj_val|default:'پروژه‌ها' }}</h4>
                                 </div>
                                 <ul id="search-projects-list" class="max-h-40 overflow-y-auto"></ul>
                             </div>
-                            
+
                             <!-- No Results -->
                             <div id="search-no-results" class="hidden p-4 text-center text-gray-500 text-sm">
                                 {% get_text 'no_results' %}
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Language Selector - Desktop Only -->
-                    <select id="language-selector" onchange="changeLanguage(this.value)" class="hidden lg:block px-1.5 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2 text-xs sm:text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer hover:border-primary-500 transition-colors">
+                    <select id="language-selector" onchange="changeLanguage(this.value)" class="hidden lg:block px-2 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer hover:border-primary-500 transition-colors shadow-sm">
                         <option value="fa" {% if current_lang == 'fa' %}selected{% endif %}>🇮🇷 فارسی</option>
                         <option value="en" {% if current_lang == 'en' %}selected{% endif %}>🇬🇧 English</option>
                         <option value="ar" {% if current_lang == 'ar' %}selected{% endif %}>🇸🇦 العربية</option>
                         <option value="ru" {% if current_lang == 'ru' %}selected{% endif %}>🇷🇺 Русский</option>
                     </select>
-                    
+
                     <!-- Theme Toggle Button - Desktop Only -->
-                    <button id="header-theme-toggle" class="hidden lg:flex p-1.5 sm:p-2 md:p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-primary-500 transition-all duration-300 flex-shrink-0" title="{% get_text 'toggle_theme' as htt_val %}{{ htt_val|default:'تغییر تم' }}">
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                    <button id="header-theme-toggle" class="hidden lg:flex p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-500 transition-all shadow-sm" title="{% get_text 'toggle_theme' as htt_val %}{{ htt_val|default:'تغییر تم' }}">
+                        <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
                         </svg>
-                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
                         </svg>
                     </button>
-                    
+
                     <!-- CTA Button - Desktop Only -->
-                    <a href="{% if settings %}{{ settings.cta_link|default:'#consultation' }}{% else %}#consultation{% endif %}" class="hidden lg:inline-block px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-xs sm:text-sm font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap flex-shrink-0" id="header-cta-link">
+                    <a href="{% if settings %}{{ settings.cta_link|default:'#consultation' }}{% else %}#consultation{% endif %}" class="hidden lg:inline-block px-5 py-2.5 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-sm font-bold rounded-xl shadow-lg hover:shadow-primary-500/30 transform hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap flex-shrink-0" id="header-cta-link">
                         {% get_text 'cta_text' as cta_text_val %}{{ cta_text_val|default:'درخواست مشاوره' }}
                     </a>
                 </div>
-                
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="lg:flex hidden p-1.5 sm:p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex-shrink-0">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+
+                <!-- Hamburger Button (Mobile Only) - Using inline onclick to survive AJAX replacements -->
+                <button id="mobile-menu-btn" class="flex 2xl:hidden p-2.5 rounded-xl bg-gray-100/50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 transition-colors border border-gray-200/50 dark:border-gray-700/50 relative z-50 flex-shrink-0" onclick="openMobileMenu()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
                     </svg>
                 </button>
             </div>
-            
-            <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden lg:hidden mt-2 pb-3 space-y-2 sm:space-y-3 border-t border-gray-200 dark:border-gray-700 pt-2 sm:pt-3">
+        </nav>
+
+        <!-- Dummy element to prevent main.js from crashing (since main.js expects it to be here) -->
+        <div id="mobile-menu" class="hidden"></div>
+
+        <!-- NEW: Mobile Menu Overlay (Dark Backdrop) - Now INSIDE Header so it gets updated via AJAX -->
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[45] hidden lg:hidden transition-opacity duration-300 opacity-0" onclick="closeMobileMenu()"></div>
+
+        <!-- NEW: Mobile Menu Drawer - Now INSIDE Header so it gets updated via AJAX -->
+        <div id="mobile-menu-drawer" class="fixed top-0 bottom-0 rtl:right-0 ltr:left-0 w-[85vw] max-w-sm bg-white dark:bg-gray-900 z-[50] transform rtl:translate-x-full ltr:-translate-x-full transition-transform duration-300 ease-out lg:hidden flex flex-col shadow-2xl overflow-hidden border-l border-gray-200 dark:border-gray-800">
+
+            <!-- Drawer Header -->
+            <div class="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
+                <span class="font-bold text-lg text-gray-900 dark:text-white">منوی دسترسی</span>
+                <button id="mobile-close-btn" class="p-2 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-red-100 hover:text-red-500 transition-colors" onclick="closeMobileMenu()">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Drawer Content (Scrollable) -->
+            <div class="flex-1 overflow-y-auto px-5 py-6 space-y-8 custom-scrollbar">
+
                 <!-- Mobile Search -->
-                <div class="relative">
-                    <input type="text" id="mobile-search-input" placeholder="{% get_text 'search_placeholder' %}" 
-                           class="w-full px-3 sm:px-4 py-2 sm:py-2.5 pr-9 sm:pr-10 text-xs sm:text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+                <div class="relative w-full group">
+                    <input type="text" id="mobile-search-input" placeholder="{% get_text 'search_placeholder' %}"
+                           class="w-full pl-4 pr-11 py-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all shadow-sm"
                            autocomplete="off">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                 </div>
-                
-                <!-- Mobile Menu Links -->
-                <div class="space-y-1">
-                    <a href="{% url 'home' %}?lang={{ current_lang }}#hero" class="block py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all text-xs sm:text-sm">{% get_text 'menu_home' as mmh_val %}{{ mmh_val|default:'خانه' }}</a>
-                    <a href="{% url 'home' %}?lang={{ current_lang }}#categories" class="block py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all text-xs sm:text-sm">{% get_text 'menu_categories' as mmc_val %}{{ mmc_val|default:'دسته‌بندی‌ها' }}</a>
-                    <a href="{% url 'home' %}?lang={{ current_lang }}#products" class="block py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all text-xs sm:text-sm">{% get_text 'menu_products' as mmp_val %}{{ mmp_val|default:'محصولات' }}</a>
-                    <a href="{% url 'article_list' %}?lang={{ current_lang }}" class="block py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all text-xs sm:text-sm">{% get_text 'menu_articles' as mma_val %}{{ mma_val|default:'مقالات' }}</a>
-                    <a href="{% url 'project_list' %}?lang={{ current_lang }}" class="block py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all text-xs sm:text-sm">{% get_text 'menu_projects' as mmj_val %}{{ mmj_val|default:'پروژه‌ها' }}</a>
-                    <a href="{% url 'contact' %}?lang={{ current_lang }}" class="block py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all text-xs sm:text-sm">{% get_text 'menu_contact' as mmc2_val %}{{ mmc2_val|default:'تماس با ما' }}</a>
+
+                <!-- Navigation Links with Icons -->
+                <div class="flex flex-col space-y-2">
+                    <a href="{% url 'home' %}?lang={{ current_lang }}#hero" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all group">
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        {% get_text 'menu_home' as mmh_val %}{{ mmh_val|default:'خانه' }}
+                    </a>
+                    <a href="{% url 'category_list' %}?lang={{ current_lang }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all group">
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                        {% get_text 'menu_categories' as mmc_val %}{{ mmc_val|default:'دسته‌بندی‌ها' }}
+                    </a>
+                    <a href="{% url 'product_list' %}?lang={{ current_lang }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all group">
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        {% get_text 'menu_products' as mmp_val %}{{ mmp_val|default:'محصولات' }}
+                    </a>
+                    <a href="{% url 'article_list' %}?lang={{ current_lang }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all group">
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15M9 11l3 3m0 0l3-3m-3 3V8"/></svg>
+                        {% get_text 'menu_articles' as mma_val %}{{ mma_val|default:'مقالات' }}
+                    </a>
+                    <a href="{% url 'project_list' %}?lang={{ current_lang }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all group">
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        {% get_text 'menu_projects' as mmj_val %}{{ mmj_val|default:'پروژه‌ها' }}
+                    </a>
+                    <a href="{% url 'contact' %}?lang={{ current_lang }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all group">
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                        {% get_text 'menu_contact' as mmc2_val %}{{ mmc2_val|default:'تماس با ما' }}
+                    </a>
                 </div>
-                
-                <!-- Mobile Theme & Language Selector -->
-                <div class="pt-2 sm:pt-3 border-t border-gray-200 dark:border-gray-700 mt-2 sm:mt-3 space-y-2 sm:space-y-3">
-                    <!-- Mobile Language Selector -->
-                    <select onchange="changeLanguage(this.value)" class="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer text-xs sm:text-sm">
+            </div>
+
+            <!-- Drawer Footer (Settings & CTA) -->
+            <div class="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-900/80 space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- Mobile Language Selector - Added logic to clean body overflow on change -->
+                    <select onchange="document.body.style.overflow=''; changeLanguage(this.value)" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer text-gray-700 dark:text-gray-300 shadow-sm">
                         <option value="fa" {% if current_lang == 'fa' %}selected{% endif %}>🇮🇷 فارسی</option>
                         <option value="en" {% if current_lang == 'en' %}selected{% endif %}>🇬🇧 English</option>
                         <option value="ar" {% if current_lang == 'ar' %}selected{% endif %}>🇸🇦 العربية</option>
                         <option value="ru" {% if current_lang == 'ru' %}selected{% endif %}>🇷🇺 Русский</option>
                     </select>
-                    
+
                     <!-- Mobile Theme Toggle -->
-                    <button id="mobile-theme-toggle" class="w-full flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-xs sm:text-sm">
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                    <button id="mobile-theme-toggle" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors shadow-sm">
+                        <svg class="w-4 h-4 dark:hidden text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
                         </svg>
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-4 h-4 hidden dark:block text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
                         </svg>
                         <span>{% get_text 'toggle_theme' as tt_val %}{{ tt_val|default:'تغییر تم' }}</span>
                     </button>
-                    
-                    <!-- Mobile CTA -->
-                    <a href="{% if settings %}{{ settings.cta_link|default:'#consultation' }}{% else %}#consultation{% endif %}" class="block w-full text-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-xs sm:text-sm" id="mobile-cta-link">
-                        {% get_text 'cta_text' as cta_text_val %}{{ cta_text_val|default:'درخواست مشاوره' }}
-                    </a>
                 </div>
+
+                <!-- Mobile CTA -->
+                <a href="{% if settings %}{{ settings.cta_link|default:'#consultation' }}{% else %}#consultation{% endif %}" class="flex items-center justify-center w-full px-6 py-3.5 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-bold rounded-xl shadow-lg shadow-primary-500/20 hover:shadow-primary-500/40 transition-all duration-300 text-sm" id="mobile-cta-link">
+                    {% get_text 'cta_text' as cta_text_val %}{{ cta_text_val|default:'درخواست مشاوره' }}
+                </a>
             </div>
-        </nav>
+        </div>
     </header>
-    
+
     <!-- Main Content -->
-    <main class="pt-20">
+    <main class="pt-24 lg:pt-28 min-h-screen">
         {% block content %}{% endblock %}
     </main>
-    
+
     <!-- Footer -->
-    <footer class="bg-gray-900 dark:bg-gray-950 text-white pt-12 sm:pt-16 pb-8 mt-20">
-        <div class="container mx-auto px-2 sm:px-3 md:px-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
-                <!-- About -->
-                <div data-aos="fade-up" data-aos-delay="0" class="sm:col-span-2 lg:col-span-1">
-                    <h3 class="text-base sm:text-lg md:text-xl font-bold mb-3 sm:mb-4 gradient-text">{% if settings %}{{ settings.site_title|default:'برهان یو پی اس' }}{% else %}برهان یو پی اس{% endif %}</h3>
-                    <p class="text-gray-400 leading-relaxed text-xs sm:text-sm md:text-base">{% get_text 'footer_about' %}</p>
-                    <div class="flex gap-2 sm:gap-3 md:gap-4 mt-3 sm:mt-4 flex-wrap">
+    <footer class="bg-gray-900 dark:bg-gray-950 text-white pt-12 md:pt-16 pb-6 mt-16 border-t-4 border-primary-500">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mb-10">
+                <!-- About Section -->
+                <div data-aos="fade-up" class="lg:col-span-1">
+                    <h3 class="text-xl font-bold mb-4 gradient-text">{% if settings %}{{ settings.site_title|default:'برهان یو پی اس' }}{% else %}برهان یو پی اس{% endif %}</h3>
+                    <p class="text-gray-400 leading-relaxed text-sm text-justify">{% get_text 'footer_about' %}</p>
+                    <div class="flex gap-3 mt-6">
                         {% if settings.instagram %}
-                        <a href="{{ settings.instagram }}" target="_blank" class="p-1.5 sm:p-2 bg-gray-800 rounded-lg hover:bg-pink-600 transition-colors duration-300 transform hover:scale-110">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        <a href="{{ settings.instagram }}" target="_blank" class="p-2.5 bg-gray-800 rounded-lg hover:bg-pink-600 transition-all transform hover:scale-110 shadow-lg">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                         </a>
                         {% endif %}
                         {% if settings.telegram %}
-                        <a href="{{ settings.telegram }}" target="_blank" class="p-1.5 sm:p-2 bg-gray-800 rounded-lg hover:bg-blue-500 transition-colors duration-300 transform hover:scale-110">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        <a href="{{ settings.telegram }}" target="_blank" class="p-2.5 bg-gray-800 rounded-lg hover:bg-blue-500 transition-all transform hover:scale-110 shadow-lg">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
                         </a>
                         {% endif %}
                         {% if settings.linkedin %}
-                        <a href="{{ settings.linkedin }}" target="_blank" class="p-1.5 sm:p-2 bg-gray-800 rounded-lg hover:bg-blue-700 transition-colors duration-300 transform hover:scale-110">
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                        <a href="{{ settings.linkedin }}" target="_blank" class="p-2.5 bg-gray-800 rounded-lg hover:bg-blue-700 transition-colors duration-300 transform hover:scale-110 shadow-lg">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                         </a>
                         {% endif %}
                     </div>
                 </div>
-                
+
                 <!-- Quick Links -->
                 <div data-aos="fade-up" data-aos-delay="100">
-                    <h3 class="text-base sm:text-lg md:text-xl font-bold mb-3 sm:mb-4">{% get_text 'footer_quick_links' %}</h3>
-                    <ul class="space-y-1.5 sm:space-y-2">
-                        <li><a href="{% url 'product_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors text-xs sm:text-sm md:text-base block">{% get_text 'menu_products' as flp_val %}{{ flp_val|default:'محصولات' }}</a></li>
-                        <li><a href="{% url 'category_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors text-xs sm:text-sm md:text-base block">{% get_text 'menu_categories' as flc_val %}{{ flc_val|default:'دسته‌بندی‌ها' }}</a></li>
-                        <li><a href="{% url 'article_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors text-xs sm:text-sm md:text-base block">{% get_text 'menu_articles' as fla_val %}{{ fla_val|default:'مقالات' }}</a></li>
-                        <li><a href="{% url 'project_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors text-xs sm:text-sm md:text-base block">{% get_text 'menu_projects' as flj_val %}{{ flj_val|default:'پروژه‌ها' }}</a></li>
-                        <li><a href="{% url 'contact' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 transition-colors text-xs sm:text-sm md:text-base block">{% get_text 'menu_contact' as flco_val %}{{ flco_val|default:'تماس با ما' }}</a></li>
+                    <h3 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2 inline-block">{% get_text 'footer_quick_links' %}</h3>
+                    <ul class="space-y-3 mt-2">
+                        <li><a href="{% url 'product_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 hover:translate-x-[-4px] transition-all text-sm block flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>محصولات</a></li>
+                        <li><a href="{% url 'category_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 hover:translate-x-[-4px] transition-all text-sm block flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>دسته‌بندی‌ها</a></li>
+                        <li><a href="{% url 'article_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 hover:translate-x-[-4px] transition-all text-sm block flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>مقالات</a></li>
+                        <li><a href="{% url 'project_list' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 hover:translate-x-[-4px] transition-all text-sm block flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>پروژه‌ها</a></li>
+                        <li><a href="{% url 'contact' %}?lang={{ current_lang }}" class="text-gray-400 hover:text-primary-400 hover:translate-x-[-4px] transition-all text-sm block flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>تماس با ما</a></li>
                     </ul>
                 </div>
-                
-                <!-- Contact Info - Using Branch Data -->
+
+                <!-- Contact Info -->
                 <div data-aos="fade-up" data-aos-delay="200">
-                    <h3 class="text-base sm:text-lg md:text-xl font-bold mb-3 sm:mb-4">{% get_text 'footer_contact_info' %}</h3>
-                    <ul class="space-y-2 sm:space-y-3">
+                    <h3 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2 inline-block">{% get_text 'footer_contact_info' %}</h3>
+                    <ul class="space-y-4 mt-2">
                         {% for branch in branches|slice:":2" %}
-                        <li class="flex items-start gap-2 sm:gap-3">
-                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary-400 mt-0.5 sm:mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
+                        <li class="flex items-start gap-3">
+                            <div class="bg-gray-800 p-2 rounded shrink-0 text-primary-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </div>
                             <div>
-                                <span class="font-medium text-white block mb-0.5 sm:mb-1 text-xs sm:text-sm md:text-base">{{ branch.name }}{% if branch.is_main %} ({% get_text 'main_branch' %}){% endif %}</span>
-                                <span class="text-gray-400 text-xs sm:text-sm">{{ branch.address|truncatechars:50 }}</span>
+                                <span class="font-bold text-white text-sm block mb-1">{{ branch.name }}{% if branch.is_main %} ({% get_text 'main_branch' %}){% endif %}</span>
+                                <span class="text-gray-400 text-xs md:text-sm leading-relaxed block">{{ branch.address }}</span>
                             </div>
                         </li>
-                        <li class="flex items-center gap-2 sm:gap-3">
-                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                            </svg>
-                            <span class="text-gray-400 text-xs sm:text-sm">{{ branch.phone }}</span>
+                        <li class="flex items-center gap-3">
+                            <div class="bg-gray-800 p-2 rounded shrink-0 text-primary-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                </svg>
+                            </div>
+                            <a href="tel:{{ branch.phone }}" class="text-gray-400 hover:text-primary-400 text-sm transition-colors" dir="ltr">{{ branch.phone }}</a>
                         </li>
-                        {% if branch.email %}
-                        <li class="flex items-center gap-2 sm:gap-3">
-                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-primary-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                            </svg>
-                            <span class="text-gray-400 text-xs sm:text-sm">{{ branch.email }}</span>
-                        </li>
-                        {% endif %}
                         {% endfor %}
                     </ul>
                 </div>
-                
-                <!-- Map -->
-                <div data-aos="fade-up" data-aos-delay="300">
-                    <h3 class="text-base sm:text-lg md:text-xl font-bold mb-3 sm:mb-4">{% get_text 'footer_location' %}</h3>
+
+                <!-- Map Area -->
+                <div data-aos="fade-up" data-aos-delay="300" class="lg:col-span-1">
+                    <h3 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2 inline-block">{% get_text 'footer_location' %}</h3>
                     {% with main_branch=branches|first %}
                     {% if main_branch.map_iframe %}
-                    <div class="rounded-lg overflow-hidden h-32 sm:h-40 md:h-48">
+                    <div class="rounded-xl overflow-hidden h-40 md:h-48 border-2 border-gray-800 hover:border-primary-500 transition-colors">
                         {{ main_branch.map_iframe|safe }}
                     </div>
                     {% else %}
-                    <div class="bg-gray-800 rounded-lg h-32 sm:h-40 md:h-48 flex items-center justify-center">
-                        <span class="text-gray-500 text-xs sm:text-sm">{% get_text 'google_map' %}</span>
+                    <div class="bg-gray-800 rounded-xl h-40 md:h-48 flex items-center justify-center border-2 border-dashed border-gray-700">
+                        <span class="text-gray-500 text-sm">{% get_text 'google_map' %}</span>
                     </div>
                     {% endif %}
                     {% endwith %}
                 </div>
             </div>
-            
-            <!-- Copyright -->
-            <div class="border-t border-gray-800 pt-6 sm:pt-8 text-center">
-                <p class="text-gray-400 text-xs sm:text-sm">{% get_text 'footer_copyright' %}</p>
+
+            <!-- Bottom Copyright -->
+            <div class="border-t border-gray-800 pt-6 text-center">
+                <p class="text-gray-500 text-xs md:text-sm">{% get_text 'footer_copyright' %}</p>
             </div>
         </div>
     </footer>
-    
+
     <!-- AOS Animation Library JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
-    <!-- Initialize AOS -->
+
+    <!-- Scripts: Init AOS & Mobile Menu Drawer Logic -->
     <script>
+        // Initialize Animations
         AOS.init({
             duration: 800,
             easing: 'ease-in-out',
             once: false,
             mirror: true,
-            offset: 100,
+            offset: 50,
         });
+
+        // --- Mobile Menu Drawer Logic ---
+        // Defined globally so it survives after main.js replaces the header
+        window.openMobileMenu = function() {
+            const mobileOverlay = document.getElementById('mobile-menu-overlay');
+            const mobileDrawer = document.getElementById('mobile-menu-drawer');
+
+            if (mobileOverlay) {
+                mobileOverlay.classList.remove('hidden');
+                setTimeout(() => mobileOverlay.classList.remove('opacity-0'), 10);
+            }
+            if (mobileDrawer) {
+                mobileDrawer.classList.remove('rtl:translate-x-full');
+                mobileDrawer.classList.remove('ltr:-translate-x-full');
+            }
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeMobileMenu = function() {
+            const mobileOverlay = document.getElementById('mobile-menu-overlay');
+            const mobileDrawer = document.getElementById('mobile-menu-drawer');
+
+            if (mobileDrawer) {
+                mobileDrawer.classList.add('rtl:translate-x-full');
+                mobileDrawer.classList.add('ltr:-translate-x-full');
+            }
+            if (mobileOverlay) {
+                mobileOverlay.classList.add('opacity-0');
+                setTimeout(() => mobileOverlay.classList.add('hidden'), 300);
+            }
+            document.body.style.overflow = '';
+        };
     </script>
-    
+
     <!-- Custom Main JS -->
     <script src="{% static 'js/main.js' %}"></script>
     
