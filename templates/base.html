@@ -203,11 +203,11 @@
                         {% get_text 'home_menu_products' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
-                    <a href="#articles" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
+                    <a href="{% url 'article_list' %}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
                         {% get_text 'home_menu_articles' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
-                    <a href="#projects" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
+                    <a href="{% url 'project_list' %}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
                         {% get_text 'home_menu_projects' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
