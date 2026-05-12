@@ -5,35 +5,40 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Logs and temp files
+# Django
 *.log
-*.tmp
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Static files
+staticfiles/
+media/
 
 # Environment
 .env
 .env.local
-*.env.*
-
-# Editors
-.vscode/
-.idea/
-
-# Dependencies
+.env.*
 .venv/
 venv/
-node_modules/
+ENV/
 
-# Build artifacts
-dist/
-build/
-target/
-
-# Coverage
+# Dependencies
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
 .coverage
-coverage/
-htmlcov/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
 
-# Cache
-.mypy_cache/
-.pytest_cache/
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 ```

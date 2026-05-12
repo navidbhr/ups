@@ -19,8 +19,20 @@ def home_view(request):
     projects = Project.objects.all()[:6]
     partners = Partner.objects.all()
 
-    # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
-    current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
+    # دریافت زبان فعلی - اولویت با پارامتر URL است، سپس سشن، سپس زبان پیش‌فرض جنگو
+    # در درخواست AJAX، زبان از پارامتر URL خوانده می‌شود که توسط JS اضافه شده
+    url_lang = request.GET.get('lang')
+    session_lang = request.session.get('language')
+    django_lang = get_language()
+    
+    if url_lang:
+        current_lang = url_lang
+    elif session_lang:
+        current_lang = session_lang
+    elif django_lang:
+        current_lang = django_lang
+    else:
+        current_lang = 'fa'
 
     # تبدیل کد زبان به فرمت کوتاه
     lang_map = {
@@ -33,7 +45,7 @@ def home_view(request):
     }
     current_lang = lang_map.get(current_lang.lower(), 'fa')
 
-    # ذخیره زبان در سشن
+    # ذخیره زبان در سشن برای درخواست‌های بعدی
     request.session['language'] = current_lang
 
     # بارگذاری تنظیمات سایت

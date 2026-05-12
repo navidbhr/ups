@@ -50,7 +50,7 @@ function changeLanguage(lang) {
             const currentMain = document.querySelector('main') || document.querySelector('body');
             
             if (newMain && currentMain) {
-                // جایگزینی محتوای اصلی بدون ریلود کامل
+                // حفظ هدر و فوتر - فقط محتوای داخل main عوض شود
                 currentMain.innerHTML = newMain.innerHTML;
                 
                 // اجرای مجدد اسکریپت‌های داخل محتوای جدید
@@ -60,7 +60,9 @@ function changeLanguage(lang) {
                     Array.from(oldScript.attributes).forEach(attr => {
                         newScript.setAttribute(attr.name, attr.value);
                     });
-                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    if (oldScript.innerHTML.trim()) {
+                        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    }
                     oldScript.parentNode.replaceChild(newScript, oldScript);
                 });
                 
@@ -68,6 +70,11 @@ function changeLanguage(lang) {
                 if (typeof AOS !== 'undefined') {
                     AOS.refresh();
                 }
+                
+                // بروزرسانی سلکتورهای زبان
+                document.querySelectorAll('select[onchange*="changeLanguage"]').forEach(select => {
+                    select.value = lang;
+                });
             }
             
             // به‌روزرسانی URL بدون ریلود
