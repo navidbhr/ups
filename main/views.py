@@ -334,7 +334,7 @@ def product_list_view(request):
     # بارگذاری متون استاتیک
     static_texts = {}
     for key in [
-        'product_list_title', 'no_image', 'contact_for_price', 'view_details', 'no_products',
+        'product_list_title', 'products_title', 'products_subtitle', 'no_image', 'contact_for_price', 'view_details', 'no_products',
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)

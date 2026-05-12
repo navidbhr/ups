@@ -1,44 +1,55 @@
 {% extends 'base.html' %}
 {% load static custom_filters %}
 
-{% block title %}{% get_text 'product_list_title'|default:'لیست محصولات' %} | {{ settings.site_name|default:'برهان یو پی اس' }}{% endblock %}
+{% block title %}{{ static_texts.products_title|default:'لیست محصولات' }} | {{ settings.site_name|default:'برهان یو پی اس' }}{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8 mt-24">
-    <h1 class="text-3xl font-bold text-center mb-8">{% get_text 'product_list_title'|default:'لیست محصولات' %}</h1>
+<!-- Page Header -->
+<section class="pt-32 pb-16 bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div class="container mx-auto px-4">
+        <div class="text-center max-w-3xl mx-auto" data-aos="fade-up">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">{{ static_texts.products_title|default:'محصولات' }}</h1>
+            <p class="text-lg text-gray-700 dark:text-gray-300">{{ static_texts.products_subtitle|default:'مجموعه‌ای از بهترین محصولات ما برای رفع نیازهای شما' }}</p>
+        </div>
+    </div>
+</section>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {% for product in products %}
-        <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 transition-transform hover:-translate-y-1">
-            <a href="{% url 'product_detail' product.slug %}?lang={{ current_lang }}">
-                {% if product.main_image %}
-                <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="w-full h-48 object-cover">
-                {% else %}
-                <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-                    <span class="text-gray-400">{% get_text 'no_image'|default:'بدون تصویر' %}</span>
-                </div>
-                {% endif %}
-            </a>
-            <div class="p-4">
+<!-- Products Content -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for product in products %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100 transition-transform hover:-translate-y-1" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|mul:100 }}">
                 <a href="{% url 'product_detail' product.slug %}?lang={{ current_lang }}">
-                    <h3 class="text-lg font-bold text-gray-800 mb-2 hover:text-primary-600 transition-colors">{{ product.name }}</h3>
-                </a>
-                <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ product.short_description }}</p>
-                <div class="flex justify-between items-center mt-auto">
-                    {% if product.show_price and product.base_price > 0 %}
-                    <span class="font-bold text-primary-600">{{ product.base_price|intcomma }} {{ product.currency.symbol }}</span>
+                    {% if product.main_image %}
+                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="w-full h-48 object-cover">
                     {% else %}
-                    <span class="font-bold text-gray-500 text-sm">{% get_text 'contact_for_price'|default:'تماس بگیرید' %}</span>
+                    <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                        <span class="text-gray-400">{% get_text 'no_image'|default:'بدون تصویر' %}</span>
+                    </div>
                     {% endif %}
-                    <a href="{% url 'product_detail' product.slug %}?lang={{ current_lang }}" class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded text-sm transition-colors">{% get_text 'view_details'|default:'مشاهده' %}</a>
+                </a>
+                <div class="p-4">
+                    <a href="{% url 'product_detail' product.slug %}?lang={{ current_lang }}">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2 hover:text-primary-600 transition-colors">{{ product.name }}</h3>
+                    </a>
+                    <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ product.short_description }}</p>
+                    <div class="flex justify-between items-center mt-auto">
+                        {% if product.show_price and product.base_price > 0 %}
+                        <span class="font-bold text-primary-600">{{ product.base_price|intcomma }} {{ product.currency.symbol }}</span>
+                        {% else %}
+                        <span class="font-bold text-gray-500 text-sm">{% get_text 'contact_for_price'|default:'تماس بگیرید' %}</span>
+                        {% endif %}
+                        <a href="{% url 'product_detail' product.slug %}?lang={{ current_lang }}" class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded text-sm transition-colors">{% get_text 'view_details'|default:'مشاهده' %}</a>
+                    </div>
                 </div>
             </div>
+            {% empty %}
+            <div class="col-span-full text-center py-12">
+                <p class="text-xl text-gray-500">{% get_text 'no_products'|default:'هیچ محصولی یافت نشد.' %}</p>
+            </div>
+            {% endfor %}
         </div>
-        {% empty %}
-        <div class="col-span-full text-center py-12">
-            <p class="text-xl text-gray-500">{% get_text 'no_products'|default:'هیچ محصولی یافت نشد.' %}</p>
-        </div>
-        {% endfor %}
     </div>
-</div>
+</section>
 {% endblock %}

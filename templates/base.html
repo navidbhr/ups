@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{{ settings.site_title|default:"برهان یو پی اس" }}{% endblock %}</title>
-    <meta name="description" content="{{ settings.site_description|default:'مشاوره و خرید انواع دستگاه‌های یو پی اس صنعتی و خانگی با گارانتی معتبر.' }}">
+    <title>{% block title %}{% if settings %}{{ settings.site_title|default:"برهان یو پی اس" }}{% else %}برهان یو پی اس{% endif %}{% endblock %}</title>
+    <meta name="description" content="{% if settings %}{{ settings.site_description|default:'مشاوره و خرید انواع دستگاه‌های یو پی اس صنعتی و خانگی با گارانتی معتبر.' }}{% else %}مشاوره و خرید انواع دستگاه‌های یو پی اس صنعتی و خانگی با گارانتی معتبر.{% endif %}">
     
     <!-- Favicon -->
     {% if settings.favicon %}
@@ -185,25 +185,25 @@
                     {% if settings.logo %}
                     <img src="{{ settings.logo.url }}" alt="{{ settings.site_name }}" class="h-10 md:h-12 w-auto transform group-hover:scale-105 transition-transform duration-300">
                     {% else %}
-                    <div class="text-xl md:text-2xl font-bold gradient-text">{{ settings.site_name|default:'برهان یو پی اس' }}</div>
+                    <div class="text-xl md:text-2xl font-bold gradient-text">{% if settings %}{{ settings.site_name|default:'برهان یو پی اس' }}{% else %}برهان یو پی اس{% endif %}</div>
                     {% endif %}
                 </a>
                 
                 <!-- Desktop Menu -->
                 <div class="hidden lg:flex items-center gap-6 flex-1 justify-center">
-                    <a href="#hero" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
+                    <a href="{% url 'home' %}?lang={{ current_lang }}#hero" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
                         {% get_text 'home_menu_home' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
-                    <a href="#categories" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
+                    <a href="{% url 'category_list' %}?lang={{ current_lang }}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
                         {% get_text 'home_menu_categories' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
-                    <a href="#products" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
+                    <a href="{% url 'product_list' %}?lang={{ current_lang }}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
                         {% get_text 'home_menu_products' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
-                    <a href="{% url 'article_list' %}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
+                    <a href="{% url 'article_list' %}?lang={{ current_lang }}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
                         {% get_text 'home_menu_articles' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
@@ -235,7 +235,7 @@
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
-                                <span class="text-xs mt-2 block">در حال جستجو...</span>
+                                <span class="text-xs mt-2 block">{% get_text 'search_loading' %}</span>
                             </div>
                             
                             <!-- Products Section -->
@@ -296,8 +296,8 @@
                     </button>
                     
                     <!-- CTA Button -->
-                    <a href="{{ settings.cta_link|default:'#consultation' }}" class="hidden md:inline-block px-5 py-2.5 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300" id="header-cta-link">
-                        {{ static_texts.cta_text|default:settings.get_cta_text|default:'درخواست مشاوره' }}
+                    <a href="{% if settings %}{{ settings.cta_link|default:'#consultation' }}{% else %}#consultation{% endif %}" class="hidden md:inline-block px-5 py-2.5 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300" id="header-cta-link">
+                        {% get_text 'cta_text' as cta_text_val %}{{ cta_text_val|default:'درخواست مشاوره' }}
                     </a>
                 </div>
                 
@@ -311,10 +311,10 @@
             
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="hidden lg:hidden mt-4 pb-4 space-y-3 border-t border-gray-200 dark:border-gray-700 pt-4">
-                <a href="#hero" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_home' %}</a>
-                <a href="#categories" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_categories' %}</a>
-                <a href="#products" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_products' %}</a>
-                <a href="#articles" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_articles' %}</a>
+                <a href="{% url 'home' %}?lang={{ current_lang }}#hero" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_home' %}</a>
+                <a href="{% url 'home' %}?lang={{ current_lang }}#categories" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_categories' %}</a>
+                <a href="{% url 'home' %}?lang={{ current_lang }}#products" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_products' %}</a>
+                <a href="{% url 'article_list' %}?lang={{ current_lang }}" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_articles' %}</a>
                 <a href="{% url 'project_list' %}?lang={{ current_lang }}" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_projects' %}</a>
                 <a href="{% url 'contact' %}?lang={{ current_lang }}" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_contact' %}</a>
                 
@@ -340,8 +340,8 @@
                     </button>
                     
                     <!-- Mobile CTA -->
-                    <a href="{{ settings.cta_link|default:'#consultation' }}" class="block w-full text-center px-6 py-3 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300" id="mobile-cta-link">
-                        {{ static_texts.cta_text|default:settings.get_cta_text|default:'درخواست مشاوره' }}
+                    <a href="{% if settings %}{{ settings.cta_link|default:'#consultation' }}{% else %}#consultation{% endif %}" class="block w-full text-center px-6 py-3 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300" id="mobile-cta-link">
+                        {% get_text 'cta_text' as cta_text_val %}{{ cta_text_val|default:'درخواست مشاوره' }}
                     </a>
                 </div>
             </div>
@@ -359,7 +359,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                 <!-- About -->
                 <div data-aos="fade-up" data-aos-delay="0">
-                    <h3 class="text-xl font-bold mb-4 gradient-text">{{ settings.site_name|default:'برهان یو پی اس' }}</h3>
+                    <h3 class="text-xl font-bold mb-4 gradient-text">{% if settings %}{{ settings.site_title|default:'برهان یو پی اس' }}{% else %}برهان یو پی اس{% endif %}</h3>
                     <p class="text-gray-400 leading-relaxed">{% get_text 'footer_about' %}</p>
                     <div class="flex gap-4 mt-4">
                         {% if settings.instagram %}

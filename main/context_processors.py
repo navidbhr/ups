@@ -57,6 +57,9 @@ def site_settings(request):
             hero_subtitle = ''
             cta_text = ''
             cta_link = '#consultation'
+            site_name = 'برهان یو پی اس'
+            site_title = 'برهان یو پی اس'
+            site_description = 'مشاوره و خرید انواع دستگاه‌های یو پی اس صنعتی و خانگی با گارانتی معتبر.'
             def get_hero_title(self, lang_code='fa'): return ''
             def get_hero_subtitle(self, lang_code='fa'): return ''
             def get_cta_text(self, lang_code='fa'): 
@@ -68,6 +71,7 @@ def site_settings(request):
         def get_cta_text(lang_code='fa'):
             from .models import StaticText
             return StaticText.get_text('cta_text', lang_code) or settings_obj.cta_text or ''
+        # Monkey patch
         settings_obj.get_cta_text = get_cta_text
 
     # دریافت تمام متون استاتیک مورد نیاز برای قالب
