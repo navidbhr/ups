@@ -59,8 +59,16 @@ def site_settings(request):
             cta_link = '#consultation'
             def get_hero_title(self, lang_code='fa'): return ''
             def get_hero_subtitle(self, lang_code='fa'): return ''
-            def get_cta_text(self, lang_code='fa'): return ''
+            def get_cta_text(self, lang_code='fa'): 
+                from .models import StaticText
+                return StaticText.get_text('cta_text', lang_code) or ''
         settings_obj = EmptySettings()
+    else:
+        # اضافه کردن متد get_cta_text به تنظیمات موجود برای اطمینان از لود چندزبانه
+        def get_cta_text(lang_code='fa'):
+            from .models import StaticText
+            return StaticText.get_text('cta_text', lang_code) or settings_obj.cta_text or ''
+        settings_obj.get_cta_text = get_cta_text
 
     # دریافت تمام متون استاتیک مورد نیاز برای قالب
     static_texts = {}
