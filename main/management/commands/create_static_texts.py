@@ -85,6 +85,15 @@ class Command(BaseCommand):
             {'key': 'not_in_stock', 'default_text': 'ناموجود', 'text_fa': 'ناموجود', 'text_en': 'Out of Stock', 'text_ar': 'غير متوفر', 'text_ru': 'Net v nalichii'},
             {'key': 'details', 'default_text': 'جزئیات', 'text_fa': 'جزئیات', 'text_en': 'Details', 'text_ar': 'التفاصيل', 'text_ru': 'Detali'},
             {'key': 'read_more', 'default_text': 'ادامه مطلب', 'text_fa': 'ادامه مطلب', 'text_en': 'Read More', 'text_ar': 'اقرأ المزيد', 'text_ru': 'Chitat dalee'},
+            {'key': 'view_products', 'default_text': 'مشاهده محصولات', 'text_fa': 'مشاهده محصولات', 'text_en': 'View Products', 'text_ar': 'عرض المنتجات', 'text_ru': 'Posmotret produkty'},
+            
+            # Menu Items
+            {'key': 'home_menu_home', 'default_text': 'خانه', 'text_fa': 'خانه', 'text_en': 'Home', 'text_ar': 'الرئيسية', 'text_ru': 'Glavnaya'},
+            {'key': 'home_menu_categories', 'default_text': 'دسته‌بندی‌ها', 'text_fa': 'دسته‌بندی‌ها', 'text_en': 'Categories', 'text_ar': 'الفئات', 'text_ru': 'Kategorii'},
+            {'key': 'home_menu_products', 'default_text': 'محصولات', 'text_fa': 'محصولات', 'text_en': 'Products', 'text_ar': 'المنتجات', 'text_ru': 'Produkty'},
+            {'key': 'home_menu_articles', 'default_text': 'مقالات', 'text_fa': 'مقالات', 'text_en': 'Articles', 'text_ar': 'المقالات', 'text_ru': 'Statyi'},
+            {'key': 'home_menu_projects', 'default_text': 'پروژه‌ها', 'text_fa': 'پروژه‌ها', 'text_en': 'Projects', 'text_ar': 'المشاريع', 'text_ru': 'Proekty'},
+            {'key': 'home_menu_contact', 'default_text': 'تماس با ما', 'text_fa': 'تماس با ما', 'text_en': 'Contact', 'text_ar': 'اتصل بنا', 'text_ru': 'Kontakt'},
         ]
         
         created_count = 0
