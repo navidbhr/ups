@@ -545,14 +545,14 @@ def contact_view(request):
 
 @csrf_exempt
 def search_ajax(request):
-    """جستجوی AJAX برای محصولات، مقالات و پروژه‌ها"""
+    """جستجوی AJAX برای محصولات، دسته‌بندی‌ها، مقالات و پروژه‌ها"""
     from django.utils.translation import get_language
     from django.db.models import Q
 
     query = request.GET.get('q', '').strip()
     
     if not query:
-        return JsonResponse({'results': []})
+        return JsonResponse({'results': {'products': [], 'categories': [], 'articles': [], 'projects': []}})
     
     # دریافت زبان فعلی
     current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
@@ -566,26 +566,38 @@ def search_ajax(request):
     }
     current_lang = lang_map.get(current_lang.lower(), 'fa')
     
-    results = []
+    results = {
+        'products': [],
+        'categories': [],
+        'articles': [],
+        'projects': []
+    }
     
     # جستجو در محصولات
-    if current_lang == 'en':
-        products = Product.objects.filter(
-            Q(name__icontains=query) | Q(short_description__icontains=query),
-            is_in_stock=True
-        )[:5]
-    else:
-        products = Product.objects.filter(
-            Q(name__icontains=query) | Q(short_description__icontains=query),
-            is_in_stock=True
-        )[:5]
+    products = Product.objects.filter(
+        Q(name__icontains=query) | Q(short_description__icontains=query),
+        is_in_stock=True
+    )[:5]
     
     for product in products:
-        results.append({
+        results['products'].append({
             'type': 'product',
             'title': product.name,
             'url': f'/product/{product.slug}/',
             'image': product.main_image.url if product.main_image else '',
+        })
+    
+    # جستجو در دسته‌بندی‌ها
+    categories = Category.objects.filter(
+        Q(title__icontains=query)
+    )[:5]
+    
+    for category in categories:
+        results['categories'].append({
+            'type': 'category',
+            'title': category.title,
+            'url': f'/category/{category.slug}/',
+            'image': category.image.url if category.image else '',
         })
     
     # جستجو در مقالات
@@ -611,7 +623,7 @@ def search_ajax(request):
         )[:5]
     
     for article in articles:
-        results.append({
+        results['articles'].append({
             'type': 'article',
             'title': article.get_title(current_lang),
             'url': f'/article/{article.slug}/',
@@ -641,11 +653,11 @@ def search_ajax(request):
         )[:5]
     
     for project in projects:
-        results.append({
+        results['projects'].append({
             'type': 'project',
             'title': project.get_title(current_lang),
             'url': f'/project/{project.slug}/',
             'image': project.image.url if project.image else '',
         })
     
-    return JsonResponse({'results': results})
+    return JsonResponse(results)

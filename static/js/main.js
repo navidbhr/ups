@@ -220,3 +220,166 @@ document.addEventListener("DOMContentLoaded", function() {
         lastScroll = currentScroll;
     });
 });
+// جستجوی AJAX
+let searchTimeout = null;
+function initSearch() {
+    const searchInput = document.getElementById('header-search-input');
+    const searchDropdown = document.getElementById('search-results-dropdown');
+    const searchLoading = document.getElementById('search-loading');
+    
+    if (!searchInput || !searchDropdown) return;
+    
+    // نمایش dropdown هنگام فوکوس
+    searchInput.addEventListener('focus', function() {
+        if (this.value.trim().length > 0) {
+            searchDropdown.classList.remove('hidden');
+        }
+    });
+    
+    // مخفی کردن dropdown هنگام کلیک بیرون
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+            searchDropdown.classList.add('hidden');
+        }
+    });
+    
+    // جستجو هنگام تایپ
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            searchDropdown.classList.add('hidden');
+            return;
+        }
+        
+        searchTimeout = setTimeout(function() {
+            performSearch(query);
+        }, 300);
+    });
+    
+    function performSearch(query) {
+        const currentLang = localStorage.getItem('selected_language') || 'fa';
+        
+        searchLoading.classList.remove('hidden');
+        searchDropdown.classList.remove('hidden');
+        
+        // مخفی کردن همه بخش‌ها
+        document.getElementById('search-products-section').classList.add('hidden');
+        document.getElementById('search-categories-section').classList.add('hidden');
+        document.getElementById('search-articles-section').classList.add('hidden');
+        document.getElementById('search-projects-section').classList.add('hidden');
+        document.getElementById('search-no-results').classList.add('hidden');
+        
+        // پاک کردن لیست‌ها
+        document.getElementById('search-products-list').innerHTML = '';
+        document.getElementById('search-categories-list').innerHTML = '';
+        document.getElementById('search-articles-list').innerHTML = '';
+        document.getElementById('search-projects-list').innerHTML = '';
+        
+        fetch(`/api/search/?q=${encodeURIComponent(query)}&lang=${currentLang}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            searchLoading.classList.add('hidden');
+            
+            let hasResults = false;
+            
+            // نمایش محصولات
+            if (data.products && data.products.length > 0) {
+                hasResults = true;
+                const productsSection = document.getElementById('search-products-section');
+                const productsList = document.getElementById('search-products-list');
+                productsSection.classList.remove('hidden');
+                
+                data.products.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <a href="${item.url}" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            ${item.image ? `<img src="${item.image}" alt="${item.title}" class="w-10 h-10 object-cover rounded">` : ''}
+                            <span class="text-sm text-gray-900 dark:text-gray-100">${item.title}</span>
+                        </a>
+                    `;
+                    productsList.appendChild(li);
+                });
+            }
+            
+            // نمایش دسته‌بندی‌ها
+            if (data.categories && data.categories.length > 0) {
+                hasResults = true;
+                const categoriesSection = document.getElementById('search-categories-section');
+                const categoriesList = document.getElementById('search-categories-list');
+                categoriesSection.classList.remove('hidden');
+                
+                data.categories.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <a href="${item.url}" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            ${item.image ? `<img src="${item.image}" alt="${item.title}" class="w-10 h-10 object-cover rounded">` : ''}
+                            <span class="text-sm text-gray-900 dark:text-gray-100">${item.title}</span>
+                        </a>
+                    `;
+                    categoriesList.appendChild(li);
+                });
+            }
+            
+            // نمایش مقالات
+            if (data.articles && data.articles.length > 0) {
+                hasResults = true;
+                const articlesSection = document.getElementById('search-articles-section');
+                const articlesList = document.getElementById('search-articles-list');
+                articlesSection.classList.remove('hidden');
+                
+                data.articles.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <a href="${item.url}" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            ${item.image ? `<img src="${item.image}" alt="${item.title}" class="w-10 h-10 object-cover rounded">` : ''}
+                            <span class="text-sm text-gray-900 dark:text-gray-100">${item.title}</span>
+                        </a>
+                    `;
+                    articlesList.appendChild(li);
+                });
+            }
+            
+            // نمایش پروژه‌ها
+            if (data.projects && data.projects.length > 0) {
+                hasResults = true;
+                const projectsSection = document.getElementById('search-projects-section');
+                const projectsList = document.getElementById('search-projects-list');
+                projectsSection.classList.remove('hidden');
+                
+                data.projects.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <a href="${item.url}" class="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            ${item.image ? `<img src="${item.image}" alt="${item.title}" class="w-10 h-10 object-cover rounded">` : ''}
+                            <span class="text-sm text-gray-900 dark:text-gray-100">${item.title}</span>
+                        </a>
+                    `;
+                    projectsList.appendChild(li);
+                });
+            }
+            
+            // نمایش پیام بدون نتیجه
+            if (!hasResults) {
+                document.getElementById('search-no-results').classList.remove('hidden');
+            }
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+            searchLoading.classList.add('hidden');
+            searchDropdown.classList.add('hidden');
+        });
+    }
+}
+
+// اضافه کردن initSearch به DOMContentLoaded
+const originalDOMContentLoaded = document.addEventListener.toString();
+document.addEventListener("DOMContentLoaded", function() {
+    initSearch();
+});
