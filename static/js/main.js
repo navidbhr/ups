@@ -4,13 +4,13 @@ function changeLanguage(lang) {
     localStorage.setItem('selected_language', lang);
 
     // تغییر direction بر اساس زبان
-    const html = document.documentElement;
+    const htmlEl = document.documentElement;
     if (lang === 'en' || lang === 'ru') {
-        html.setAttribute('dir', 'ltr');
-        html.setAttribute('lang', lang);
+        htmlEl.setAttribute('dir', 'ltr');
+        htmlEl.setAttribute('lang', lang);
     } else {
-        html.setAttribute('dir', 'rtl');
-        html.setAttribute('lang', lang);
+        htmlEl.setAttribute('dir', 'rtl');
+        htmlEl.setAttribute('lang', lang);
     }
 
     // به‌روزرسانی تمام سلکتورهای زبان در صفحه
@@ -27,14 +27,10 @@ function changeLanguage(lang) {
         },
         body: new URLSearchParams({ language: lang })
     }).then(() => {
-        // دریافت URL فعلی و حذف پارامتر lang قدیمی
         const url = new URL(window.location.href);
         url.searchParams.delete('lang');
-        
-        // اضافه کردن پارامتر lang جدید به URL برای ویو
         url.searchParams.set('lang', lang);
         
-        // فچ کردن محتوای جدید فقط برای بخش اصلی صفحه
         fetch(url.toString(), {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -43,14 +39,17 @@ function changeLanguage(lang) {
         })
         .then(response => response.text())
         .then(html => {
-            // استخراج فقط بخش main content از پاسخ
+            if (!html || !html.trim()) {
+                window.location.href = url.toString();
+                return;
+            }
+
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
             const newMain = doc.querySelector('main') || doc.querySelector('body');
             const currentMain = document.querySelector('main') || document.querySelector('body');
             
-            if (newMain && currentMain) {
-                // حفظ هدر و فوتر - فقط محتوای داخل main عوض شود
+            if (newMain && currentMain && newMain.innerHTML.trim()) {
                 currentMain.innerHTML = newMain.innerHTML;
                 
                 // اجرای مجدد اسکریپت‌های داخل محتوای جدید
@@ -60,51 +59,64 @@ function changeLanguage(lang) {
                     Array.from(oldScript.attributes).forEach(attr => {
                         newScript.setAttribute(attr.name, attr.value);
                     });
-                    if (oldScript.innerHTML.trim()) {
+                    if (oldScript.innerHTML) {
                         newScript.appendChild(document.createTextNode(oldScript.innerHTML));
                     }
                     oldScript.parentNode.replaceChild(newScript, oldScript);
                 });
                 
-                // اجرای مجدد AOS برای انیمیشن‌ها
+                // مقداردهی مجدد کامل انیمیشن‌های AOS
+                // استفاده از init مجدد بجای refresh تا المان‌های جدید DOM شناسایی شوند
                 if (typeof AOS !== 'undefined') {
-                    AOS.refresh();
+                    // اول کلاس‌های قدیمی که باعث مخفی ماندن میشوند را حذف میکنیم
+                    document.querySelectorAll('[data-aos]').forEach(el => {
+                        el.classList.remove('aos-animate');
+                    });
+                    
+                    // راه‌اندازی مجدد برای اعمال به المان‌های جدید
+                    AOS.init({
+                        duration: 800,
+                        easing: 'ease-in-out',
+                        once: false,
+                        mirror: true,
+                        offset: 100,
+                    });
+                    
+                    // فراخوانی refreshHard برای اطمینان از اعمال تغییرات
+                    setTimeout(() => {
+                        AOS.refreshHard();
+                    }, 100);
+                }
+
+                // به‌روزرسانی دکمه‌های CTA در هدر
+                const newCtaDesktop = doc.querySelector('#header-cta-link');
+                const newCtaMobile = doc.querySelector('#mobile-cta-link');
+                const currentCtaDesktop = document.querySelector('#header-cta-link');
+                const currentCtaMobile = document.querySelector('#mobile-cta-link');
+                
+                if (newCtaDesktop && currentCtaDesktop) {
+                    currentCtaDesktop.textContent = newCtaDesktop.textContent;
+                    currentCtaDesktop.href = newCtaDesktop.href;
+                }
+                if (newCtaMobile && currentCtaMobile) {
+                    currentCtaMobile.textContent = newCtaMobile.textContent;
+                    currentCtaMobile.href = newCtaMobile.href;
                 }
                 
-                // بروزرسانی سلکتورهای زبان
-                document.querySelectorAll('select[onchange*="changeLanguage"]').forEach(select => {
-                    select.value = lang;
-                });
+                // به‌روزرسانی منوی موبایل لینک‌ها
+                const newMobileMenu = doc.querySelector('#mobile-menu');
+                const currentMobileMenu = document.querySelector('#mobile-menu');
+                if (newMobileMenu && currentMobileMenu) {
+                    currentMobileMenu.innerHTML = newMobileMenu.innerHTML;
+                }
+                
+                window.history.pushState({ lang: lang }, '', url.toString());
+            } else {
+                window.location.href = url.toString();
             }
-            
-            // به‌روزرسانی دکمه‌های CTA در هدر
-            const newCtaDesktop = doc.querySelector('#header-cta-link');
-            const newCtaMobile = doc.querySelector('#mobile-cta-link');
-            const currentCtaDesktop = document.querySelector('#header-cta-link');
-            const currentCtaMobile = document.querySelector('#mobile-cta-link');
-            
-            if (newCtaDesktop && currentCtaDesktop) {
-                currentCtaDesktop.textContent = newCtaDesktop.textContent;
-                currentCtaDesktop.href = newCtaDesktop.href;
-            }
-            if (newCtaMobile && currentCtaMobile) {
-                currentCtaMobile.textContent = newCtaMobile.textContent;
-                currentCtaMobile.href = newCtaMobile.href;
-            }
-            
-            // به‌روزرسانی منوی موبایل لینک‌ها
-            const newMobileMenu = doc.querySelector('#mobile-menu');
-            const currentMobileMenu = document.querySelector('#mobile-menu');
-            if (newMobileMenu && currentMobileMenu) {
-                currentMobileMenu.innerHTML = newMobileMenu.innerHTML;
-            }
-            
-            // به‌روزرسانی URL بدون ریلود
-            window.history.pushState({ lang: lang }, '', url.toString());
         })
         .catch(error => {
-            console.log('Error fetching content:', error);
-            // در صورت خطا، ریلود معمولی انجام می‌شود
+            console.error('Error fetching content:', error);
             window.location.href = url.toString();
         });
     });
