@@ -157,9 +157,62 @@ def submit_product_consultation(request):
     return JsonResponse({'success': False, 'message': 'متد نامعتبر'}, status=405)
 
 
+def category_list_view(request):
+    """نمایش لیست تمام دسته‌بندی‌ها"""
+    from django.utils.translation import get_language
+    from .models import StaticText, SiteSettings
+
+    categories = Category.objects.filter(parent__isnull=True)
+    
+    # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
+    current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
+    lang_map = {
+        'fa-ir': 'fa',
+        'en-us': 'en',
+        'ar': 'ar',
+        'ru': 'ru',
+        'fa': 'fa',
+        'en': 'en',
+    }
+    current_lang = lang_map.get(current_lang.lower(), 'fa')
+    request.session['language'] = current_lang
+
+    # بارگذاری تنظیمات سایت
+    try:
+        settings = SiteSettings.objects.first()
+    except:
+        settings = None
+
+    # بارگذاری متون استاتیک
+    static_texts = {}
+    for key in [
+        'categories_title', 'categories_subtitle', 'view_products', 'details',
+        'category_placeholder_title', 'category_placeholder_desc',
+    ]:
+        try:
+            static_obj = StaticText.objects.get(key=key)
+            field_name = f'text_{current_lang}'
+            text = getattr(static_obj, field_name, None)
+            if not text and current_lang != 'fa':
+                text = getattr(static_obj, 'text_fa', '')
+            static_texts[key] = text or static_obj.default_text or ''
+        except StaticText.DoesNotExist:
+            static_texts[key] = ''
+
+    context = {
+        'categories': categories,
+        'current_lang': current_lang,
+        'static_texts': static_texts,
+        'settings': settings,
+    }
+    
+    return render(request, 'main/category_list.html', context)
+
+
 def category_detail_view(request, slug):
     """نمایش جزئیات دسته‌بندی و محصولات آن"""
     from django.utils.translation import get_language
+    from .models import StaticText, SiteSettings
 
     category = get_object_or_404(Category, slug=slug)
     products = Product.objects.filter(category=category, is_in_stock=True).select_related('currency')
@@ -178,12 +231,36 @@ def category_detail_view(request, slug):
     current_lang = lang_map.get(current_lang.lower(), 'fa')
     request.session['language'] = current_lang
 
+    # بارگذاری تنظیمات سایت
+    try:
+        settings = SiteSettings.objects.first()
+    except:
+        settings = None
+
+    # بارگذاری متون استاتیک
+    static_texts = {}
+    for key in [
+        'categories_title', 'categories_subtitle', 'view_products', 'details',
+        'product_placeholder_price', 'product_placeholder_title', 'product_placeholder_desc',
+    ]:
+        try:
+            static_obj = StaticText.objects.get(key=key)
+            field_name = f'text_{current_lang}'
+            text = getattr(static_obj, field_name, None)
+            if not text and current_lang != 'fa':
+                text = getattr(static_obj, 'text_fa', '')
+            static_texts[key] = text or static_obj.default_text or ''
+        except StaticText.DoesNotExist:
+            static_texts[key] = ''
+
     context = {
         'category': category,
         'products': products,
         'products_count': products.count(),
         'child_categories': child_categories,
         'current_lang': current_lang,
+        'static_texts': static_texts,
+        'settings': settings,
     }
     
     return render(request, 'main/category_detail.html', context)

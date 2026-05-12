@@ -1,7 +1,7 @@
 from django.urls import path, include
 from django.conf.urls.i18n import set_language
 from .views import (
-    home_view, category_detail_view, product_detail_view, product_list_view, 
+    home_view, category_list_view, category_detail_view, product_detail_view, product_list_view, 
     submit_product_consultation, project_list_view, project_detail_view,
     article_list_view, article_detail_view, contact_view, search_ajax
 )
@@ -10,8 +10,9 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('i18n/setlang/', set_language, name='set_language'),
     path('', home_view, name='home'),
-    path('products/', product_list_view, name='product_list'),
+    path('categories/', category_list_view, name='category_list'),
     path('category/<str:slug>/', category_detail_view, name='category_detail'),
+    path('products/', product_list_view, name='product_list'),
     path('product/<str:slug>/', product_detail_view, name='product_detail'),
     path('projects/', project_list_view, name='project_list'),
     path('project/<str:slug>/', project_detail_view, name='project_detail'),
