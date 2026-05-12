@@ -78,7 +78,7 @@ def site_settings(request):
         'hero_badge_warranty', 'hero_badge_warranty_value', 'hero_badge_support', 'hero_badge_support_value',
         'categories_title', 'categories_subtitle',
         'view_products', 'category_placeholder_title', 'category_placeholder_desc',
-        'products_title', 'products_subtitle', 'contact_us', 'details',
+        'products_title', 'products_subtitle', 'contact_us', 'details', 'view_details',
         'product_placeholder_price', 'product_placeholder_title', 'product_placeholder_desc',
         'view_all_products',
         'articles_title', 'articles_subtitle', 'read_more', 'article_placeholder_title', 'article_placeholder_desc',
@@ -96,6 +96,8 @@ def site_settings(request):
         'not_in_stock',
         'footer_about', 'footer_quick_links', 'footer_contact_info', 'footer_location', 'google_map', 'footer_copyright',
         'main_branch', 'send_message',
+        'home_menu_home', 'home_menu_categories', 'home_menu_products', 'home_menu_articles', 'home_menu_projects', 'home_menu_contact',
+        'search_placeholder', 'no_results',
     ]:
         static_texts[key] = get_text_by_key(key, lang)
 

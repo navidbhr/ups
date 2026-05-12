@@ -103,7 +103,7 @@
                         </svg>
                         <span class="line-clamp-1">{{ related.get_location }}</span>
                     </div>
-                    <a href="{% url 'project_detail' related.slug %}" class="text-primary-500 hover:text-primary-600 text-sm font-medium transition-colors">
+                    <a href="{% url 'project_detail' related.slug %}?lang={{ current_lang }}" class="text-primary-500 hover:text-primary-600 text-sm font-medium transition-colors">
                         {{ static_texts.view_details|default:'مشاهده جزئیات' }}
                     </a>
                 </div>
