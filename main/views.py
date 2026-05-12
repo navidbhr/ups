@@ -258,6 +258,7 @@ def product_list_view(request):
 def project_list_view(request):
     """نمایش لیست پروژه‌ها"""
     from django.utils.translation import get_language
+    from .models import StaticText, SiteSettings
 
     projects = Project.objects.filter(is_published=True).order_by('order', '-created_at')
     
@@ -274,9 +275,32 @@ def project_list_view(request):
     current_lang = lang_map.get(current_lang.lower(), 'fa')
     request.session['language'] = current_lang
 
+    # بارگذاری تنظیمات سایت
+    try:
+        settings = SiteSettings.objects.first()
+    except:
+        settings = None
+
+    # بارگذاری متون استاتیک
+    static_texts = {}
+    for key in [
+        'projects_title', 'projects_subtitle', 'details', 'no_results',
+    ]:
+        try:
+            static_obj = StaticText.objects.get(key=key)
+            field_name = f'text_{current_lang}'
+            text = getattr(static_obj, field_name, None)
+            if not text and current_lang != 'fa':
+                text = getattr(static_obj, 'text_fa', '')
+            static_texts[key] = text or static_obj.default_text or ''
+        except StaticText.DoesNotExist:
+            static_texts[key] = ''
+
     context = {
         'projects': projects,
         'current_lang': current_lang,
+        'static_texts': static_texts,
+        'settings': settings,
     }
     
     return render(request, 'main/project_list.html', context)
@@ -285,6 +309,7 @@ def project_list_view(request):
 def project_detail_view(request, slug):
     """نمایش جزئیات پروژه"""
     from django.utils.translation import get_language
+    from .models import StaticText, SiteSettings
 
     project = get_object_or_404(Project, slug=slug)
     
@@ -306,10 +331,33 @@ def project_detail_view(request, slug):
     current_lang = lang_map.get(current_lang.lower(), 'fa')
     request.session['language'] = current_lang
 
+    # بارگذاری تنظیمات سایت
+    try:
+        settings = SiteSettings.objects.first()
+    except:
+        settings = None
+
+    # بارگذاری متون استاتیک
+    static_texts = {}
+    for key in [
+        'projects_title', 'about_project', 'back_to_projects', 'related_projects', 'view_details',
+    ]:
+        try:
+            static_obj = StaticText.objects.get(key=key)
+            field_name = f'text_{current_lang}'
+            text = getattr(static_obj, field_name, None)
+            if not text and current_lang != 'fa':
+                text = getattr(static_obj, 'text_fa', '')
+            static_texts[key] = text or static_obj.default_text or ''
+        except StaticText.DoesNotExist:
+            static_texts[key] = ''
+
     context = {
         'project': project,
         'related_projects': related_projects,
         'current_lang': current_lang,
+        'static_texts': static_texts,
+        'settings': settings,
     }
     
     return render(request, 'main/project_detail.html', context)
@@ -318,6 +366,7 @@ def project_detail_view(request, slug):
 def article_list_view(request):
     """نمایش لیست مقالات"""
     from django.utils.translation import get_language
+    from .models import StaticText, SiteSettings
 
     articles = Article.objects.filter(is_published=True).order_by('-created_at')
     categories = BlogCategory.objects.all()
@@ -343,11 +392,35 @@ def article_list_view(request):
     current_lang = lang_map.get(current_lang.lower(), 'fa')
     request.session['language'] = current_lang
 
+    # بارگذاری تنظیمات سایت
+    try:
+        settings = SiteSettings.objects.first()
+    except:
+        settings = None
+
+    # بارگذاری متون استاتیک
+    static_texts = {}
+    for key in [
+        'articles_title', 'articles_subtitle', 'categories', 'all_categories', 
+        'read_more', 'no_results',
+    ]:
+        try:
+            static_obj = StaticText.objects.get(key=key)
+            field_name = f'text_{current_lang}'
+            text = getattr(static_obj, field_name, None)
+            if not text and current_lang != 'fa':
+                text = getattr(static_obj, 'text_fa', '')
+            static_texts[key] = text or static_obj.default_text or ''
+        except StaticText.DoesNotExist:
+            static_texts[key] = ''
+
     context = {
         'articles': articles,
         'categories': categories,
         'current_category': category,
         'current_lang': current_lang,
+        'static_texts': static_texts,
+        'settings': settings,
     }
     
     return render(request, 'main/article_list.html', context)
@@ -356,6 +429,7 @@ def article_list_view(request):
 def article_detail_view(request, slug):
     """نمایش جزئیات مقاله"""
     from django.utils.translation import get_language
+    from .models import StaticText, SiteSettings
 
     article = get_object_or_404(Article, slug=slug)
     
@@ -378,10 +452,33 @@ def article_detail_view(request, slug):
     current_lang = lang_map.get(current_lang.lower(), 'fa')
     request.session['language'] = current_lang
 
+    # بارگذاری تنظیمات سایت
+    try:
+        settings = SiteSettings.objects.first()
+    except:
+        settings = None
+
+    # بارگذاری متون استاتیک
+    static_texts = {}
+    for key in [
+        'articles_title', 'back_to_articles', 'related_articles', 'no_related',
+    ]:
+        try:
+            static_obj = StaticText.objects.get(key=key)
+            field_name = f'text_{current_lang}'
+            text = getattr(static_obj, field_name, None)
+            if not text and current_lang != 'fa':
+                text = getattr(static_obj, 'text_fa', '')
+            static_texts[key] = text or static_obj.default_text or ''
+        except StaticText.DoesNotExist:
+            static_texts[key] = ''
+
     context = {
         'article': article,
         'related_articles': related_articles,
         'current_lang': current_lang,
+        'static_texts': static_texts,
+        'settings': settings,
     }
     
     return render(request, 'main/article_detail.html', context)
