@@ -40,7 +40,7 @@ INSTALLED_APPS = [
 
     # Third-party Apps
     'django_ckeditor_5',
-    # 'tailwind',  # Commented out as it's not installed
+    'tailwind',  # Commented out as it's not installed
     'theme',
 
 

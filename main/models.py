@@ -361,7 +361,7 @@ class BlogCategory(TimeStampedModel):
 class Article(TimeStampedModel):
     category = models.ForeignKey(BlogCategory, on_delete=models.SET_NULL, null=True, related_name='articles', verbose_name=_("دسته‌بندی"))
     
-    title_fa = models.CharField(max_length=250, verbose_name=_("عنوان مقاله (فارسی)"))
+    title_fa = models.CharField(max_length=250, verbose_name=_("عنوان مقاله (فارسی)"), default='')
     title_en = models.CharField(max_length=250, blank=True, verbose_name=_("Title (English)"))
     title_ar = models.CharField(max_length=250, blank=True, verbose_name=_("العنوان (عربی)"))
     title_ru = models.CharField(max_length=250, blank=True, verbose_name=_("Название (روسی)"))
@@ -369,7 +369,7 @@ class Article(TimeStampedModel):
     slug = models.SlugField(unique=True, allow_unicode=True, blank=True, verbose_name=_("نامک"))
     image = models.ImageField(upload_to='blog/', verbose_name=_("تصویر شاخص"))
     
-    content_fa = CKEditor5Field('محتوا (فارسی)', config_name='extends')
+    content_fa = CKEditor5Field('محتوا (فارسی)', config_name='extends', default='')
     content_en = CKEditor5Field('محتوا (English)', config_name='extends', blank=True, null=True)
     content_ar = CKEditor5Field('المحتوى (عربی)', config_name='extends', blank=True, null=True)
     content_ru = CKEditor5Field('Контент (روسی)', config_name='extends', blank=True, null=True)
@@ -501,19 +501,19 @@ class Partner(models.Model):
 
 
 class Project(TimeStampedModel):
-    title_fa = models.CharField(max_length=200, verbose_name=_("عنوان (فارسی)"))
+    title_fa = models.CharField(max_length=200, verbose_name=_("عنوان (فارسی)"), default='')
     title_en = models.CharField(max_length=200, blank=True, verbose_name=_("Title (English)"))
     title_ar = models.CharField(max_length=200, blank=True, verbose_name=_("العنوان (عربی)"))
     title_ru = models.CharField(max_length=200, blank=True, verbose_name=_("Название (روسی)"))
     
-    location_fa = models.CharField(max_length=100, verbose_name=_("محل اجرا (فارسی)"))
+    location_fa = models.CharField(max_length=100, verbose_name=_("محل اجرا (فارسی)"), default='')
     location_en = models.CharField(max_length=100, blank=True, verbose_name=_("Location (English)"))
     location_ar = models.CharField(max_length=100, blank=True, verbose_name=_("الموقع (عربی)"))
     location_ru = models.CharField(max_length=100, blank=True, verbose_name=_("Местоположение (روسی)"))
     
     image = models.ImageField(upload_to='projects/', verbose_name=_("تصویر"))
     
-    description_fa = models.TextField(verbose_name=_("توضیحات (فارسی)"))
+    description_fa = models.TextField(verbose_name=_("توضیحات (فارسی)"), default='')
     description_en = models.TextField(blank=True, verbose_name=_("Description (English)"))
     description_ar = models.TextField(blank=True, verbose_name=_("الوصف (عربی)"))
     description_ru = models.TextField(blank=True, verbose_name=_("Описание (روسی)"))
