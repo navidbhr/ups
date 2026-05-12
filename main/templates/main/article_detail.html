@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static custom_filters %}
+
+{% block title %}{{ article.get_title }} - {{ static_texts.articles_title|default:'مقالات' }}{% endblock %}
+
+{% block content %}
+<!-- Article Detail Header -->
+<section class="pt-32 pb-16 bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto" data-aos="fade-up">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center gap-2 text-sm mb-8 text-gray-600 dark:text-gray-400">
+                <a href="/" class="hover:text-primary-500 transition-colors">{{ settings.site_name|default:'برهان یو پی اس' }}</a>
+                <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <a href="{% url 'article_list' %}" class="hover:text-primary-500 transition-colors">{{ static_texts.articles_title|default:'مقالات' }}</a>
+                <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                {% if article.category %}
+                <a href="?category={{ article.category.slug }}" class="hover:text-primary-500 transition-colors">{{ article.category.title }}</a>
+                <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                {% endif %}
+                <span class="text-gray-900 dark:text-white font-medium line-clamp-1">{{ article.get_title }}</span>
+            </nav>
+            
+            <!-- Article Title & Meta -->
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">{{ article.get_title }}</h1>
+            <div class="flex flex-wrap items-center gap-6 text-gray-600 dark:text-gray-400 mb-8">
+                {% if article.category %}
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                    <span>{{ article.category.title }}</span>
+                </div>
+                {% endif %}
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <span>{{ article.created_at|date:"Y/m/d" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Article Main Content -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Article Image & Content -->
+            <div class="lg:col-span-2" data-aos="fade-right">
+                {% if article.image %}
+                <img src="{{ article.image.url }}" alt="{{ article.get_title }}" class="w-full h-auto rounded-2xl shadow-2xl mb-8">
+                {% endif %}
+                
+                <!-- Article Content -->
+                <div class="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
+                    {{ article.get_content|safe }}
+                </div>
+                
+                <!-- Back to Articles Button -->
+                <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+                    <a href="{% url 'article_list' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        <svg class="w-5 h-5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                        {{ static_texts.back_to_articles|default:'بازگشت به لیست مقالات' }}
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <aside class="lg:col-span-1" data-aos="fade-left">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 sticky top-24">
+                    <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">{{ static_texts.related_articles|default:'مقالات مرتبط' }}</h3>
+                    {% if related_articles %}
+                    <div class="space-y-4">
+                        {% for related in related_articles %}
+                        <a href="{% url 'article_detail' related.slug %}" class="block group">
+                            <div class="flex gap-3">
+                                {% if related.image %}
+                                <img src="{{ related.image.url }}" alt="{{ related.get_title }}" class="w-20 h-20 object-cover rounded-lg flex-shrink-0">
+                                {% else %}
+                                <div class="w-20 h-20 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-8 h-8 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                                    </svg>
+                                </div>
+                                {% endif %}
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors line-clamp-2 text-sm">
+                                        {{ related.get_title }}
+                                    </h4>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400 mt-1 block">
+                                        {{ related.created_at|date:"Y/m/d" }}
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ static_texts.no_related|default:'مقاله مرتبط یافت نشد' }}</p>
+                    {% endif %}
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+{% endblock %}

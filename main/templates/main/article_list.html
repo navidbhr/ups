@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static custom_filters %}
+
+{% block title %}{% if current_category %}{{ current_category.title }} - {% endif %}{{ static_texts.articles_title|default:'مقالات' }} - {{ settings.site_name|default:'برهان یو پی اس' }}{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="pt-32 pb-16 bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div class="container mx-auto px-4">
+        <div class="text-center max-w-3xl mx-auto" data-aos="fade-up">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">{{ static_texts.articles_title|default:'مقالات و اخبار' }}</h1>
+            <p class="text-lg text-gray-700 dark:text-gray-300">{{ static_texts.articles_subtitle|default:'آخرین مقالات، اخبار و آموزش‌های تخصصی در زمینه UPS و برق اضطراری' }}</p>
+        </div>
+    </div>
+</section>
+
+<!-- Articles Content -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Sidebar - Categories -->
+            <aside class="lg:col-span-1" data-aos="fade-left">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 sticky top-24">
+                    <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">{{ static_texts.categories|default:'دسته‌بندی‌ها' }}</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="{% url 'article_list' %}" class="block px-4 py-2 rounded-lg {% if not current_category %}bg-primary-500 text-white{% else %}hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %} transition-colors">
+                                {{ static_texts.all_categories|default:'همه دسته‌بندی‌ها' }}
+                            </a>
+                        </li>
+                        {% for category in categories %}
+                        <li>
+                            <a href="?category={{ category.slug }}" class="block px-4 py-2 rounded-lg {% if current_category == category %}bg-primary-500 text-white{% else %}hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300{% endif %} transition-colors">
+                                {{ category.title }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </aside>
+            
+            <!-- Articles Grid -->
+            <div class="lg:col-span-3">
+                {% if articles %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {% for article in articles %}
+                    <div class="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|mul:100 }}">
+                        <!-- Article Image -->
+                        <div class="relative overflow-hidden aspect-video">
+                            {% if article.image %}
+                            <img src="{{ article.image.url }}" alt="{{ article.get_title }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                            {% else %}
+                            <div class="w-full h-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+                                <svg class="w-20 h-20 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                                </svg>
+                            </div>
+                            {% endif %}
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        </div>
+                        
+                        <!-- Article Info -->
+                        <div class="p-6">
+                            {% if article.category %}
+                            <span class="inline-block px-3 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 rounded-full mb-3">
+                                {{ article.category.title }}
+                            </span>
+                            {% endif %}
+                            <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors line-clamp-2">
+                                {{ article.get_title }}
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                                {{ article.get_content|striptags|truncatewords:20 }}
+                            </p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-500 dark:text-gray-400">
+                                    {{ article.created_at|date:"Y/m/d" }}
+                                </span>
+                                <a href="{% url 'article_detail' article.slug %}" class="inline-flex items-center gap-2 text-primary-500 hover:text-primary-600 font-medium transition-colors text-sm">
+                                    {{ static_texts.read_more|default:'ادامه مطلب' }}
+                                    <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-16">
+                    <svg class="w-24 h-24 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                    </svg>
+                    <p class="text-xl text-gray-600 dark:text-gray-400">{{ static_texts.no_results|default:'هیچ مقاله‌ای یافت نشد' }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

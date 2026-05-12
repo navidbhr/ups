@@ -360,13 +360,31 @@ class BlogCategory(TimeStampedModel):
 
 class Article(TimeStampedModel):
     category = models.ForeignKey(BlogCategory, on_delete=models.SET_NULL, null=True, related_name='articles', verbose_name=_("دسته‌بندی"))
-    title = models.CharField(max_length=250, verbose_name=_("عنوان مقاله"))
+    
+    title_fa = models.CharField(max_length=250, verbose_name=_("عنوان مقاله (فارسی)"))
+    title_en = models.CharField(max_length=250, blank=True, verbose_name=_("Title (English)"))
+    title_ar = models.CharField(max_length=250, blank=True, verbose_name=_("العنوان (عربی)"))
+    title_ru = models.CharField(max_length=250, blank=True, verbose_name=_("Название (روسی)"))
+    
     slug = models.SlugField(unique=True, allow_unicode=True, blank=True, verbose_name=_("نامک"))
     image = models.ImageField(upload_to='blog/', verbose_name=_("تصویر شاخص"))
-    content = CKEditor5Field('محتوا', config_name='extends')
+    
+    content_fa = CKEditor5Field('محتوا (فارسی)', config_name='extends')
+    content_en = CKEditor5Field('محتوا (English)', config_name='extends', blank=True, null=True)
+    content_ar = CKEditor5Field('المحتوى (عربی)', config_name='extends', blank=True, null=True)
+    content_ru = CKEditor5Field('Контент (روسی)', config_name='extends', blank=True, null=True)
+    
     is_published = models.BooleanField(default=True, verbose_name=_("منتشر شده"))
-    meta_title = models.CharField(max_length=60, null=True, blank=True, verbose_name=_("عنوان سئو"))
-    meta_description = models.CharField(max_length=160, null=True, blank=True, verbose_name=_("توضیحات متا"))
+    
+    meta_title_fa = models.CharField(max_length=60, null=True, blank=True, verbose_name=_("عنوان سئو (فارسی)"))
+    meta_title_en = models.CharField(max_length=60, null=True, blank=True, verbose_name=_("SEO Title (English)"))
+    meta_title_ar = models.CharField(max_length=60, null=True, blank=True, verbose_name=_("عنوان سئو (عربی)"))
+    meta_title_ru = models.CharField(max_length=60, null=True, blank=True, verbose_name=_("SEO Title (روسی)"))
+    
+    meta_description_fa = models.CharField(max_length=160, null=True, blank=True, verbose_name=_("توضیحات متا (فارسی)"))
+    meta_description_en = models.CharField(max_length=160, null=True, blank=True, verbose_name=_("Meta Description (English)"))
+    meta_description_ar = models.CharField(max_length=160, null=True, blank=True, verbose_name=_("وصف ميتا (عربی)"))
+    meta_description_ru = models.CharField(max_length=160, null=True, blank=True, verbose_name=_("Мета-описание (روسی)"))
 
     class Meta:
         verbose_name = _("مقاله")
@@ -374,8 +392,65 @@ class Article(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = generate_unique_slug(Article, self.title, self.pk)
+            # استفاده از عنوان فارسی برای تولید slug
+            self.slug = generate_unique_slug(Article, self.title_fa, self.pk)
         super().save(*args, **kwargs)
+    
+    def get_title(self, lang_code='fa'):
+        """دریافت عنوان بر اساس زبان"""
+        field_map = {
+            'fa': 'title_fa',
+            'en': 'title_en',
+            'ar': 'title_ar',
+            'ru': 'title_ru',
+        }
+        field_name = field_map.get(lang_code, 'title_fa')
+        text = getattr(self, field_name, None)
+        if not text:
+            text = self.title_fa
+        return text or ''
+    
+    def get_content(self, lang_code='fa'):
+        """دریافت محتوا بر اساس زبان"""
+        field_map = {
+            'fa': 'content_fa',
+            'en': 'content_en',
+            'ar': 'content_ar',
+            'ru': 'content_ru',
+        }
+        field_name = field_map.get(lang_code, 'content_fa')
+        text = getattr(self, field_name, None)
+        if not text:
+            text = self.content_fa
+        return text or ''
+    
+    def get_meta_title(self, lang_code='fa'):
+        """دریافت عنوان سئو بر اساس زبان"""
+        field_map = {
+            'fa': 'meta_title_fa',
+            'en': 'meta_title_en',
+            'ar': 'meta_title_ar',
+            'ru': 'meta_title_ru',
+        }
+        field_name = field_map.get(lang_code, 'meta_title_fa')
+        text = getattr(self, field_name, None)
+        if not text:
+            text = self.meta_title_fa
+        return text or ''
+    
+    def get_meta_description(self, lang_code='fa'):
+        """دریافت توضیحات متا بر اساس زبان"""
+        field_map = {
+            'fa': 'meta_description_fa',
+            'en': 'meta_description_en',
+            'ar': 'meta_description_ar',
+            'ru': 'meta_description_ru',
+        }
+        field_name = field_map.get(lang_code, 'meta_description_fa')
+        text = getattr(self, field_name, None)
+        if not text:
+            text = self.meta_description_fa
+        return text or ''
 
 
 # --- سایر بخش‌های برندینگ ---
@@ -426,16 +501,72 @@ class Partner(models.Model):
 
 
 class Project(TimeStampedModel):
-    title = models.CharField(max_length=200, verbose_name=_("عنوان"))
-    location = models.CharField(max_length=100, verbose_name=_("محل اجرا"))
+    title_fa = models.CharField(max_length=200, verbose_name=_("عنوان (فارسی)"))
+    title_en = models.CharField(max_length=200, blank=True, verbose_name=_("Title (English)"))
+    title_ar = models.CharField(max_length=200, blank=True, verbose_name=_("العنوان (عربی)"))
+    title_ru = models.CharField(max_length=200, blank=True, verbose_name=_("Название (روسی)"))
+    
+    location_fa = models.CharField(max_length=100, verbose_name=_("محل اجرا (فارسی)"))
+    location_en = models.CharField(max_length=100, blank=True, verbose_name=_("Location (English)"))
+    location_ar = models.CharField(max_length=100, blank=True, verbose_name=_("الموقع (عربی)"))
+    location_ru = models.CharField(max_length=100, blank=True, verbose_name=_("Местоположение (روسی)"))
+    
     image = models.ImageField(upload_to='projects/', verbose_name=_("تصویر"))
-    description = models.TextField(verbose_name=_("توضیحات"))
+    
+    description_fa = models.TextField(verbose_name=_("توضیحات (فارسی)"))
+    description_en = models.TextField(blank=True, verbose_name=_("Description (English)"))
+    description_ar = models.TextField(blank=True, verbose_name=_("الوصف (عربی)"))
+    description_ru = models.TextField(blank=True, verbose_name=_("Описание (روسی)"))
+    
     order = models.PositiveIntegerField(default=0, verbose_name=_("ترتیب"))
-
+    is_published = models.BooleanField(default=True, verbose_name=_("منتشر شده"))
+    
     class Meta:
         ordering = ['order', '-created_at']
         verbose_name = _("پروژه موفق")
         verbose_name_plural = _("پروژه‌ها")
+    
+    def get_title(self, lang_code='fa'):
+        """دریافت عنوان بر اساس زبان"""
+        field_map = {
+            'fa': 'title_fa',
+            'en': 'title_en',
+            'ar': 'title_ar',
+            'ru': 'title_ru',
+        }
+        field_name = field_map.get(lang_code, 'title_fa')
+        text = getattr(self, field_name, None)
+        if not text:
+            text = self.title_fa
+        return text or ''
+    
+    def get_location(self, lang_code='fa'):
+        """دریافت محل اجرا بر اساس زبان"""
+        field_map = {
+            'fa': 'location_fa',
+            'en': 'location_en',
+            'ar': 'location_ar',
+            'ru': 'location_ru',
+        }
+        field_name = field_map.get(lang_code, 'location_fa')
+        text = getattr(self, field_name, None)
+        if not text:
+            text = self.location_fa
+        return text or ''
+    
+    def get_description(self, lang_code='fa'):
+        """دریافت توضیحات بر اساس زبان"""
+        field_map = {
+            'fa': 'description_fa',
+            'en': 'description_en',
+            'ar': 'description_ar',
+            'ru': 'description_ru',
+        }
+        field_name = field_map.get(lang_code, 'description_fa')
+        text = getattr(self, field_name, None)
+        if not text:
+            text = self.description_fa
+        return text or ''
 
 
 class FAQ(models.Model):

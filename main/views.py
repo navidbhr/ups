@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-from main.models import Product, Category, Article, Project, Partner, ProductConsultationRequest
+from main.models import Product, Category, Article, Project, Partner, ProductConsultationRequest, BlogCategory
 
 
 def home_view(request):
@@ -94,7 +94,7 @@ def home_view(request):
         'form_message_label', 'form_message_placeholder',
         'form_submit',
         'contact_info_title', 'contact_address_label', 'contact_phone_label', 'contact_email_label',
-        'not_in_stock',
+        'not_in_stock', 'search_placeholder', 'no_results',
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)
@@ -253,3 +253,302 @@ def product_list_view(request):
     }
     
     return render(request, 'main/product_list.html', context)
+
+
+def project_list_view(request):
+    """نمایش لیست پروژه‌ها"""
+    from django.utils.translation import get_language
+
+    projects = Project.objects.filter(is_published=True).order_by('order', '-created_at')
+    
+    # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
+    current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
+    lang_map = {
+        'fa-ir': 'fa',
+        'en-us': 'en',
+        'ar': 'ar',
+        'ru': 'ru',
+        'fa': 'fa',
+        'en': 'en',
+    }
+    current_lang = lang_map.get(current_lang.lower(), 'fa')
+    request.session['language'] = current_lang
+
+    context = {
+        'projects': projects,
+        'current_lang': current_lang,
+    }
+    
+    return render(request, 'main/project_list.html', context)
+
+
+def project_detail_view(request, slug):
+    """نمایش جزئیات پروژه"""
+    from django.utils.translation import get_language
+
+    project = get_object_or_404(Project, slug=slug)
+    
+    # پروژه‌های مرتبط (سایر پروژه‌ها)
+    related_projects = Project.objects.filter(
+        is_published=True
+    ).exclude(pk=project.pk).order_by('order', '-created_at')[:4]
+    
+    # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
+    current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
+    lang_map = {
+        'fa-ir': 'fa',
+        'en-us': 'en',
+        'ar': 'ar',
+        'ru': 'ru',
+        'fa': 'fa',
+        'en': 'en',
+    }
+    current_lang = lang_map.get(current_lang.lower(), 'fa')
+    request.session['language'] = current_lang
+
+    context = {
+        'project': project,
+        'related_projects': related_projects,
+        'current_lang': current_lang,
+    }
+    
+    return render(request, 'main/project_detail.html', context)
+
+
+def article_list_view(request):
+    """نمایش لیست مقالات"""
+    from django.utils.translation import get_language
+
+    articles = Article.objects.filter(is_published=True).order_by('-created_at')
+    categories = BlogCategory.objects.all()
+    
+    # فیلتر بر اساس دسته‌بندی
+    category_slug = request.GET.get('category')
+    if category_slug:
+        category = get_object_or_404(BlogCategory, slug=category_slug)
+        articles = articles.filter(category=category)
+    else:
+        category = None
+    
+    # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
+    current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
+    lang_map = {
+        'fa-ir': 'fa',
+        'en-us': 'en',
+        'ar': 'ar',
+        'ru': 'ru',
+        'fa': 'fa',
+        'en': 'en',
+    }
+    current_lang = lang_map.get(current_lang.lower(), 'fa')
+    request.session['language'] = current_lang
+
+    context = {
+        'articles': articles,
+        'categories': categories,
+        'current_category': category,
+        'current_lang': current_lang,
+    }
+    
+    return render(request, 'main/article_list.html', context)
+
+
+def article_detail_view(request, slug):
+    """نمایش جزئیات مقاله"""
+    from django.utils.translation import get_language
+
+    article = get_object_or_404(Article, slug=slug)
+    
+    # مقالات مرتبط (همان دسته‌بندی به جز مقاله فعلی)
+    related_articles = Article.objects.filter(
+        category=article.category,
+        is_published=True
+    ).exclude(pk=article.pk).order_by('-created_at')[:4]
+    
+    # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
+    current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
+    lang_map = {
+        'fa-ir': 'fa',
+        'en-us': 'en',
+        'ar': 'ar',
+        'ru': 'ru',
+        'fa': 'fa',
+        'en': 'en',
+    }
+    current_lang = lang_map.get(current_lang.lower(), 'fa')
+    request.session['language'] = current_lang
+
+    context = {
+        'article': article,
+        'related_articles': related_articles,
+        'current_lang': current_lang,
+    }
+    
+    return render(request, 'main/article_detail.html', context)
+
+
+def contact_view(request):
+    """نمایش صفحه تماس با ما"""
+    from django.utils.translation import get_language
+    from .models import Branch, StaticText, SiteSettings
+
+    branches = Branch.objects.filter(is_active=True)
+    
+    # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
+    current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
+    lang_map = {
+        'fa-ir': 'fa',
+        'en-us': 'en',
+        'ar': 'ar',
+        'ru': 'ru',
+        'fa': 'fa',
+        'en': 'en',
+    }
+    current_lang = lang_map.get(current_lang.lower(), 'fa')
+    request.session['language'] = current_lang
+
+    # بارگذاری تنظیمات سایت
+    try:
+        settings = SiteSettings.objects.first()
+    except:
+        settings = None
+
+    # بارگذاری متون استاتیک برای صفحه تماس
+    static_texts = {}
+    for key in [
+        'contact_title', 'contact_subtitle',
+        'form_name_label', 'form_name_placeholder',
+        'form_phone_label', 'form_phone_placeholder',
+        'form_company_label', 'form_company_placeholder',
+        'form_power_label', 'form_power_placeholder',
+        'form_message_label', 'form_message_placeholder',
+        'form_submit',
+        'contact_info_title', 'contact_address_label', 'contact_phone_label', 'contact_email_label',
+        'whatsapp',
+    ]:
+        try:
+            static_obj = StaticText.objects.get(key=key)
+            field_name = f'text_{current_lang}'
+            text = getattr(static_obj, field_name, None)
+            if not text and current_lang != 'fa':
+                text = getattr(static_obj, 'text_fa', '')
+            static_texts[key] = text or static_obj.default_text or ''
+        except StaticText.DoesNotExist:
+            static_texts[key] = ''
+
+    context = {
+        'branches': branches,
+        'current_lang': current_lang,
+        'static_texts': static_texts,
+        'settings': settings,
+    }
+    
+    return render(request, 'main/contact.html', context)
+
+
+@csrf_exempt
+def search_ajax(request):
+    """جستجوی AJAX برای محصولات، مقالات و پروژه‌ها"""
+    from django.utils.translation import get_language
+    from django.db.models import Q
+
+    query = request.GET.get('q', '').strip()
+    
+    if not query:
+        return JsonResponse({'results': []})
+    
+    # دریافت زبان فعلی
+    current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
+    lang_map = {
+        'fa-ir': 'fa',
+        'en-us': 'en',
+        'ar': 'ar',
+        'ru': 'ru',
+        'fa': 'fa',
+        'en': 'en',
+    }
+    current_lang = lang_map.get(current_lang.lower(), 'fa')
+    
+    results = []
+    
+    # جستجو در محصولات
+    if current_lang == 'en':
+        products = Product.objects.filter(
+            Q(name__icontains=query) | Q(short_description__icontains=query),
+            is_in_stock=True
+        )[:5]
+    else:
+        products = Product.objects.filter(
+            Q(name__icontains=query) | Q(short_description__icontains=query),
+            is_in_stock=True
+        )[:5]
+    
+    for product in products:
+        results.append({
+            'type': 'product',
+            'title': product.name,
+            'url': f'/product/{product.slug}/',
+            'image': product.main_image.url if product.main_image else '',
+        })
+    
+    # جستجو در مقالات
+    if current_lang == 'en':
+        articles = Article.objects.filter(
+            Q(title_en__icontains=query) | Q(content_en__icontains=query),
+            is_published=True
+        )[:5]
+    elif current_lang == 'ar':
+        articles = Article.objects.filter(
+            Q(title_ar__icontains=query) | Q(content_ar__icontains=query),
+            is_published=True
+        )[:5]
+    elif current_lang == 'ru':
+        articles = Article.objects.filter(
+            Q(title_ru__icontains=query) | Q(content_ru__icontains=query),
+            is_published=True
+        )[:5]
+    else:
+        articles = Article.objects.filter(
+            Q(title_fa__icontains=query) | Q(content_fa__icontains=query),
+            is_published=True
+        )[:5]
+    
+    for article in articles:
+        results.append({
+            'type': 'article',
+            'title': article.get_title(current_lang),
+            'url': f'/article/{article.slug}/',
+            'image': article.image.url if article.image else '',
+        })
+    
+    # جستجو در پروژه‌ها
+    if current_lang == 'en':
+        projects = Project.objects.filter(
+            Q(title_en__icontains=query) | Q(description_en__icontains=query),
+            is_published=True
+        )[:5]
+    elif current_lang == 'ar':
+        projects = Project.objects.filter(
+            Q(title_ar__icontains=query) | Q(description_ar__icontains=query),
+            is_published=True
+        )[:5]
+    elif current_lang == 'ru':
+        projects = Project.objects.filter(
+            Q(title_ru__icontains=query) | Q(description_ru__icontains=query),
+            is_published=True
+        )[:5]
+    else:
+        projects = Project.objects.filter(
+            Q(title_fa__icontains=query) | Q(description_fa__icontains=query),
+            is_published=True
+        )[:5]
+    
+    for project in projects:
+        results.append({
+            'type': 'project',
+            'title': project.get_title(current_lang),
+            'url': f'/project/{project.slug}/',
+            'image': project.image.url if project.image else '',
+        })
+    
+    return JsonResponse({'results': results})
