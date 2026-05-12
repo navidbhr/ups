@@ -94,6 +94,8 @@ def site_settings(request):
         'form_submit',
         'contact_info_title', 'contact_address_label', 'contact_phone_label', 'contact_email_label',
         'not_in_stock',
+        'footer_about', 'footer_quick_links', 'footer_contact_info', 'footer_location', 'google_map', 'footer_copyright',
+        'main_branch',
     ]:
         static_texts[key] = get_text_by_key(key, lang)
 

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static custom_filters %}
+
+{% block title %}{{ static_texts.categories_title|default:'دسته‌بندی محصولات' }} - {{ settings.site_name|default:'برهان یو پی اس' }}{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="pt-32 pb-16 bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div class="container mx-auto px-4">
+        <div class="text-center max-w-3xl mx-auto" data-aos="fade-up">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">{{ static_texts.categories_title|default:'دسته‌بندی محصولات' }}</h1>
+            <p class="text-lg text-gray-700 dark:text-gray-300">{{ static_texts.categories_subtitle|default:'محصولات ما را بر اساس دسته‌بندی مشاهده کنید' }}</p>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Grid -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        {% if categories %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for category in categories %}
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|mul:100 }}">
+                {% if category.image %}
+                <img src="{{ category.image.url }}" alt="{{ category.title }}" class="w-full h-48 object-cover">
+                {% else %}
+                <div class="w-full h-48 bg-gradient-to-br from-primary-400 to-accent-400 flex items-center justify-center">
+                    <svg class="w-20 h-20 text-white opacity-80" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                </div>
+                {% endif %}
+                
+                <div class="p-6">
+                    <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">{{ category.title }}</h3>
+                    
+                    {% if category.description %}
+                    <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{{ category.description|truncatechars:100 }}</p>
+                    {% endif %}
+                    
+                    <a href="{% url 'category_detail' category.slug %}?lang={{ current_lang }}" 
+                       class="inline-flex items-center gap-2 text-primary-500 hover:text-primary-600 font-medium transition-colors">
+                        {{ static_texts.view_products|default:'مشاهده محصولات' }}
+                        <svg class="w-5 h-5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-16">
+            <p class="text-gray-500 dark:text-gray-400 text-lg">{{ static_texts.no_results|default:'دسته‌بندی یافت نشد.' }}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
