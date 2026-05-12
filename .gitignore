@@ -1,16 +1,15 @@
 ```
+# Database
+db.sqlite3
+
+# Static files
+static/js/main.js
+
 # Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
-# Django
-*.mo
-*.po~
-
-# Logs
-*.log
 
 # Environment
 .env
@@ -21,12 +20,34 @@ __pycache__/
 venv/
 .venv/
 .env/
+node_modules/
 
-# Editors
-.vscode/
-.idea/
+# Logs
+*.log
 
-# OS
+# OS generated files
 .DS_Store
 Thumbs.db
+
+# Coverage
+.coverage
+coverage/
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+target/
+.gradle/
+
+# Cache
+.mypy_cache/
+.pytest_cache/
 ```

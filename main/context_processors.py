@@ -100,7 +100,7 @@ def site_settings(request):
         'not_in_stock',
         'footer_about', 'footer_quick_links', 'footer_contact_info', 'footer_location', 'google_map', 'footer_copyright',
         'main_branch', 'send_message',
-        'home_menu_home', 'home_menu_categories', 'home_menu_products', 'home_menu_articles', 'home_menu_projects', 'home_menu_contact',
+        'menu_home', 'menu_categories', 'menu_products', 'menu_articles', 'menu_projects', 'menu_contact',
         'search_placeholder', 'no_results',
     ]:
         static_texts[key] = get_text_by_key(key, lang)

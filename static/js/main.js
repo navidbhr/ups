@@ -28,6 +28,7 @@ function changeLanguage(lang) {
         body: new URLSearchParams({ language: lang })
     }).then(() => {
         const url = new URL(window.location.href);
+        // حذف تمام پارامترهای lang قدیمی و اضافه کردن پارامتر جدید
         url.searchParams.delete('lang');
         url.searchParams.set('lang', lang);
         
