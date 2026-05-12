@@ -190,6 +190,36 @@ class Command(BaseCommand):
              'text_en': 'No results found', 'text_ar': 'لم يتم العثور على نتائج', 'text_ru': 'Rezultatov ne naydeno'},
             {'key': 'details', 'default_text': 'جزئیات بیشتر', 'text_fa': 'جزئیات بیشتر', 'text_en': 'More Details',
              'text_ar': 'المزيد من التفاصيل', 'text_ru': 'Podrobneye'},
+            # FAQ Section
+            {'key': 'faq_title', 'default_text': 'سوالات متداول', 'text_fa': 'سوالات متداول',
+             'text_en': 'Frequently Asked Questions', 'text_ar': 'الأسئلة الشائعة',
+             'text_ru': 'Часто задаваемые вопросы'},
+            {'key': 'faq_subtitle', 'default_text': 'پاسخ به پرسش‌های رایج درباره محصولات و خدمات ما',
+             'text_fa': 'پاسخ به پرسش‌های رایج درباره محصولات و خدمات ما',
+             'text_en': 'Answers to common questions about our products and services',
+             'text_ar': 'إجابات على الأسئلة الشائعة حول منتجاتنا وخدماتنا',
+             'text_ru': 'Ответы на частые вопросы о наших продуктах и услугах'},
+            {'key': 'faq_empty', 'default_text': 'سوالی ثبت نشده است.', 'text_fa': 'سوالی ثبت نشده است.',
+             'text_en': 'No FAQs recorded.', 'text_ar': 'لم يتم تسجيل أي أسئلة.',
+             'text_ru': 'Вопросы не зарегистрированы.'},
+
+            # Agents Section
+            {'key': 'agents_title', 'default_text': 'نمایندگان فروش', 'text_fa': 'نمایندگان فروش',
+             'text_en': 'Sales Representatives', 'text_ar': 'مندوبو المبيعات', 'text_ru': 'Торговые представители'},
+            {'key': 'agents_subtitle', 'default_text': 'دسترسی سریع به نمایندگان ما در سراسر کشور',
+             'text_fa': 'دسترسی سریع به نمایندگان ما در سراسر کشور',
+             'text_en': 'Quick access to our representatives nationwide',
+             'text_ar': 'وصول سريع إلى ممثلينا في جميع أنحاء البلاد',
+             'text_ru': 'Быстрый доступ к нашим представителям по всей стране'},
+            {'key': 'agents_map_link', 'default_text': 'مشاهده روی نقشه', 'text_fa': 'مشاهده روی نقشه',
+             'text_en': 'View on map', 'text_ar': 'عرض على الخريطة', 'text_ru': 'Посмотреть на карте'},
+            {'key': 'agents_empty', 'default_text': 'نماینده‌ای ثبت نشده است.', 'text_fa': 'نماینده‌ای ثبت نشده است.',
+             'text_en': 'No agents recorded.', 'text_ar': 'لم يتم تسجيل أي ممثلين.',
+             'text_ru': 'Представители не зарегистрированы.'},
+
+            # Base / Mobile Menu
+            {'key': 'mobile_menu_title', 'default_text': 'منوی دسترسی', 'text_fa': 'منوی دسترسی', 'text_en': 'Menu',
+             'text_ar': 'قائمة الوصول', 'text_ru': 'Меню доступа'},
         ]
 
         created_count = 0

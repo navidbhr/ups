@@ -107,7 +107,9 @@ def home_view(request):
         'form_message_label', 'form_message_placeholder',
         'form_submit',
         'contact_info_title', 'contact_address_label', 'contact_phone_label', 'contact_email_label',
-        'not_in_stock', 'search_placeholder', 'no_results',
+        'not_in_stock', 'search_placeholder', 'no_results','faq_title', 'faq_subtitle', 'faq_empty',
+        'agents_title', 'agents_subtitle', 'agents_map_link', 'agents_empty',
+        'mobile_menu_title',
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)
