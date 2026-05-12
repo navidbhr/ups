@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-from main.models import Product, Category, Article, Project, Partner, ProductConsultationRequest, BlogCategory
+from main.models import Product, Category, Article, Project, Partner, ProductConsultationRequest, BlogCategory, ContactMessage
 
 
 def home_view(request):
@@ -596,7 +596,7 @@ def contact_view(request):
         'form_company_label', 'form_company_placeholder',
         'form_power_label', 'form_power_placeholder',
         'form_message_label', 'form_message_placeholder',
-        'form_submit',
+        'form_submit', 'send_message', 'main_branch',
         'contact_info_title', 'contact_address_label', 'contact_phone_label', 'contact_email_label',
         'whatsapp',
     ]:
@@ -618,6 +618,34 @@ def contact_view(request):
     }
     
     return render(request, 'main/contact.html', context)
+
+
+@csrf_exempt
+def submit_contact_message(request):
+    """پردازش پیام ارسالی از صفحه تماس با ما"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            
+            contact_message = ContactMessage.objects.create(
+                full_name=data.get('full_name', ''),
+                phone_number=data.get('phone_number', ''),
+                company_name=data.get('company_name', ''),
+                power_required=data.get('power_required', ''),
+                message=data.get('message', '')
+            )
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'پیام شما با موفقیت ثبت شد. کارشناسان ما به زودی با شما تماس خواهند گرفت.'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': f'خطا در ثبت پیام: {str(e)}'
+            }, status=400)
+    
+    return JsonResponse({'success': False, 'message': 'متد نامعتبر'}, status=405)
 
 
 @csrf_exempt

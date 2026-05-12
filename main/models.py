@@ -468,6 +468,25 @@ class ConsultationRequest(TimeStampedModel):
         verbose_name_plural = _("درخواست‌های مشاوره")
 
 
+class ContactMessage(TimeStampedModel):
+    """مدل برای ذخیره پیام‌های ارسالی از صفحه تماس با ما"""
+    full_name = models.CharField(max_length=150, verbose_name=_("نام و نام خانوادگی"))
+    phone_number = models.CharField(max_length=20, verbose_name=_("شماره تماس"))
+    company_name = models.CharField(max_length=150, blank=True, verbose_name=_("نام شرکت"))
+    power_required = models.CharField(max_length=100, blank=True, verbose_name=_("توان مورد نیاز"))
+    message = models.TextField(verbose_name=_("پیام"))
+    is_read = models.BooleanField(default=False, verbose_name=_("خوانده شده"))
+    is_replied = models.BooleanField(default=False, verbose_name=_("پاسخ داده شده"))
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _("پیام تماس")
+        verbose_name_plural = _("پیام‌های تماس")
+
+    def __str__(self):
+        return f"{self.full_name} - {self.phone_number}"
+
+
 class ProductConsultationRequest(TimeStampedModel):
     """مدل برای درخواست مشاوره مخصوص هر محصول"""
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='consultation_requests', verbose_name=_("محصول"))
