@@ -77,6 +77,28 @@ function changeLanguage(lang) {
                 });
             }
             
+            // به‌روزرسانی دکمه‌های CTA در هدر
+            const newCtaDesktop = doc.querySelector('#header-cta-link');
+            const newCtaMobile = doc.querySelector('#mobile-cta-link');
+            const currentCtaDesktop = document.querySelector('#header-cta-link');
+            const currentCtaMobile = document.querySelector('#mobile-cta-link');
+            
+            if (newCtaDesktop && currentCtaDesktop) {
+                currentCtaDesktop.textContent = newCtaDesktop.textContent;
+                currentCtaDesktop.href = newCtaDesktop.href;
+            }
+            if (newCtaMobile && currentCtaMobile) {
+                currentCtaMobile.textContent = newCtaMobile.textContent;
+                currentCtaMobile.href = newCtaMobile.href;
+            }
+            
+            // به‌روزرسانی منوی موبایل لینک‌ها
+            const newMobileMenu = doc.querySelector('#mobile-menu');
+            const currentMobileMenu = document.querySelector('#mobile-menu');
+            if (newMobileMenu && currentMobileMenu) {
+                currentMobileMenu.innerHTML = newMobileMenu.innerHTML;
+            }
+            
             // به‌روزرسانی URL بدون ریلود
             window.history.pushState({ lang: lang }, '', url.toString());
         })

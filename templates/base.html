@@ -238,8 +238,8 @@
                     </button>
                     
                     <!-- CTA Button -->
-                    <a href="{{ settings.cta_link|default:'#consultation' }}" class="hidden md:inline-block px-5 py-2.5 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300">
-                        {{ settings.cta_text|default:'درخواست مشاوره' }}
+                    <a href="{{ settings.cta_link|default:'#consultation' }}" class="hidden md:inline-block px-5 py-2.5 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300" id="header-cta-link">
+                        {{ static_texts.cta_text|default:settings.get_cta_text|default:'درخواست مشاوره' }}
                     </a>
                 </div>
                 
@@ -282,8 +282,8 @@
                     </button>
                     
                     <!-- Mobile CTA -->
-                    <a href="{{ settings.cta_link|default:'#consultation' }}" class="block w-full text-center px-6 py-3 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                        {{ settings.cta_text|default:'درخواست مشاوره' }}
+                    <a href="{{ settings.cta_link|default:'#consultation' }}" class="block w-full text-center px-6 py-3 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300" id="mobile-cta-link">
+                        {{ static_texts.cta_text|default:settings.get_cta_text|default:'درخواست مشاوره' }}
                     </a>
                 </div>
             </div>
