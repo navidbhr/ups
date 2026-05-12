@@ -110,6 +110,15 @@ function changeLanguage(lang) {
                     currentMobileMenu.innerHTML = newMobileMenu.innerHTML;
                 }
                 
+                // به‌روزرسانی متن‌های منوی دسکتاپ در هدر
+                const navLinks = document.querySelectorAll('nav a[href^="#"]');
+                const newNavLinks = doc.querySelectorAll('nav a[href^="#"]');
+                if (navLinks.length === newNavLinks.length) {
+                    navLinks.forEach((link, index) => {
+                        link.textContent = newNavLinks[index].textContent;
+                    });
+                }
+                
                 window.history.pushState({ lang: lang }, '', url.toString());
             } else {
                 window.location.href = url.toString();

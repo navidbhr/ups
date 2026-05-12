@@ -131,12 +131,12 @@ class HomeSliderAdmin(admin.ModelAdmin):
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'is_published', 'created_at')
+    list_display = ('title_fa', 'category', 'is_published', 'created_at')
     list_filter = ('is_published', 'category')
     readonly_fields = ('slug',)
     fieldsets = (
-        ('محتوا', {'fields': ('title', 'slug', 'category', 'image', 'content', 'is_published')}),
-        ('سئو 📈', {'fields': ('meta_title', 'meta_description'), 'classes': ('collapse',)}),
+        ('محتوا', {'fields': ('title_fa', 'title_en', 'title_ar', 'title_ru', 'slug', 'category', 'image', 'content_fa', 'content_en', 'content_ar', 'content_ru', 'is_published')}),
+        ('سئو 📈', {'fields': ('meta_title_fa', 'meta_title_en', 'meta_title_ar', 'meta_title_ru', 'meta_description_fa', 'meta_description_en', 'meta_description_ar', 'meta_description_ru'), 'classes': ('collapse',)}),
     )
 
 
@@ -169,8 +169,9 @@ class PartnerAdmin(admin.ModelAdmin):
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('title', 'location', 'order')
+    list_display = ('title_fa', 'location_fa', 'order', 'is_published')
     list_editable = ('order',)
+    list_filter = ('is_published',)
 
 
 @admin.register(Agent)
