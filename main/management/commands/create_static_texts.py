@@ -94,6 +94,12 @@ class Command(BaseCommand):
             {'key': 'home_menu_articles', 'default_text': 'مقالات', 'text_fa': 'مقالات', 'text_en': 'Articles', 'text_ar': 'المقالات', 'text_ru': 'Statyi'},
             {'key': 'home_menu_projects', 'default_text': 'پروژه‌ها', 'text_fa': 'پروژه‌ها', 'text_en': 'Projects', 'text_ar': 'المشاريع', 'text_ru': 'Proekty'},
             {'key': 'home_menu_contact', 'default_text': 'تماس با ما', 'text_fa': 'تماس با ما', 'text_en': 'Contact', 'text_ar': 'اتصل بنا', 'text_ru': 'Kontakt'},
+            
+            # Additional keys for article and project multilingual support
+            {'key': 'all_categories', 'default_text': 'همه دسته‌بندی‌ها', 'text_fa': 'همه دسته‌بندی‌ها', 'text_en': 'All Categories', 'text_ar': 'جميع الفئات', 'text_ru': 'Vse kategorii'},
+            {'key': 'categories', 'default_text': 'دسته‌بندی‌ها', 'text_fa': 'دسته‌بندی‌ها', 'text_en': 'Categories', 'text_ar': 'الفئات', 'text_ru': 'Kategorii'},
+            {'key': 'no_results', 'default_text': 'هیچ نتیجه‌ای یافت نشد', 'text_fa': 'هیچ نتیجه‌ای یافت نشد', 'text_en': 'No results found', 'text_ar': 'لم يتم العثور على نتائج', 'text_ru': 'Rezultatov ne naydeno'},
+            {'key': 'details', 'default_text': 'جزئیات بیشتر', 'text_fa': 'جزئیات بیشتر', 'text_en': 'More Details', 'text_ar': 'المزيد من التفاصيل', 'text_ru': 'Podrobneye'},
         ]
         
         created_count = 0
