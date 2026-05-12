@@ -18,6 +18,8 @@ def home_view(request):
     articles = Article.objects.filter(is_published=True)[:6]
     projects = Project.objects.all()[:6]
     partners = Partner.objects.all()
+    sliders = HomeSlider.objects.filter(is_active=True).order_by('order')
+    homepage_images = HomepageImage.objects.filter(is_active=True).order_by('order')
 
     # دریافت زبان فعلی - اولویت با پارامتر URL است، سپس سشن، سپس زبان پیش‌فرض جنگو
     # در درخواست AJAX، زبان از پارامتر URL خوانده می‌شود که توسط JS اضافه شده
@@ -112,6 +114,8 @@ def home_view(request):
         'articles': articles,
         'projects': projects,
         'partners': partners,
+        'sliders': sliders,
+        'homepage_images': homepage_images,
         'current_lang': current_lang,
         'static_texts': static_texts,
         'settings': settings,
