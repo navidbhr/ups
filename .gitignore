@@ -3,9 +3,10 @@
 *.pyc
 __pycache__/
 
-# Dependencies
-venv/
-.venv/
+# Logs
+*.log
+
+# Environment variables
 .env
 .env.local
 *.env.*
@@ -17,18 +18,20 @@ venv/
 *.swo
 *.tmp
 
-# Logs
-*.log
+# Dependencies
+.venv/
+venv/
+node_modules/
+
+# Build/dist directories
+dist/
+build/
+target/
 
 # Coverage reports
-.coverage
 coverage/
 htmlcov/
-
-# Build artifacts
-build/
-dist/
-target/
+.coverage
 
 # Python cache
 .mypy_cache/

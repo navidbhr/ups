@@ -308,6 +308,7 @@ def product_detail_view(request, slug):
 def product_list_view(request):
     """نمایش لیست همه محصولات"""
     from django.utils.translation import get_language
+    from .models import StaticText, SiteSettings
 
     products = Product.objects.filter(is_in_stock=True).select_related('currency')
     
@@ -324,9 +325,32 @@ def product_list_view(request):
     current_lang = lang_map.get(current_lang.lower(), 'fa')
     request.session['language'] = current_lang
 
+    # بارگذاری تنظیمات سایت
+    try:
+        settings = SiteSettings.objects.first()
+    except:
+        settings = None
+
+    # بارگذاری متون استاتیک
+    static_texts = {}
+    for key in [
+        'product_list_title', 'no_image', 'contact_for_price', 'view_details', 'no_products',
+    ]:
+        try:
+            static_obj = StaticText.objects.get(key=key)
+            field_name = f'text_{current_lang}'
+            text = getattr(static_obj, field_name, None)
+            if not text and current_lang != 'fa':
+                text = getattr(static_obj, 'text_fa', '')
+            static_texts[key] = text or static_obj.default_text or ''
+        except StaticText.DoesNotExist:
+            static_texts[key] = ''
+
     context = {
         'products': products,
         'current_lang': current_lang,
+        'static_texts': static_texts,
+        'settings': settings,
     }
     
     return render(request, 'main/product_list.html', context)
@@ -598,7 +622,7 @@ def contact_view(request):
         'form_message_label', 'form_message_placeholder',
         'form_submit', 'send_message', 'main_branch',
         'contact_info_title', 'contact_address_label', 'contact_phone_label', 'contact_email_label',
-        'whatsapp',
+        'whatsapp', 'cta_text',
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)

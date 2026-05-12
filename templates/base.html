@@ -207,11 +207,11 @@
                         {% get_text 'home_menu_articles' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
-                    <a href="{% url 'project_list' %}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
+                    <a href="{% url 'project_list' %}?lang={{ current_lang }}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
                         {% get_text 'home_menu_projects' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
-                    <a href="#contact" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
+                    <a href="{% url 'contact' %}?lang={{ current_lang }}" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
                         {% get_text 'home_menu_contact' %}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                     </a>
@@ -315,8 +315,8 @@
                 <a href="#categories" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_categories' %}</a>
                 <a href="#products" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_products' %}</a>
                 <a href="#articles" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_articles' %}</a>
-                <a href="#projects" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_projects' %}</a>
-                <a href="#contact" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_contact' %}</a>
+                <a href="{% url 'project_list' %}?lang={{ current_lang }}" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_projects' %}</a>
+                <a href="{% url 'contact' %}?lang={{ current_lang }}" class="block py-2.5 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-primary-500 transition-all">{% get_text 'home_menu_contact' %}</a>
                 
                 <!-- Mobile Theme & Language Selector -->
                 <div class="pt-4 border-t border-gray-200 dark:border-gray-700 mt-4 space-y-3">
