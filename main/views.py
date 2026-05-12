@@ -18,8 +18,6 @@ def home_view(request):
     articles = Article.objects.filter(is_published=True)[:6]
     projects = Project.objects.all()[:6]
     partners = Partner.objects.all()
-    sliders = HomeSlider.objects.filter(is_active=True).order_by('order')
-    homepage_images = HomepageImage.objects.filter(is_active=True).order_by('order')
 
     # دریافت زبان فعلی - اولویت با پارامتر URL است، سپس سشن، سپس زبان پیش‌فرض جنگو
     # در درخواست AJAX، زبان از پارامتر URL خوانده می‌شود که توسط JS اضافه شده
@@ -114,17 +112,11 @@ def home_view(request):
         'articles': articles,
         'projects': projects,
         'partners': partners,
-        'sliders': sliders,
-        'homepage_images': homepage_images,
         'current_lang': current_lang,
         'static_texts': static_texts,
         'settings': settings,
     }
-    
-    # اگر درخواست AJAX بود، فقط تکه‌ای از تمپلیت را برگردان
-    if is_ajax:
-        return render(request, 'main/home_content.html', context)
-    
+
     return render(request, 'main/home.html', context)
 
 
@@ -338,7 +330,7 @@ def product_list_view(request):
     # بارگذاری متون استاتیک
     static_texts = {}
     for key in [
-        'product_list_title', 'products_title', 'products_subtitle', 'no_image', 'contact_for_price', 'view_details', 'no_products',
+        'product_list_title', 'no_image', 'contact_for_price', 'view_details', 'no_products',
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)

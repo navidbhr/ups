@@ -190,7 +190,7 @@
                 </a>
                 
                 <!-- Desktop Menu -->
-                <div class="hidden lg:flex items-center gap-6 flex-1 justify-center">
+                <div id="desktop-menu" class="hidden lg:flex items-center gap-6 flex-1 justify-center">
                     <a href="{% url 'home' %}?lang={{ current_lang }}#hero" class="text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group">
                         {% get_text 'menu_home' as menu_home_val %}{{ menu_home_val|default:'خانه' }}
                         <span class="absolute bottom-0 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>

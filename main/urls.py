@@ -7,8 +7,6 @@ from .views import (
 )
 
 urlpatterns = [
-    path('i18n/', include('django.conf.urls.i18n')),
-    path('i18n/setlang/', set_language, name='set_language'),
     path('', home_view, name='home'),
     path('categories/', category_list_view, name='category_list'),
     path('category/<str:slug>/', category_detail_view, name='category_detail'),

@@ -24,15 +24,7 @@ def get_text_by_key(key, lang='fa'):
 
 
 def site_settings(request):
-    from django.utils.translation import get_language
-
-    # اولویت‌بندی برای تشخیص زبان:
-    # 1. زبان تنظیم شده در session توسط middleware
-    # 2. زبان فعلی Django
-    # 3. پیش‌فرض fa
-    current_lang = getattr(request, 'LANGUAGE_CODE', None) or get_language() or 'fa'
-
-    # تبدیل کد زبان به فرمت مورد استفاده در مدل (fa, en, ar, ru)
+    current_lang = request.GET.get('lang') or request.session.get('language') or 'fa'
     lang_map = {
         'fa-ir': 'fa',
         'en-us': 'en',
@@ -57,21 +49,22 @@ def site_settings(request):
             hero_subtitle = ''
             cta_text = ''
             cta_link = '#consultation'
-            site_name = 'برهان یو پی اس'
-            site_title = 'برهان یو پی اس'
-            site_description = 'مشاوره و خرید انواع دستگاه‌های یو پی اس صنعتی و خانگی با گارانتی معتبر.'
+
             def get_hero_title(self, lang_code='fa'): return ''
+
             def get_hero_subtitle(self, lang_code='fa'): return ''
-            def get_cta_text(self, lang_code='fa'): 
+
+            def get_cta_text(self, lang_code='fa'):
                 from .models import StaticText
                 return StaticText.get_text('cta_text', lang_code) or ''
+
         settings_obj = EmptySettings()
     else:
         # اضافه کردن متد get_cta_text به تنظیمات موجود برای اطمینان از لود چندزبانه
         def get_cta_text(lang_code='fa'):
             from .models import StaticText
             return StaticText.get_text('cta_text', lang_code) or settings_obj.cta_text or ''
-        # Monkey patch
+
         settings_obj.get_cta_text = get_cta_text
 
     # دریافت تمام متون استاتیک مورد نیاز برای قالب
@@ -86,7 +79,8 @@ def site_settings(request):
         'product_placeholder_price', 'product_placeholder_title', 'product_placeholder_desc',
         'view_all_products',
         'articles_title', 'articles_subtitle', 'read_more', 'article_placeholder_title', 'article_placeholder_desc',
-        'projects_title', 'projects_subtitle', 'project_placeholder_title', 'project_placeholder_location', 'project_placeholder_desc',
+        'projects_title', 'projects_subtitle', 'project_placeholder_title', 'project_placeholder_location',
+        'project_placeholder_desc',
         'partners_title', 'partners_subtitle', 'partner_placeholder',
         'consultation_title', 'consultation_subtitle', 'whatsapp',
         'contact_title', 'contact_subtitle',
@@ -98,9 +92,11 @@ def site_settings(request):
         'form_submit',
         'contact_info_title', 'contact_address_label', 'contact_phone_label', 'contact_email_label',
         'not_in_stock',
-        'footer_about', 'footer_quick_links', 'footer_contact_info', 'footer_location', 'google_map', 'footer_copyright',
+        'footer_about', 'footer_quick_links', 'footer_contact_info', 'footer_location', 'google_map',
+        'footer_copyright',
         'main_branch', 'send_message',
-        'menu_home', 'menu_categories', 'menu_products', 'menu_articles', 'menu_projects', 'menu_contact',
+        'menu_home', 'menu_categories', 'menu_products', 'menu_articles', 'menu_projects',
+        'menu_contact',
         'search_placeholder', 'no_results',
     ]:
         static_texts[key] = get_text_by_key(key, lang)

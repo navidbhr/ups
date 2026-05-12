@@ -1,9 +1,7 @@
 // توابع تغییر زبان و تم
 function changeLanguage(lang) {
-    // ذخیره زبان در localStorage
     localStorage.setItem('selected_language', lang);
 
-    // تغییر direction بر اساس زبان
     const htmlEl = document.documentElement;
     if (lang === 'en' || lang === 'ru') {
         htmlEl.setAttribute('dir', 'ltr');
@@ -13,122 +11,85 @@ function changeLanguage(lang) {
         htmlEl.setAttribute('lang', lang);
     }
 
-    // به‌روزرسانی تمام سلکتورهای زبان در صفحه
     document.querySelectorAll('select[onchange*="changeLanguage"]').forEach(select => {
         select.value = lang;
     });
 
-    // ارسال درخواست AJAX به endpoint تنظیم زبان Django
-    fetch('/i18n/setlang/', {
-        method: 'POST',
+    const url = new URL(window.location.href);
+    url.searchParams.delete('lang');
+    url.searchParams.set('lang', lang);
+
+    // واکشی دیتای جدید با پارامتر زبان
+    fetch(url.toString(), {
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: new URLSearchParams({ language: lang })
-    }).then(() => {
-        const url = new URL(window.location.href);
-        // حذف تمام پارامترهای lang قدیمی و اضافه کردن پارامتر جدید
-        url.searchParams.delete('lang');
-        url.searchParams.set('lang', lang);
-        
-        fetch(url.toString(), {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'text/html fragment'
-            }
-        })
-        .then(response => response.text())
-        .then(html => {
-            if (!html || !html.trim()) {
-                window.location.href = url.toString();
-                return;
-            }
-
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newMain = doc.querySelector('main') || doc.querySelector('body');
-            const currentMain = document.querySelector('main') || document.querySelector('body');
-            
-            if (newMain && currentMain && newMain.innerHTML.trim()) {
-                currentMain.innerHTML = newMain.innerHTML;
-                
-                // اجرای مجدد اسکریپت‌های داخل محتوای جدید
-                const scripts = currentMain.querySelectorAll('script');
-                scripts.forEach(oldScript => {
-                    const newScript = document.createElement('script');
-                    Array.from(oldScript.attributes).forEach(attr => {
-                        newScript.setAttribute(attr.name, attr.value);
-                    });
-                    if (oldScript.innerHTML) {
-                        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                    }
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
-                });
-                
-                // مقداردهی مجدد کامل انیمیشن‌های AOS
-                // استفاده از init مجدد بجای refresh تا المان‌های جدید DOM شناسایی شوند
-                if (typeof AOS !== 'undefined') {
-                    // اول کلاس‌های قدیمی که باعث مخفی ماندن میشوند را حذف میکنیم
-                    document.querySelectorAll('[data-aos]').forEach(el => {
-                        el.classList.remove('aos-animate');
-                    });
-                    
-                    // راه‌اندازی مجدد برای اعمال به المان‌های جدید
-                    AOS.init({
-                        duration: 800,
-                        easing: 'ease-in-out',
-                        once: false,
-                        mirror: true,
-                        offset: 100,
-                    });
-                    
-                    // فراخوانی refreshHard برای اطمینان از اعمال تغییرات
-                    setTimeout(() => {
-                        AOS.refreshHard();
-                    }, 100);
-                }
-
-                // به‌روزرسانی دکمه‌های CTA در هدر
-                const newCtaDesktop = doc.querySelector('#header-cta-link');
-                const newCtaMobile = doc.querySelector('#mobile-cta-link');
-                const currentCtaDesktop = document.querySelector('#header-cta-link');
-                const currentCtaMobile = document.querySelector('#mobile-cta-link');
-                
-                if (newCtaDesktop && currentCtaDesktop) {
-                    currentCtaDesktop.textContent = newCtaDesktop.textContent;
-                    currentCtaDesktop.href = newCtaDesktop.href;
-                }
-                if (newCtaMobile && currentCtaMobile) {
-                    currentCtaMobile.textContent = newCtaMobile.textContent;
-                    currentCtaMobile.href = newCtaMobile.href;
-                }
-                
-                // به‌روزرسانی منوی موبایل لینک‌ها
-                const newMobileMenu = doc.querySelector('#mobile-menu');
-                const currentMobileMenu = document.querySelector('#mobile-menu');
-                if (newMobileMenu && currentMobileMenu) {
-                    currentMobileMenu.innerHTML = newMobileMenu.innerHTML;
-                }
-                
-                // به‌روزرسانی متن‌های منوی دسکتاپ در هدر
-                const navLinks = document.querySelectorAll('nav a[href^="#"]');
-                const newNavLinks = doc.querySelectorAll('nav a[href^="#"]');
-                if (navLinks.length === newNavLinks.length) {
-                    navLinks.forEach((link, index) => {
-                        link.textContent = newNavLinks[index].textContent;
-                    });
-                }
-                
-                window.history.pushState({ lang: lang }, '', url.toString());
-            } else {
-                window.location.href = url.toString();
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching content:', error);
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'text/html'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        if (!html || !html.trim()) {
             window.location.href = url.toString();
-        });
+            return;
+        }
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // ۱. آپدیت کامل تگ هدر (شامل منوها، دکمه‌های CTA و جستجو)
+        const newHeader = doc.querySelector('header');
+        const currentHeader = document.querySelector('header');
+        if (newHeader && currentHeader) {
+            currentHeader.innerHTML = newHeader.innerHTML;
+        }
+
+        // ۲. آپدیت کامل بدنه اصلی (main)
+        const newMain = doc.querySelector('main');
+        const currentMain = document.querySelector('main');
+        if (newMain && currentMain) {
+            currentMain.innerHTML = newMain.innerHTML;
+
+            // اجرای مجدد اسکریپت‌های درون main
+            const scripts = currentMain.querySelectorAll('script');
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                if (oldScript.innerHTML) newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+        }
+
+        // ۳. آپدیت کامل فوتر
+        const newFooter = doc.querySelector('footer');
+        const currentFooter = document.querySelector('footer');
+        if (newFooter && currentFooter) {
+            currentFooter.innerHTML = newFooter.innerHTML;
+        }
+
+        // ۴. مقداردهی مجدد پلاگین‌ها
+        if (typeof AOS !== 'undefined') {
+            document.querySelectorAll('[data-aos]').forEach(el => el.classList.remove('aos-animate'));
+            AOS.init({ duration: 800, easing: 'ease-in-out', once: false, mirror: true, offset: 100 });
+            setTimeout(() => AOS.refreshHard(), 100);
+        }
+
+        // ۵. راه‌اندازی مجدد رویدادهای جستجو و منوی موبایل چون هدر از نو نوشته شده است
+        if (typeof initSearch === 'function') initSearch();
+
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // تغییر تاریخچه مرورگر تا URL بدون رفرش آپدیت شود
+        window.history.pushState({ lang: lang }, '', url.toString());
+    })
+    .catch(error => {
+        console.error('خطا در تغییر زبان:', error);
+        window.location.href = url.toString();
     });
 }
 
@@ -176,24 +137,20 @@ document.addEventListener("DOMContentLoaded", function() {
     initTheme();
 
     // دکمه تغییر تم شناور
-    const themeToggle = document.getElementById('theme-toggle');
-    const headerThemeToggle = document.getElementById('header-theme-toggle');
-    const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-
     function toggleTheme() {
         const isDark = document.documentElement.classList.toggle('dark');
         applyTheme(isDark);
     }
 
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
-    }
-    if (headerThemeToggle) {
-        headerThemeToggle.addEventListener('click', toggleTheme);
-    }
-    if (mobileThemeToggle) {
-        mobileThemeToggle.addEventListener('click', toggleTheme);
-    }
+    // استفاده از Event Delegation برای دکمه‌های تغییر تم
+    document.addEventListener('click', function(e) {
+        // چک می‌کنیم آیا کاربر روی دکمه‌های تم (یا المان‌های داخلشان مثل SVG) کلیک کرده یا نه
+        const themeBtn = e.target.closest('#theme-toggle, #header-theme-toggle, #mobile-theme-toggle');
+
+        if (themeBtn) {
+            toggleTheme();
+        }
+    });
 
     // منوی موبایل
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
