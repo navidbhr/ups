@@ -3,7 +3,7 @@ from .models import (
     Category, Product, ProductImage, SpecificationGroup,
     ProductSpecification, ProductDocument, Currency, SiteSettings,
     BlogCategory, Partner, FAQ, Agent, Project, ConsultationRequest, Article,
-    Branch, PageTranslation, HomepageImage, HomeSlider, ProductConsultationRequest, StaticText
+    Branch, PageTranslation, HomepageImage, HomeSlider, ProductConsultationRequest, StaticText, ContactMessage
 )
 
 
@@ -178,6 +178,15 @@ class ProjectAdmin(admin.ModelAdmin):
 class AgentAdmin(admin.ModelAdmin):
     list_display = ('agent_name', 'province', 'city')
     list_filter = ('province',)
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ('full_name', 'phone_number', 'company_name', 'power_required', 'is_read', 'is_replied', 'created_at')
+    list_filter = ('is_read', 'is_replied', 'created_at')
+    search_fields = ('full_name', 'phone_number', 'company_name', 'message')
+    list_editable = ('is_read', 'is_replied')
+    readonly_fields = ('created_at', 'updated_at')
 
 
 # سایر مدل‌های ساده
