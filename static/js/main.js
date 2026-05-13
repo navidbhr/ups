@@ -1,3 +1,40 @@
+// تابع مقداردهی اولیه اسلایدر (Swiper) با افکت زیبا
+function initSwiper() {
+    if (typeof Swiper !== 'undefined') {
+        const sliderContainers = document.querySelectorAll('.hero-swiper-container');
+        sliderContainers.forEach(container => {
+            // اگر از قبل اینستنسی وجود داشت، آن را از بین ببر (مخصوص زمان‌هایی که صفحه با Ajax لود می‌شود)
+            if (container.swiper) {
+                container.swiper.destroy(true, true);
+            }
+            // ایجاد اسلایدر جدید با افکت Fade و اتوپلی
+            new Swiper(container, {
+                effect: 'fade',
+                fadeEffect: {
+                    crossFade: true
+                },
+                speed: 1000, // سرعت انیمیشن تغییر عکس (۱ ثانیه)
+                loop: true,
+                // تنظیمات حرکت خودکار (Autoplay)
+                autoplay: {
+                    delay: 3500, // هر ۳.۵ ثانیه تغییر کند
+                    disableOnInteraction: false, // اگر کاربر روی دکمه‌ها کلیک کرد، اتوپلی از کار نیفتد
+                    pauseOnMouseEnter: true, // وقتی موس روی اسلایدر می‌رود حرکت متوقف شود تا کاربر متن را بخواند
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                    dynamicBullets: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
+        });
+    }
+}
+
 // توابع تغییر زبان و تم
 function changeLanguage(lang) {
     localStorage.setItem('selected_language', lang);
@@ -73,6 +110,11 @@ function changeLanguage(lang) {
             setTimeout(() => AOS.refreshHard(), 100);
         }
 
+        // راه‌اندازی مجدد اسلایدر بعد از لود ایجکس
+        if (typeof initSwiper === 'function') {
+            initSwiper();
+        }
+
         // ۵. راه‌اندازی مجدد رویدادهای جستجو و منوی موبایل چون هدر از نو نوشته شده است
         if (typeof initSearch === 'function') initSearch();
 
@@ -136,6 +178,9 @@ document.addEventListener("DOMContentLoaded", function() {
     // راه‌اندازی تم اولیه
     initTheme();
 
+    // راه‌اندازی اسلایدر در هنگام لود شدن صفحه اصلی
+    initSwiper();
+
     // دکمه تغییر تم شناور
     function toggleTheme() {
         const isDark = document.documentElement.classList.toggle('dark');
@@ -178,64 +223,65 @@ document.addEventListener("DOMContentLoaded", function() {
         lastScroll = currentScroll;
     });
 });
+
 // جستجوی AJAX
 let searchTimeout = null;
 function initSearch() {
     const searchInput = document.getElementById('header-search-input');
     const searchDropdown = document.getElementById('search-results-dropdown');
     const searchLoading = document.getElementById('search-loading');
-    
+
     if (!searchInput || !searchDropdown) return;
-    
+
     // نمایش dropdown هنگام فوکوس
     searchInput.addEventListener('focus', function() {
         if (this.value.trim().length > 0) {
             searchDropdown.classList.remove('hidden');
         }
     });
-    
+
     // مخفی کردن dropdown هنگام کلیک بیرون
     document.addEventListener('click', function(e) {
         if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
             searchDropdown.classList.add('hidden');
         }
     });
-    
+
     // جستجو هنگام تایپ
     searchInput.addEventListener('input', function() {
         const query = this.value.trim();
-        
+
         clearTimeout(searchTimeout);
-        
+
         if (query.length < 2) {
             searchDropdown.classList.add('hidden');
             return;
         }
-        
+
         searchTimeout = setTimeout(function() {
             performSearch(query);
         }, 300);
     });
-    
+
     function performSearch(query) {
         const currentLang = localStorage.getItem('selected_language') || 'fa';
-        
+
         searchLoading.classList.remove('hidden');
         searchDropdown.classList.remove('hidden');
-        
+
         // مخفی کردن همه بخش‌ها
         document.getElementById('search-products-section').classList.add('hidden');
         document.getElementById('search-categories-section').classList.add('hidden');
         document.getElementById('search-articles-section').classList.add('hidden');
         document.getElementById('search-projects-section').classList.add('hidden');
         document.getElementById('search-no-results').classList.add('hidden');
-        
+
         // پاک کردن لیست‌ها
         document.getElementById('search-products-list').innerHTML = '';
         document.getElementById('search-categories-list').innerHTML = '';
         document.getElementById('search-articles-list').innerHTML = '';
         document.getElementById('search-projects-list').innerHTML = '';
-        
+
         fetch(`/api/search/?q=${encodeURIComponent(query)}&lang=${currentLang}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -244,16 +290,16 @@ function initSearch() {
         .then(response => response.json())
         .then(data => {
             searchLoading.classList.add('hidden');
-            
+
             let hasResults = false;
-            
+
             // نمایش محصولات
             if (data.products && data.products.length > 0) {
                 hasResults = true;
                 const productsSection = document.getElementById('search-products-section');
                 const productsList = document.getElementById('search-products-list');
                 productsSection.classList.remove('hidden');
-                
+
                 data.products.forEach(item => {
                     const li = document.createElement('li');
                     li.innerHTML = `
@@ -265,14 +311,14 @@ function initSearch() {
                     productsList.appendChild(li);
                 });
             }
-            
+
             // نمایش دسته‌بندی‌ها
             if (data.categories && data.categories.length > 0) {
                 hasResults = true;
                 const categoriesSection = document.getElementById('search-categories-section');
                 const categoriesList = document.getElementById('search-categories-list');
                 categoriesSection.classList.remove('hidden');
-                
+
                 data.categories.forEach(item => {
                     const li = document.createElement('li');
                     li.innerHTML = `
@@ -284,14 +330,14 @@ function initSearch() {
                     categoriesList.appendChild(li);
                 });
             }
-            
+
             // نمایش مقالات
             if (data.articles && data.articles.length > 0) {
                 hasResults = true;
                 const articlesSection = document.getElementById('search-articles-section');
                 const articlesList = document.getElementById('search-articles-list');
                 articlesSection.classList.remove('hidden');
-                
+
                 data.articles.forEach(item => {
                     const li = document.createElement('li');
                     li.innerHTML = `
@@ -303,14 +349,14 @@ function initSearch() {
                     articlesList.appendChild(li);
                 });
             }
-            
+
             // نمایش پروژه‌ها
             if (data.projects && data.projects.length > 0) {
                 hasResults = true;
                 const projectsSection = document.getElementById('search-projects-section');
                 const projectsList = document.getElementById('search-projects-list');
                 projectsSection.classList.remove('hidden');
-                
+
                 data.projects.forEach(item => {
                     const li = document.createElement('li');
                     li.innerHTML = `
@@ -322,7 +368,7 @@ function initSearch() {
                     projectsList.appendChild(li);
                 });
             }
-            
+
             // نمایش پیام بدون نتیجه
             if (!hasResults) {
                 document.getElementById('search-no-results').classList.remove('hidden');
