@@ -3,7 +3,78 @@
 {% load custom_filters %}
 
 {% block content %}
-    <!-- Hero Section -->
+    <!-- Hero Slider Section -->
+    {% if slider_images %}
+    <section id="hero-slider" class="relative min-h-screen overflow-hidden">
+        <div class="swiper hero-swiper-container">
+            <div class="swiper-wrapper">
+                {% for slide in slider_images %}
+                <div class="swiper-slide relative min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+                    <!-- Slide Image Background -->
+                    {% if slide.image %}
+                    <div class="absolute inset-0 z-0">
+                        <img src="{{ slide.image.url }}" alt="{{ slide.get_title }}" class="w-full h-full object-cover opacity-20 dark:opacity-10">
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Animated Background Elements -->
+                    <div class="absolute inset-0 overflow-hidden z-0">
+                        <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary-300 dark:bg-primary-700 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-float"></div>
+                        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-accent-300 dark:bg-accent-700 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-float" style="animation-delay: 2s;"></div>
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-200 dark:bg-primary-800 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-2xl opacity-50 animate-pulse-slow"></div>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="container mx-auto px-3 sm:px-4 py-12 sm:py-16 md:py-20 relative z-10">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 md:gap-10 lg:gap-12 items-center">
+                            <!-- Text Content -->
+                            <div data-aos="fade-left" data-aos-duration="1000" class="order-2 md:order-1">
+                                <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 md:mb-6 leading-tight">
+                                    <span class="gradient-text">{{ slide.get_title }}</span>
+                                </h1>
+                                <p class="text-base sm:text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-6 md:mb-8 leading-relaxed">
+                                    {{ slide.get_subtitle }}
+                                </p>
+                                {% if slide.link %}
+                                <a href="{{ slide.link }}" class="px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 font-bold text-sm md:text-base inline-block">
+                                    {{ static_texts.cta_text|default:'درخواست مشاوره رایگان' }}
+                                </a>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Stats -->
+                            <div class="hidden lg:block">
+                                <div class="grid grid-cols-3 gap-4 md:gap-6">
+                                    <div class="text-center p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl">
+                                        <div class="text-3xl font-bold gradient-text">+15</div>
+                                        <div class="text-sm text-gray-600 dark:text-gray-400">{{ static_texts.hero_stats_experience|default:"سال تجربه" }}</div>
+                                    </div>
+                                    <div class="text-center p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl">
+                                        <div class="text-3xl font-bold gradient-text">+500</div>
+                                        <div class="text-sm text-gray-600 dark:text-gray-400">{{ static_texts.hero_stats_projects|default:"پروژه موفق" }}</div>
+                                    </div>
+                                    <div class="text-center p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl">
+                                        <div class="text-3xl font-bold gradient-text">+1000</div>
+                                        <div class="text-sm text-gray-600 dark:text-gray-400">{{ static_texts.hero_stats_customers|default:"مشتری راضی" }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Navigation Buttons -->
+            <div class="swiper-button-next hidden md:flex"></div>
+            <div class="swiper-button-prev hidden md:flex"></div>
+            
+            <!-- Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+    {% else %}
+    <!-- Hero Section (Fallback when no slider) -->
     <section id="hero"
              class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <!-- Animated Background Elements -->
