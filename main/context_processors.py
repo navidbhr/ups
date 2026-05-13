@@ -106,6 +106,7 @@ def site_settings(request):
     return {
         'settings': settings_obj,
         'main_branch': main_branch,
+        'branches': Branch.objects.filter(is_active=True),  # <--- این خط از قلم افتاده بود!
         'categories': Category.objects.filter(parent__isnull=True),
         'current_lang': lang,
         'static_texts': static_texts,

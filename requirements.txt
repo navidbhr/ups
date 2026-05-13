@@ -1,0 +1,5 @@
+Django>=5.0
+django-jazzmin>=3.0.0
+django-ckeditor-5>=0.2.11
+django-tailwind>=3.8.0
+Pillow>=10.2.0
