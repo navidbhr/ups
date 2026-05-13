@@ -220,6 +220,21 @@ class Command(BaseCommand):
             # Base / Mobile Menu
             {'key': 'mobile_menu_title', 'default_text': 'منوی دسترسی', 'text_fa': 'منوی دسترسی', 'text_en': 'Menu',
              'text_ar': 'قائمة الوصول', 'text_ru': 'Меню доступа'},
+            # Footer
+            {'key': 'footer_about', 'default_text': 'توضیحات درباره ما در فوتر', 'text_fa': 'متن درباره ما...',
+             'text_en': 'About Us text...', 'text_ar': 'نص معلومات عنا...', 'text_ru': 'Текст о нас...'},
+            {'key': 'footer_quick_links', 'default_text': 'لینک‌های سریع', 'text_fa': 'لینک‌های سریع',
+             'text_en': 'Quick Links', 'text_ar': 'روابط سريعة', 'text_ru': 'Быстрые ссылки'},
+            {'key': 'footer_contact_info', 'default_text': 'اطلاعات تماس', 'text_fa': 'اطلاعات تماس',
+             'text_en': 'Contact Info', 'text_ar': 'معلومات الاتصال', 'text_ru': 'Контактная информация'},
+            {'key': 'footer_location', 'default_text': 'موقعیت ما', 'text_fa': 'موقعیت ما', 'text_en': 'Our Location',
+             'text_ar': 'موقعنا', 'text_ru': 'Наше местоположение'},
+            {'key': 'google_map', 'default_text': 'نقشه گوگل', 'text_fa': 'نقشه گوگل', 'text_en': 'Google Map',
+             'text_ar': 'خريطة جوجل', 'text_ru': 'Карта Google'},
+            {'key': 'footer_copyright', 'default_text': 'تمامی حقوق محفوظ است.', 'text_fa': 'تمامی حقوق محفوظ است.',
+             'text_en': 'All rights reserved.', 'text_ar': 'كل الحقوق محفوظة.', 'text_ru': 'Все права защищены.'},
+            {'key': 'main_branch', 'default_text': 'شعبه مرکزی', 'text_fa': 'شعبه مرکزی', 'text_en': 'Main Branch',
+             'text_ar': 'الفرع الرئيسي', 'text_ru': 'Главный филиал'},
         ]
 
         created_count = 0

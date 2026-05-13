@@ -9,6 +9,7 @@
     {% endif %}{% endblock %}</title>
     <meta name="description" content="
 
+
             {% if settings %}{{ settings.site_description|default:'مشاوره و خرید انواع دستگاه‌های یو پی اس صنعتی و خانگی با گارانتی معتبر.' }}{% else %}مشاوره و خرید انواع دستگاه‌های یو پی اس صنعتی و خانگی با گارانتی معتبر.{% endif %}">
 
     <!-- Favicon -->
@@ -318,8 +319,8 @@
                 <!-- Language Selector - Desktop Only -->
                 <select id="language-selector" onchange="changeLanguage(this.value)"
                         class="hidden lg:block px-2 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer hover:border-primary-500 transition-colors shadow-sm">
-                    <option value="fa" {% if current_lang == 'fa' %}selected{% endif %}>🇮🇷 فارسی</option>
                     <option value="en" {% if current_lang == 'en' %}selected{% endif %}>🇬🇧 English</option>
+                    <option value="fa" {% if current_lang == 'fa' %}selected{% endif %}>🇮🇷 فارسی</option>
                     <option value="ar" {% if current_lang == 'ar' %}selected{% endif %}>🇸🇦 العربية</option>
                     <option value="ru" {% if current_lang == 'ru' %}selected{% endif %}>🇷🇺 Русский</option>
                 </select>
@@ -340,6 +341,7 @@
 
                 <!-- CTA Button - Desktop Only -->
                 <a href="
+
 
                         {% if settings %}{{ settings.cta_link|default:'#consultation' }}{% else %}#consultation{% endif %}"
                    class="hidden lg:inline-block px-5 py-2.5 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-sm font-bold rounded-xl shadow-lg hover:shadow-primary-500/30 transform hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap flex-shrink-0"
@@ -545,19 +547,24 @@
                 <ul class="space-y-3 mt-2">
                     <li><a href="{% url 'product_list' %}?lang={{ current_lang }}"
                            class="text-gray-400 hover:text-primary-400 hover:translate-x-[-4px] transition-all text-sm block flex items-center gap-2"><span
-                            class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>محصولات</a></li>
+                            class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>{% get_text 'menu_products' %}</a>
+                    </li>
                     <li><a href="{% url 'category_list' %}?lang={{ current_lang }}"
                            class="text-gray-400 hover:text-primary-400 hover:translate-x-[-4px] transition-all text-sm block flex items-center gap-2"><span
-                            class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>دسته‌بندی‌ها</a></li>
+                            class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>{% get_text 'menu_categories' %}</a>
+                    </li>
                     <li><a href="{% url 'article_list' %}?lang={{ current_lang }}"
                            class="text-gray-400 hover:text-primary-400 hover:translate-x-[-4px] transition-all text-sm block flex items-center gap-2"><span
-                            class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>مقالات</a></li>
+                            class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>{% get_text 'menu_articles' %}</a>
+                    </li>
                     <li><a href="{% url 'project_list' %}?lang={{ current_lang }}"
                            class="text-gray-400 hover:text-primary-400 hover:translate-x-[-4px] transition-all text-sm block flex items-center gap-2"><span
-                            class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>پروژه‌ها</a></li>
+                            class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>{% get_text 'menu_projects' %}</a>
+                    </li>
                     <li><a href="{% url 'contact' %}?lang={{ current_lang }}"
                            class="text-gray-400 hover:text-primary-400 hover:translate-x-[-4px] transition-all text-sm block flex items-center gap-2"><span
-                            class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>تماس با ما</a></li>
+                            class="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>{% get_text 'menu_contact' %}</a>
+                    </li>
                 </ul>
             </div>
 
