@@ -8,7 +8,7 @@
 <section class="pt-32 pb-16 bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
     <div class="container mx-auto px-4">
         <div class="text-center max-w-3xl mx-auto" data-aos="fade-up">
-            <h1 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">{{ static_texts.categories_title|default:'دسته‌بندی محصولات' }}</h1>
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-normal py-2 gradient-text">{{ static_texts.categories_title|default:'دسته‌بندی محصولات' }}</h1>
             <p class="text-lg text-gray-700 dark:text-gray-300">{{ static_texts.categories_subtitle|default:'محصولات ما را بر اساس دسته‌بندی مشاهده کنید' }}</p>
         </div>
     </div>
@@ -30,15 +30,15 @@
                     </svg>
                 </div>
                 {% endif %}
-                
+
                 <div class="p-6">
                     <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">{{ category.title }}</h3>
-                    
+
                     {% if category.description %}
                     <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{{ category.description|truncatechars:100 }}</p>
                     {% endif %}
-                    
-                    <a href="{% url 'category_detail' category.slug %}?lang={{ current_lang }}" 
+
+                    <a href="{% url 'category_detail' category.slug %}?lang={{ current_lang }}"
                        class="inline-flex items-center gap-2 text-primary-500 hover:text-primary-600 font-medium transition-colors">
                         {{ static_texts.view_products|default:'مشاهده محصولات' }}
                         <svg class="w-5 h-5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
