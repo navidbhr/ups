@@ -177,12 +177,14 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
     const formData = new FormData(this);
     const messageDiv = document.getElementById('formMessage');
 
-    fetch('{% url "home" %}', {
+    fetch('{% url "submit_contact_message" %}', {
         method: 'POST',
-        body: formData,
         headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
             'X-Requested-With': 'XMLHttpRequest',
-        }
+        },
+        body: JSON.stringify(Object.fromEntries(formData.entries())),
     })
     .then(response => response.json())
     .then(data => {

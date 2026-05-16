@@ -76,6 +76,12 @@ class Command(BaseCommand):
              'text_en': 'Article Title', 'text_ar': 'عنوان المقال', 'text_ru': 'Nazvaniye statyi'},
             {'key': 'article_placeholder_desc', 'default_text': 'خلاصه مقاله', 'text_fa': 'خلاصه مقاله',
              'text_en': 'Article Summary', 'text_ar': 'ملخص المقال', 'text_ru': 'Kratkoye soderzhaniye statyi'},
+            {'key': 'back_to_articles', 'default_text': 'بازگشت به مقالات', 'text_fa': 'بازگشت به مقالات',
+             'text_en': 'Back to Articles', 'text_ar': 'العودة إلى المقالات', 'text_ru': 'Vernutsya k statyam'},
+            {'key': 'related_articles', 'default_text': 'مقالات مرتبط', 'text_fa': 'مقالات مرتبط',
+             'text_en': 'Related Articles', 'text_ar': 'مقالات ذات صلة', 'text_ru': 'Svyazannye statyi'},
+            {'key': 'no_related', 'default_text': 'بدون مورد مرتبط', 'text_fa': 'بدون مورد مرتبط',
+             'text_en': 'No related items', 'text_ar': 'لا توجد عناصر ذات صلة', 'text_ru': 'Net svyazannykh elementov'},
 
             # Projects
             {'key': 'projects_title', 'default_text': 'پروژه‌های انجام شده', 'text_fa': 'پروژه‌های انجام شده',
@@ -91,6 +97,12 @@ class Command(BaseCommand):
              'text_en': 'Project Location', 'text_ar': 'موقع المشروع', 'text_ru': 'Mestopolozheniye proekta'},
             {'key': 'project_placeholder_desc', 'default_text': 'توضیحات پروژه', 'text_fa': 'توضیحات پروژه',
              'text_en': 'Project Description', 'text_ar': 'وصف المشروع', 'text_ru': 'Opisaniye proekta'},
+            {'key': 'about_project', 'default_text': 'درباره پروژه', 'text_fa': 'درباره پروژه',
+             'text_en': 'About Project', 'text_ar': 'حول المشروع', 'text_ru': 'O proekte'},
+            {'key': 'back_to_projects', 'default_text': 'بازگشت به پروژه‌ها', 'text_fa': 'بازگشت به پروژه‌ها',
+             'text_en': 'Back to Projects', 'text_ar': 'العودة إلى المشاريع', 'text_ru': 'Vernutsya k proektam'},
+            {'key': 'related_projects', 'default_text': 'پروژه‌های مرتبط', 'text_fa': 'پروژه‌های مرتبط',
+             'text_en': 'Related Projects', 'text_ar': 'مشاريع ذات صلة', 'text_ru': 'Svyazannye proekty'},
 
             # Partners
             {'key': 'partners_title', 'default_text': 'همکاران و مشتریان ما', 'text_fa': 'همکاران و مشتریان ما',
@@ -140,6 +152,8 @@ class Command(BaseCommand):
              'text_ar': 'رسالتك', 'text_ru': 'Vashe soobshcheniye'},
             {'key': 'form_message_placeholder', 'default_text': 'توضیحات تکمیلی...', 'text_fa': 'توضیحات تکمیلی...',
              'text_en': 'Additional details...', 'text_ar': 'تفاصيل إضافية...', 'text_ru': 'Dopolnitelnyye detali...'},
+            {'key': 'form_submit_button', 'default_text': 'ارسال', 'text_fa': 'ارسال', 'text_en': 'Submit',
+             'text_ar': 'إرسال', 'text_ru': 'Otpravit'},
 
             # Contact Info
             {'key': 'contact_info_title', 'default_text': 'اطلاعات تماس', 'text_fa': 'اطلاعات تماس',
@@ -166,6 +180,10 @@ class Command(BaseCommand):
              'text_ar': 'اقرأ المزيد', 'text_ru': 'Chitat dalee'},
             {'key': 'view_products', 'default_text': 'مشاهده محصولات', 'text_fa': 'مشاهده محصولات',
              'text_en': 'View Products', 'text_ar': 'عرض المنتجات', 'text_ru': 'Posmotret produkty'},
+            {'key': 'search_loading', 'default_text': 'در حال جستجو...', 'text_fa': 'در حال جستجو...',
+             'text_en': 'Searching...', 'text_ar': 'جارٍ البحث...', 'text_ru': 'Poisk...'},
+            {'key': 'toggle_theme', 'default_text': 'تغییر قالب', 'text_fa': 'تغییر قالب',
+             'text_en': 'Toggle Theme', 'text_ar': 'تبديل السمة', 'text_ru': 'Pereklyuchit temu'},
 
             # Menu Items (تصحیح شده)
             {'key': 'menu_home', 'default_text': 'خانه', 'text_fa': 'خانه', 'text_en': 'Home', 'text_ar': 'الرئيسية',

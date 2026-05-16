@@ -1,10 +1,23 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 import json
 
 from main.models import Product, Category, Article, Project, Partner, ProductConsultationRequest, BlogCategory, ContactMessage, FAQ, Agent, HomepageImage, HomeSlider
 
+
+def apply_article_translation(article, lang):
+    article.display_title = article.get_title(lang)
+    article.display_content = article.get_content(lang)
+    article.display_meta_title = article.get_meta_title(lang)
+    article.display_meta_description = article.get_meta_description(lang)
+    return article
+
+
+def apply_project_translation(project, lang):
+    project.display_title = project.get_title(lang)
+    project.display_location = project.get_location(lang)
+    project.display_description = project.get_description(lang)
+    return project
 
 def home_view(request):
     from django.utils.translation import get_language
@@ -15,8 +28,8 @@ def home_view(request):
     
     categories = Category.objects.filter(parent__isnull=True)[:6]
     products = Product.objects.filter(is_in_stock=True)[:8]
-    articles = Article.objects.filter(is_published=True)[:6]
-    projects = Project.objects.all()[:6]
+    articles = list(Article.objects.filter(is_published=True)[:6])
+    projects = list(Project.objects.filter(is_published=True)[:6])
     partners = Partner.objects.all()
     
     # مدل‌های جدید برای صفحه اصلی
@@ -57,7 +70,14 @@ def home_view(request):
         'en': 'en',
     }
     current_lang = lang_map.get(current_lang.lower(), 'fa')
+    
+    articles = [apply_article_translation(article, current_lang) for article in articles]
+    projects = [apply_project_translation(project, current_lang) for project in projects]
 
+    slider_images = list(slider_images)
+    for slide in slider_images:
+        slide.display_title = slide.get_title(current_lang)
+        slide.display_subtitle = slide.get_subtitle(current_lang)
     # ذخیره زبان در سشن برای درخواست‌های بعدی
     request.session['language'] = current_lang
 
@@ -105,11 +125,12 @@ def home_view(request):
         'form_company_label', 'form_company_placeholder',
         'form_power_label', 'form_power_placeholder',
         'form_message_label', 'form_message_placeholder',
-        'form_submit',
+        'form_submit', 'form_submit_button',
         'contact_info_title', 'contact_address_label', 'contact_phone_label', 'contact_email_label',
         'not_in_stock', 'search_placeholder', 'no_results','faq_title', 'faq_subtitle', 'faq_empty',
         'agents_title', 'agents_subtitle', 'agents_map_link', 'agents_empty',
-        'mobile_menu_title',
+        'mobile_menu_title', 'search_loading', 'toggle_theme', 'about_project', 'back_to_projects', 'related_projects', 'view_details',
+        'back_to_articles', 'related_articles', 'no_related'
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)
@@ -143,37 +164,43 @@ def home_view(request):
     return render(request, 'main/home.html', context)
 
 
-@csrf_exempt
 def submit_product_consultation(request):
     """پردازش درخواست مشاوره محصول از طریق AJAX"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            product_id = data.get('product_id')
-            product = get_object_or_404(Product, pk=product_id)
-            
-            consultation = ProductConsultationRequest.objects.create(
-                product=product,
-                full_name=data.get('full_name', ''),
-                phone_number=data.get('phone_number', ''),
-                email=data.get('email', ''),
-                company_name=data.get('company_name', ''),
-                quantity_needed=data.get('quantity_needed', ''),
-                application=data.get('application', ''),
-                message=data.get('message', '')
-            )
-            
-            return JsonResponse({
-                'success': True,
-                'message': 'درخواست شما با موفقیت ثبت شد. کارشناسان ما به زودی با شما تماس خواهند گرفت.'
-            })
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'message': f'خطا در ثبت درخواست: {str(e)}'
-            }, status=400)
-    
-    return JsonResponse({'success': False, 'message': 'متد نامعتبر'}, status=405)
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid method'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'message': 'Invalid JSON'}, status=400)
+
+    product_id = data.get('product_id')
+    full_name = data.get('full_name', '').strip()
+    phone_number = data.get('phone_number', '').strip()
+
+    if not product_id or not full_name or not phone_number:
+        return JsonResponse({
+            'success': False,
+            'message': 'Product, name, and phone number are required.'
+        }, status=400)
+
+    product = get_object_or_404(Product, pk=product_id)
+
+    ProductConsultationRequest.objects.create(
+        product=product,
+        full_name=full_name,
+        phone_number=phone_number,
+        email=data.get('email', '').strip(),
+        company_name=data.get('company_name', '').strip(),
+        quantity_needed=data.get('quantity_needed', '').strip(),
+        application=data.get('application', '').strip(),
+        message=data.get('message', '').strip(),
+    )
+
+    return JsonResponse({
+        'success': True,
+        'message': 'Your request was submitted successfully.'
+    })
 
 
 def category_list_view(request):
@@ -206,7 +233,7 @@ def category_list_view(request):
     static_texts = {}
     for key in [
         'categories_title', 'categories_subtitle', 'view_products', 'details',
-        'category_placeholder_title', 'category_placeholder_desc',
+        'category_placeholder_title', 'category_placeholder_desc', 'form_submit_button', 'search_loading', 'toggle_theme'
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)
@@ -261,6 +288,7 @@ def category_detail_view(request, slug):
     for key in [
         'categories_title', 'categories_subtitle', 'view_products', 'details',
         'product_placeholder_price', 'product_placeholder_title', 'product_placeholder_desc',
+        'form_submit_button', 'search_loading', 'toggle_theme'
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)
@@ -353,7 +381,8 @@ def product_list_view(request):
     # بارگذاری متون استاتیک
     static_texts = {}
     for key in [
-        'product_list_title', 'no_image', 'contact_for_price', 'view_details', 'no_products',
+        'products_title', 'products_subtitle', 'no_image', 'contact_for_price', 'view_details', 'no_products',
+        'form_submit_button', 'search_loading', 'toggle_theme'
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)
@@ -380,7 +409,7 @@ def project_list_view(request):
     from django.utils.translation import get_language
     from .models import StaticText, SiteSettings
 
-    projects = Project.objects.filter(is_published=True).order_by('order', '-created_at')
+    projects = list(Project.objects.filter(is_published=True).order_by('order', '-created_at'))
     
     # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
     current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
@@ -393,6 +422,8 @@ def project_list_view(request):
         'en': 'en',
     }
     current_lang = lang_map.get(current_lang.lower(), 'fa')
+    
+    projects = [apply_project_translation(project, current_lang) for project in projects]
     request.session['language'] = current_lang
 
     # بارگذاری تنظیمات سایت
@@ -404,7 +435,7 @@ def project_list_view(request):
     # بارگذاری متون استاتیک
     static_texts = {}
     for key in [
-        'projects_title', 'projects_subtitle', 'details', 'no_results',
+        'projects_title', 'projects_subtitle', 'details', 'no_results', 'form_submit_button', 'search_loading', 'toggle_theme'
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)
@@ -431,12 +462,16 @@ def project_detail_view(request, slug):
     from django.utils.translation import get_language
     from .models import StaticText, SiteSettings
 
-    project = get_object_or_404(Project, slug=slug)
+    project_qs = Project.objects.all()
+    if not request.user.is_staff:
+        project_qs = project_qs.filter(is_published=True)
+
+    project = get_object_or_404(project_qs, slug=slug)
     
     # پروژه‌های مرتبط (سایر پروژه‌ها)
-    related_projects = Project.objects.filter(
+    related_projects = list(Project.objects.filter(
         is_published=True
-    ).exclude(pk=project.pk).order_by('order', '-created_at')[:4]
+    ).exclude(pk=project.pk).order_by('order', '-created_at')[:4])
     
     # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
     current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
@@ -449,6 +484,9 @@ def project_detail_view(request, slug):
         'en': 'en',
     }
     current_lang = lang_map.get(current_lang.lower(), 'fa')
+    
+    project = apply_project_translation(project, current_lang)
+    related_projects = [apply_project_translation(item, current_lang) for item in related_projects]
     request.session['language'] = current_lang
 
     # بارگذاری تنظیمات سایت
@@ -461,6 +499,7 @@ def project_detail_view(request, slug):
     static_texts = {}
     for key in [
         'projects_title', 'about_project', 'back_to_projects', 'related_projects', 'view_details',
+        'form_submit_button', 'search_loading', 'toggle_theme'
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)
@@ -498,6 +537,8 @@ def article_list_view(request):
         articles = articles.filter(category=category)
     else:
         category = None
+        
+    articles = list(articles)
     
     # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
     current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
@@ -510,6 +551,8 @@ def article_list_view(request):
         'en': 'en',
     }
     current_lang = lang_map.get(current_lang.lower(), 'fa')
+    
+    articles = [apply_article_translation(article, current_lang) for article in articles]
     request.session['language'] = current_lang
 
     # بارگذاری تنظیمات سایت
@@ -522,7 +565,7 @@ def article_list_view(request):
     static_texts = {}
     for key in [
         'articles_title', 'articles_subtitle', 'categories', 'all_categories', 
-        'read_more', 'no_results',
+        'read_more', 'no_results', 'form_submit_button', 'search_loading', 'toggle_theme'
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)
@@ -551,13 +594,17 @@ def article_detail_view(request, slug):
     from django.utils.translation import get_language
     from .models import StaticText, SiteSettings
 
-    article = get_object_or_404(Article, slug=slug)
+    article_qs = Article.objects.all()
+    if not request.user.is_staff:
+        article_qs = article_qs.filter(is_published=True)
+
+    article = get_object_or_404(article_qs, slug=slug)
     
     # مقالات مرتبط (همان دسته‌بندی به جز مقاله فعلی)
-    related_articles = Article.objects.filter(
+    related_articles = list(Article.objects.filter(
         category=article.category,
         is_published=True
-    ).exclude(pk=article.pk).order_by('-created_at')[:4]
+    ).exclude(pk=article.pk).order_by('-created_at')[:4])
     
     # دریافت زبان فعلی از پارامتر URL یا سشن یا پیش‌فرض
     current_lang = request.GET.get('lang') or request.session.get('language') or get_language() or 'fa'
@@ -570,6 +617,9 @@ def article_detail_view(request, slug):
         'en': 'en',
     }
     current_lang = lang_map.get(current_lang.lower(), 'fa')
+    
+    article = apply_article_translation(article, current_lang)
+    related_articles = [apply_article_translation(item, current_lang) for item in related_articles]
     request.session['language'] = current_lang
 
     # بارگذاری تنظیمات سایت
@@ -582,6 +632,7 @@ def article_detail_view(request, slug):
     static_texts = {}
     for key in [
         'articles_title', 'back_to_articles', 'related_articles', 'no_related',
+        'form_submit_button', 'search_loading', 'toggle_theme'
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)
@@ -641,7 +692,7 @@ def contact_view(request):
         'form_message_label', 'form_message_placeholder',
         'form_submit', 'send_message', 'main_branch',
         'contact_info_title', 'contact_address_label', 'contact_phone_label', 'contact_email_label',
-        'whatsapp', 'cta_text',
+        'whatsapp', 'cta_text', 'form_submit_button', 'search_loading', 'toggle_theme'
     ]:
         try:
             static_obj = StaticText.objects.get(key=key)
@@ -663,35 +714,40 @@ def contact_view(request):
     return render(request, 'main/contact.html', context)
 
 
-@csrf_exempt
 def submit_contact_message(request):
     """پردازش پیام ارسالی از صفحه تماس با ما"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            
-            contact_message = ContactMessage.objects.create(
-                full_name=data.get('full_name', ''),
-                phone_number=data.get('phone_number', ''),
-                company_name=data.get('company_name', ''),
-                power_required=data.get('power_required', ''),
-                message=data.get('message', '')
-            )
-            
-            return JsonResponse({
-                'success': True,
-                'message': 'پیام شما با موفقیت ثبت شد. کارشناسان ما به زودی با شما تماس خواهند گرفت.'
-            })
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'message': f'خطا در ثبت پیام: {str(e)}'
-            }, status=400)
-    
-    return JsonResponse({'success': False, 'message': 'متد نامعتبر'}, status=405)
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid method'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'message': 'Invalid JSON'}, status=400)
+
+    full_name = data.get('full_name', '').strip()
+    phone_number = data.get('phone_number', '').strip()
+    message = data.get('message', '').strip()
+
+    if not full_name or not phone_number or not message:
+        return JsonResponse({
+            'success': False,
+            'message': 'Name, phone number, and message are required.'
+        }, status=400)
+
+    ContactMessage.objects.create(
+        full_name=full_name,
+        phone_number=phone_number,
+        company_name=data.get('company_name', '').strip(),
+        power_required=data.get('power_required', '').strip(),
+        message=message,
+    )
+
+    return JsonResponse({
+        'success': True,
+        'message': 'Your message was submitted successfully.'
+    })
 
 
-@csrf_exempt
 def search_ajax(request):
     """جستجوی AJAX برای محصولات، دسته‌بندی‌ها، مقالات و پروژه‌ها"""
     from django.utils.translation import get_language

@@ -25,7 +25,7 @@
                     <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="w-full h-48 object-cover">
                     {% else %}
                     <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-                        <span class="text-gray-400">{% get_text 'no_image'|default:'بدون تصویر' %}</span>
+                        <span class="text-gray-400">{{ static_texts.no_image|default:'بدون تصویر' }}</span>
                     </div>
                     {% endif %}
                 </a>
@@ -38,15 +38,15 @@
                         {% if product.show_price and product.base_price > 0 %}
                         <span class="font-bold text-primary-600">{{ product.base_price|intcomma }} {{ product.currency.symbol }}</span>
                         {% else %}
-                        <span class="font-bold text-gray-500 text-sm">{% get_text 'contact_for_price'|default:'تماس بگیرید' %}</span>
+                        <span class="font-bold text-gray-500 text-sm">{{ static_texts.contact_for_price|default:'تماس بگیرید' }}</span>
                         {% endif %}
-                        <a href="{% url 'product_detail' product.slug %}?lang={{ current_lang }}" class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded text-sm transition-colors">{% get_text 'view_details'|default:'مشاهده' %}</a>
+                        <a href="{% url 'product_detail' product.slug %}?lang={{ current_lang }}" class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded text-sm transition-colors">{{ static_texts.view_details|default:'مشاهده' }}</a>
                     </div>
                 </div>
             </div>
             {% empty %}
             <div class="col-span-full text-center py-12">
-                <p class="text-xl text-gray-500">{% get_text 'no_products'|default:'هیچ محصولی یافت نشد.' %}</p>
+                <p class="text-xl text-gray-500">{{ static_texts.no_products|default:'هیچ محصولی یافت نشد.' }}</p>
             </div>
             {% endfor %}
         </div>

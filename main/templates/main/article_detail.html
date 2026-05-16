@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static custom_filters %}
 
-{% block title %}{{ article.get_title }} - {{ static_texts.articles_title|default:'مقالات' }}{% endblock %}
+{% block title %}{{ article.display_title }} - {{ static_texts.articles_title|default:'مقالات' }}{% endblock %}
 
 {% block content %}
 <!-- Article Detail Header -->
@@ -24,11 +24,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
                 {% endif %}
-                <span class="text-gray-900 dark:text-white font-medium line-clamp-1">{{ article.get_title }}</span>
+                <span class="text-gray-900 dark:text-white font-medium line-clamp-1">{{ article.display_title }}</span>
             </nav>
             
             <!-- Article Title & Meta -->
-            <h1 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">{{ article.get_title }}</h1>
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">{{ article.display_title }}</h1>
             <div class="flex flex-wrap items-center gap-6 text-gray-600 dark:text-gray-400 mb-8">
                 {% if article.category %}
                 <div class="flex items-center gap-2">
@@ -56,12 +56,12 @@
             <!-- Article Image & Content -->
             <div class="lg:col-span-2" data-aos="fade-right">
                 {% if article.image %}
-                <img src="{{ article.image.url }}" alt="{{ article.get_title }}" class="w-full h-auto rounded-2xl shadow-2xl mb-8">
+                <img src="{{ article.image.url }}" alt="{{ article.display_title }}" class="w-full h-auto rounded-2xl shadow-2xl mb-8">
                 {% endif %}
                 
                 <!-- Article Content -->
                 <div class="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
-                    {{ article.get_content|safe }}
+                    {{ article.display_content|safe }}
                 </div>
                 
                 <!-- Back to Articles Button -->
@@ -85,7 +85,7 @@
                         <a href="{% url 'article_detail' related.slug %}" class="block group">
                             <div class="flex gap-3">
                                 {% if related.image %}
-                                <img src="{{ related.image.url }}" alt="{{ related.get_title }}" class="w-20 h-20 object-cover rounded-lg flex-shrink-0">
+                                <img src="{{ related.image.url }}" alt="{{ related.display_title }}" class="w-20 h-20 object-cover rounded-lg flex-shrink-0">
                                 {% else %}
                                 <div class="w-20 h-20 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center flex-shrink-0">
                                     <svg class="w-8 h-8 text-white opacity-50" fill="currentColor" viewBox="0 0 24 24">
@@ -95,7 +95,7 @@
                                 {% endif %}
                                 <div class="flex-1 min-w-0">
                                     <h4 class="font-medium text-gray-900 dark:text-white group-hover:text-primary-500 transition-colors line-clamp-2 text-sm">
-                                        {{ related.get_title }}
+                                        {{ related.display_title }}
                                     </h4>
                                     <span class="text-xs text-gray-500 dark:text-gray-400 mt-1 block">
                                         {{ related.created_at|date:"Y/m/d" }}

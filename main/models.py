@@ -180,17 +180,26 @@ class SiteSettings(models.Model):
     def get_hero_title(self, lang_code='fa'):
         """دریافت hero_title از StaticText یا fallback به فیلد قدیمی"""
         from .models import StaticText
-        return StaticText.get_text('hero_title', lang_code) or self.hero_title or ''
+        text = StaticText.get_text('hero_title', lang_code)
+        if text != 'hero_title':
+            return text
+        return self.hero_title
     
     def get_hero_subtitle(self, lang_code='fa'):
         """دریافت hero_subtitle از StaticText یا fallback به فیلد قدیمی"""
         from .models import StaticText
-        return StaticText.get_text('hero_subtitle', lang_code) or self.hero_subtitle or ''
+        text = StaticText.get_text('hero_subtitle', lang_code)
+        if text != 'hero_subtitle':
+            return text
+        return self.hero_subtitle
     
     def get_cta_text(self, lang_code='fa'):
         """دریافت cta_text از StaticText یا fallback به فیلد قدیمی"""
         from .models import StaticText
-        return StaticText.get_text('cta_text', lang_code) or self.cta_text or ''
+        text = StaticText.get_text('cta_text', lang_code)
+        if text != 'cta_text':
+            return text
+        return self.cta_text
 
 
 # --- مدیریت شعب شرکت ---
@@ -683,3 +692,23 @@ class HomeSlider(models.Model):
 
     def __str__(self):
         return self.title_fa
+
+    def get_title(self, lang_code='fa'):
+        field_map = {
+            'fa': 'title_fa',
+            'en': 'title_en',
+            'ar': 'title_ar',
+            'ru': 'title_ru',
+        }
+        text = getattr(self, field_map.get(lang_code, 'title_fa'), None)
+        return text or self.title_fa or ''
+
+    def get_subtitle(self, lang_code='fa'):
+        field_map = {
+            'fa': 'subtitle_fa',
+            'en': 'subtitle_en',
+            'ar': 'subtitle_ar',
+            'ru': 'subtitle_ru',
+        }
+        text = getattr(self, field_map.get(lang_code, 'subtitle_fa'), None)
+        return text or self.subtitle_fa or ''
