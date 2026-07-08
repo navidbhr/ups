@@ -1,0 +1,142 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    .import-module { direction: rtl; text-align: right; padding: 20px; }
+    .import-module h1 { font-size: 1.5rem; margin-bottom: 20px; }
+    .import-module .submit-row { margin-top: 20px; }
+    .import-module .results { margin-top: 30px; }
+    .import-module .results h2 { font-size: 1.2rem; margin-bottom: 10px; }
+    .import-module .results ul { list-style: none; padding: 0; }
+    .import-module .results li { padding: 5px 10px; margin: 3px 0; border-radius: 4px; }
+    .import-module .results li.success { background: #d4edda; color: #155724; }
+    .import-module .results li.error { background: #f8d7da; color: #721c24; }
+    .import-module .template-info { background: #e2e3f5; color: #383d41; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+    .import-module .template-info code { background: #fff; padding: 2px 6px; border-radius: 3px; }
+    .import-module .tables-section { margin-top: 25px; }
+    .import-module table { width: 100%; border-collapse: collapse; margin: 10px 0 20px; font-size: 13px; }
+    .import-module th { background: #f8f9fa; border: 1px solid #dee2e6; padding: 8px 10px; font-weight: 600; }
+    .import-module td { border: 1px solid #dee2e6; padding: 6px 10px; }
+    .import-module td.required { background: #fff3cd; }
+    .import-module .download-btn { display: inline-block; background: #17a2b8; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px; margin-bottom: 20px; }
+    .import-module .download-btn:hover { background: #138496; }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="import-module">
+  <h1>ورود محصولات از فایل Excel</h1>
+
+  <a href="{% static 'sample_import.xlsx' %}" class="download-btn" download>دانلود فایل نمونه</a>
+
+  <div class="template-info">
+    <strong>راهنما:</strong> فایل Excel باید دارای سه شیت با نام‌های زیر باشد:
+    <ul>
+      <li><code>Products</code> — اطلاعات اصلی محصولات</li>
+      <li><code>Prices</code> — قیمت‌های اضافی (اختیاری)</li>
+      <li><code>Specifications</code> — مشخصات فنی (اختیاری)</li>
+    </ul>
+    ستون‌های <strong>هایلایت شده</strong> اجباری هستند. اگر SKU در سیستم موجود باشد محصول <strong>آپدیت</strong> می‌شود، در غیر این صورت محصول جدید <strong>ایجاد</strong> می‌شود.
+  </div>
+
+  <div class="tables-section">
+    <h3>📋 شیت Products</h3>
+    <table>
+      <thead><tr>
+        <th class="required">sku*</th>
+        <th class="required">name*</th>
+        <th class="required">category*</th>
+        <th>short_description</th>
+        <th>full_description</th>
+        <th>base_price</th>
+        <th class="required">currency*</th>
+        <th>is_in_stock</th>
+        <th>warranty_months</th>
+        <th>show_price</th>
+        <th>meta_title</th>
+        <th>meta_description</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="required">UPS-1001</td>
+          <td class="required">UPS مدل X1000</td>
+          <td class="required">UPS آنلاین</td>
+          <td>دستگاه UPS آنلاین</td>
+          <td>نقد و بررسی...</td>
+          <td>15000000</td>
+          <td class="required">تومان</td>
+          <td>True</td>
+          <td>12</td>
+          <td>True</td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>📋 شیت Prices (اختیاری)</h3>
+    <table>
+      <thead><tr>
+        <th class="required">sku*</th>
+        <th class="required">amount*</th>
+        <th class="required">currency*</th>
+        <th>label</th>
+        <th>is_active</th>
+        <th>order</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="required">UPS-1001</td>
+          <td class="required">12000000</td>
+          <td class="required">تومان</td>
+          <td>قیمت نقدی</td>
+          <td>True</td>
+          <td>1</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>📋 شیت Specifications (اختیاری)</h3>
+    <table>
+      <thead><tr>
+        <th class="required">sku*</th>
+        <th class="required">group*</th>
+        <th class="required">key*</th>
+        <th class="required">value*</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="required">UPS-1001</td>
+          <td class="required">ورودی</td>
+          <td class="required">ولتاژ نامی</td>
+          <td class="required">220V</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+      <label for="file">فایل Excel را انتخاب کنید:</label>
+      <input type="file" name="excel_file" id="file" accept=".xlsx,.xls" required>
+    </div>
+    <div class="submit-row">
+      <input type="submit" value="ورود محصولات" class="default">
+    </div>
+  </form>
+
+  {% if results %}
+  <div class="results">
+    <h2>نتیجه ورود:</h2>
+    <ul>
+      {% for r in results %}
+        <li class="{% if r.type == 'success' %}success{% else %}error{% endif %}">{{ r.message }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

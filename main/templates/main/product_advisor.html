@@ -1,0 +1,282 @@
+{% extends 'base.html' %}
+{% load static custom_filters %}
+
+{% block title %}{{ advisor_config.title_fa }} | {{ settings.site_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.appliance-row td { vertical-align: middle; }
+.appliance-row .remove-btn { color: #ef4444; cursor: pointer; }
+.result-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+.result-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="pt-32 pb-16 bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div class="container mx-auto px-4">
+        <div class="text-center max-w-3xl mx-auto" data-aos="fade-up">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-normal py-2 gradient-text">{{ advisor_config.title_fa }}</h1>
+            <p class="text-lg text-gray-700 dark:text-gray-300">{{ advisor_config.subtitle_fa }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="py-16">
+    <div class="container mx-auto px-4 max-w-7xl">
+        <form method="post" id="advisorForm">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200/80 dark:border-gray-700">
+                        <h2 class="text-base font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                            <i class="fas fa-briefcase text-primary-500"></i> {{ advisor_config.section_application_title }}
+                        </h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">{{ advisor_config.section_application_title }} <span class="text-red-500">*</span></label>
+                                <select name="application" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary-500">
+                                    <option value="">{{ advisor_config.select_placeholder }}</option>
+                                    <option value="office" {% if form_data.application == 'office' %}selected{% endif %}>{{ advisor_config.application_office_label }}</option>
+                                    <option value="home" {% if form_data.application == 'home' %}selected{% endif %}>{{ advisor_config.application_home_label }}</option>
+                                    <option value="server" {% if form_data.application == 'server' %}selected{% endif %}>{{ advisor_config.application_server_label }}</option>
+                                    <option value="industrial" {% if form_data.application == 'industrial' %}selected{% endif %}>{{ advisor_config.application_industrial_label }}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">{% get_text 'advisor_budget_label' as t %}{{ t|default:'حداکثر بودجه (تومان)' }}</label>
+                                <input type="text" name="budget_max" value="{{ form_data.budget_max }}" placeholder="{% get_text 'advisor_budget_placeholder' as t %}{{ t|default:'مثلاً ۵۰,۰۰۰,۰۰۰' }}" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-primary-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200/80 dark:border-gray-700">
+                        <h2 class="text-base font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                            <i class="fas fa-plug text-amber-500"></i> {{ advisor_config.section_appliances_title }}
+                        </h2>
+                        <div class="mb-4">
+                            <select id="preset-appliances" class="w-full sm:w-auto text-sm bg-gray-100 dark:bg-gray-700 border-none rounded-xl p-2.5 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-primary-500" onchange="addPreset(this)">
+                                <option value="">➕ {{ advisor_config.preset_label }}</option>
+                                {% for p in presets %}
+                                <option value="{{ p.key }}|{{ p.power }}">{{ p.name }} ({{ p.power }} {% get_text 'advisor_watt' as t %}{{ t|default:'وات' }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="overflow-x-auto border border-gray-100 dark:border-gray-700 rounded-xl mb-4">
+                            <table class="w-full text-right text-sm">
+                                <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold">
+                                    <tr>
+                                        <th class="p-3">{% get_text 'advisor_col_device' as t %}{{ t|default:'نام وسیله' }}</th>
+                                        <th class="p-3">{% get_text 'advisor_col_power' as t %}{{ t|default:'توان (وات)' }}</th>
+                                        <th class="p-3">{% get_text 'advisor_col_qty' as t %}{{ t|default:'تعداد' }}</th>
+                                        <th class="p-3">{% get_text 'advisor_col_hours' as t %}{{ t|default:'ساعت کار' }}</th>
+                                        <th class="p-3 text-center">{% get_text 'advisor_col_remove' as t %}{{ t|default:'حذف' }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appliance-list">
+                                    {% if selected_appliances %}
+                                    {% for app in selected_appliances %}
+                                    <tr class="appliance-row border-t border-gray-100 dark:border-gray-700">
+                                        <td class="p-2"><input type="text" name="app_name[]" value="{{ app.name }}" class="w-full px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"></td>
+                                        <td class="p-2"><input type="number" name="app_power[]" value="{{ app.power }}" class="w-full px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"></td>
+                                        <td class="p-2"><input type="number" name="app_qty[]" value="{{ app.qty }}" min="1" class="w-16 px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"></td>
+                                        <td class="p-2"><input type="number" name="app_hours[]" value="{{ app.hours }}" step="0.5" min="0" class="w-20 px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"></td>
+                                        <td class="p-2 text-center"><span class="remove-btn text-red-500 hover:text-red-700 cursor-pointer" onclick="this.closest('tr').remove()"><i class="fas fa-times"></i></span></td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    <tr id="empty-row" class="text-center text-gray-400">
+                                        <td colspan="5" class="p-6">{{ advisor_config.no_appliances_msg }}</td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" onclick="addBlankRow()" class="w-full py-2.5 border-2 border-dashed border-primary-200 hover:border-primary-500 text-primary-600 hover:text-primary-800 text-sm font-bold rounded-xl transition flex items-center justify-center gap-2">
+                            <i class="fas fa-plus"></i> {{ advisor_config.add_row_btn_text }}
+                        </button>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200/80 dark:border-gray-700">
+                        <h2 class="text-base font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                            <i class="fas fa-sliders-h text-primary-500"></i> {{ advisor_config.section_technical_title }}
+                        </h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">{% get_text 'advisor_system_phase' as t %}{{ t|default:'فاز سیستم' }}</label>
+                                <select name="system_phase" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary-500">
+                                    <option value="1phase" {% if form_data.system_phase == '1phase' %}selected{% endif %}>{% get_text 'advisor_phase_1' as t %}{{ t|default:'تک فاز' }} (220V)</option>
+                                    <option value="3phase" {% if form_data.system_phase == '3phase' %}selected{% endif %}>{% get_text 'advisor_phase_3' as t %}{{ t|default:'سه فاز' }} (380V)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">{% get_text 'advisor_battery_voltage' as t %}{{ t|default:'ولتاژ باتری' }}</label>
+                                <select name="battery_voltage" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary-500">
+                                    <option value="12" {% if form_data.battery_voltage == '12' %}selected{% endif %}>12 {% get_text 'advisor_volt' as t %}{{ t|default:'ولت' }}</option>
+                                    <option value="24" {% if form_data.battery_voltage == '24' %}selected{% endif %}>24 {% get_text 'advisor_volt' as t %}{{ t|default:'ولت' }}</option>
+                                    <option value="48" {% if not form_data.battery_voltage or form_data.battery_voltage == '48' %}selected{% endif %}>48 {% get_text 'advisor_volt' as t %}{{ t|default:'ولت' }}</option>
+                                    <option value="96" {% if form_data.battery_voltage == '96' %}selected{% endif %}>96 {% get_text 'advisor_volt' as t %}{{ t|default:'ولت' }}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">{% get_text 'advisor_backup_hours' as t %}{{ t|default:'ساعت پشتیبان' }}</label>
+                                <input type="number" name="backup_hours" value="{{ form_data.backup_hours|default:advisor_config.default_backup_hours }}" step="0.5" min="0.5" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">{% get_text 'advisor_safety_margin' as t %}{{ t|default:'ضریب اطمینان' }} (%)</label>
+                                <input type="number" name="safety_margin" value="{{ form_data.safety_margin|default:advisor_config.default_safety_margin }}" min="0" max="100" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">{% get_text 'advisor_efficiency' as t %}{{ t|default:'راندمان سیستم' }} (%)</label>
+                                <input type="number" name="system_efficiency" value="{{ form_data.system_efficiency|default:advisor_config.default_efficiency }}" min="10" max="100" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">{% get_text 'advisor_power_factor' as t %}{{ t|default:'ضریب توان' }} (PF)</label>
+                                <input type="number" name="power_factor" value="{{ form_data.power_factor|default:advisor_config.default_power_factor }}" step="0.05" min="0.4" max="1.0" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">{% get_text 'advisor_dod' as t %}{{ t|default:'عمق تخلیه باتری' }} (DoD %)</label>
+                                <input type="number" name="dod" value="{{ form_data.dod|default:advisor_config.default_dod }}" min="10" max="100" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-primary-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl transition-colors text-lg shadow-lg">
+                        <i class="fas fa-calculator ml-2"></i> {{ advisor_config.submit_btn_text }}
+                    </button>
+
+                    {% if error %}
+                    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl text-sm">
+                        <i class="fas fa-exclamation-circle ml-1"></i> {{ error }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="lg:col-span-5 space-y-6">
+                    {% if results_summary %}
+                    <div class="result-card p-6 rounded-3xl shadow-xl text-white relative overflow-hidden">
+                        <div class="absolute -top-10 -left-10 w-40 h-40 bg-primary-500/10 rounded-full blur-2xl"></div>
+                        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-amber-500/10 rounded-full blur-2xl"></div>
+                        <h3 class="text-base font-bold mb-4 flex items-center justify-between border-b border-white/10 pb-3">
+                            <span class="flex items-center gap-2"><i class="fas fa-calculator text-amber-400"></i> {{ advisor_config.section_results_title }}</span>
+                            <span class="text-xs bg-white/10 px-2 py-1 rounded-full">
+                                {% if results_summary.system_phase == '3phase' %}
+                                {% get_text 'advisor_phase_3' as t %}{{ t|default:'سه فاز' }}
+                                {% else %}
+                                {% get_text 'advisor_phase_1' as t %}{{ t|default:'تک فاز' }}
+                                {% endif %}
+                            </span>
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="result-item p-3.5 rounded-2xl">
+                                <span class="block text-xs text-gray-400">{% get_text 'advisor_total_load' as t %}{{ t|default:'توان کل بارها' }}</span>
+                                <span class="text-lg font-black text-white">{{ results_summary.total_load_watts|intcomma }} <span class="text-xs font-normal text-gray-300">W</span></span>
+                            </div>
+                            <div class="result-item p-3.5 rounded-2xl">
+                                <span class="block text-xs text-amber-300">{% get_text 'advisor_inverter_power' as t %}{{ t|default:'توان اینورتر پیشنهادی' }}</span>
+                                <span class="text-lg font-black text-amber-400">{{ results_summary.inverter_power_va|intcomma }} <span class="text-xs font-normal text-amber-200">VA</span></span>
+                            </div>
+                            <div class="result-item p-3.5 rounded-2xl col-span-2">
+                                <span class="block text-xs text-gray-400">{% get_text 'advisor_total_energy' as t %}{{ t|default:'انرژی کل مورد نیاز' }}</span>
+                                <span class="text-lg font-black text-indigo-300">{{ results_summary.total_energy|intcomma }} <span class="text-xs font-normal text-gray-300">Wh</span></span>
+                            </div>
+                            <div class="bg-indigo-950/40 p-4 rounded-2xl border border-indigo-500/20 col-span-2 flex justify-between items-center">
+                                <div>
+                                    <span class="block text-xs text-indigo-300">{% get_text 'advisor_battery_capacity' as t %}{{ t|default:'حداقل ظرفیت باتری' }}</span>
+                                    <span class="text-xl font-black text-emerald-400 mt-1 block">{{ results_summary.battery_ah|intcomma }} <span class="text-xs font-normal text-emerald-300">Ah</span></span>
+                                </div>
+                                <span class="text-xs bg-indigo-500/20 px-2 py-1 rounded-lg text-indigo-300 border border-indigo-500/30">{{ results_summary.battery_voltage|floatformat:"0" }} {% get_text 'advisor_volt' as t %}{{ t|default:'ولت' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200/80 dark:border-gray-700">
+                        <h3 class="text-base font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-magic text-emerald-500"></i> {{ advisor_config.section_recommendations_title }}</span>
+                            <span class="text-xs bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2.5 py-0.5 rounded-full font-bold">{{ recommendations|length }} {% get_text 'advisor_item' as t %}{{ t|default:'کالا' }}</span>
+                        </h3>
+                        {% if recommendations %}
+                        <div class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+                            {% for product in recommendations %}
+                            <div class="border border-gray-100 dark:border-gray-700 rounded-xl p-4 hover:shadow-md transition" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|mul:50 }}">
+                                <div class="flex gap-4">
+                                    <div class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700">
+                                        {% if product.main_image %}
+                                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                                        {% else %}
+                                        <div class="w-full h-full flex items-center justify-center text-gray-400"><i class="fas fa-image"></i></div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-grow min-w-0">
+                                        <a href="{% url 'product_detail' product.slug %}?lang={{ current_lang }}" class="text-sm font-bold text-gray-800 dark:text-gray-100 hover:text-primary-600 transition">{{ product.name }}</a>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">{{ product.short_description|truncatechars:80 }}</p>
+                                        <div class="flex items-center justify-between mt-2">
+                                            <span class="text-xs px-2 py-0.5 bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded">{{ product.category.title }}</span>
+                                            <div class="flex items-center gap-2">
+                                                {% with prices=product.display_prices %}
+                                                {% if prices %}
+                                                <span class="text-sm font-bold text-primary-600">{{ prices.0.amount|floatformat:"0"|intcomma }} {{ prices.0.currency.symbol }}</span>
+                                                {% endif %}
+                                                {% endwith %}
+                                                <a href="{% url 'product_detail' product.slug %}?lang={{ current_lang }}" class="bg-primary-500 hover:bg-primary-600 text-white px-3 py-1.5 rounded-lg text-xs transition flex-shrink-0">{% get_text 'view_details' as t %}{{ t|default:'جزئیات' }}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-info-circle text-3xl mb-3 block text-gray-300 dark:text-gray-600"></i>
+                            <p class="text-sm">{{ advisor_config.no_results_msg }}</p>
+                            <p class="text-xs mt-1">{{ advisor_config.no_results_hint }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="bg-white dark:bg-gray-800 p-10 rounded-2xl shadow-sm border border-gray-200/80 dark:border-gray-700 text-center">
+                        <i class="fas fa-chart-line text-5xl text-gray-300 dark:text-gray-600 mb-4 block"></i>
+                        <h3 class="text-lg font-bold text-gray-700 dark:text-gray-300 mb-2">{{ advisor_config.empty_state_title }}</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ advisor_config.empty_state_msg }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function addPreset(select) {
+    var val = select.value;
+    if (!val) return;
+    var parts = val.split('|');
+    var name = select.options[select.selectedIndex].text.split(' (')[0];
+    var power = parts[1];
+    addRow(name, power, 1, 0);
+    select.value = '';
+}
+
+function addBlankRow() {
+    addRow('', '', 1, 0);
+}
+
+function addRow(name, power, qty, hours) {
+    var tbody = document.getElementById('appliance-list');
+    var empty = document.getElementById('empty-row');
+    if (empty) empty.remove();
+    var tr = document.createElement('tr');
+    tr.className = 'appliance-row border-t border-gray-100 dark:border-gray-700';
+    tr.innerHTML =
+        '<td class="p-2"><input type="text" name="app_name[]" value="' + name + '" class="w-full px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"></td>' +
+        '<td class="p-2"><input type="number" name="app_power[]" value="' + power + '" class="w-full px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"></td>' +
+        '<td class="p-2"><input type="number" name="app_qty[]" value="' + qty + '" min="1" class="w-16 px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"></td>' +
+        '<td class="p-2"><input type="number" name="app_hours[]" value="' + hours + '" step="0.5" min="0" class="w-20 px-2 py-1.5 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"></td>' +
+        '<td class="p-2 text-center"><span class="remove-btn text-red-500 hover:text-red-700 cursor-pointer" onclick="this.closest(\'tr\').remove()"><i class="fas fa-times"></i></span></td>';
+    tbody.appendChild(tr);
+}
+</script>
+{% endblock %}

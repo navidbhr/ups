@@ -198,6 +198,8 @@ class Command(BaseCommand):
              'text_ar': 'المشاريع', 'text_ru': 'Proekty'},
             {'key': 'menu_contact', 'default_text': 'تماس با ما', 'text_fa': 'تماس با ما', 'text_en': 'Contact',
              'text_ar': 'اتصل بنا', 'text_ru': 'Kontakt'},
+            {'key': 'menu_advisor', 'default_text': 'مشاور محصول', 'text_fa': 'مشاور محصول',
+             'text_en': 'Product Advisor', 'text_ar': 'مستشار المنتجات', 'text_ru': 'Консультант по продукту'},
 
             # Additional keys for article and project multilingual support
             {'key': 'all_categories', 'default_text': 'همه دسته‌بندی‌ها', 'text_fa': 'همه دسته‌بندی‌ها',
@@ -253,6 +255,32 @@ class Command(BaseCommand):
              'text_en': 'All rights reserved.', 'text_ar': 'كل الحقوق محفوظة.', 'text_ru': 'Все права защищены.'},
             {'key': 'main_branch', 'default_text': 'شعبه مرکزی', 'text_fa': 'شعبه مرکزی', 'text_en': 'Main Branch',
              'text_ar': 'الفرع الرئيسي', 'text_ru': 'Главный филиал'},
+
+            # Advisor Page
+            {'key': 'advisor_budget_label', 'default_text': 'حداکثر بودجه (تومان)', 'text_fa': 'حداکثر بودجه (تومان)', 'text_en': 'Max Budget (Toman)'},
+            {'key': 'advisor_budget_placeholder', 'default_text': 'مثلاً ۵۰,۰۰۰,۰۰۰', 'text_fa': 'مثلاً ۵۰,۰۰۰,۰۰۰', 'text_en': 'e.g. 50,000,000'},
+            {'key': 'advisor_watt', 'default_text': 'وات', 'text_fa': 'وات', 'text_en': 'Watt'},
+            {'key': 'advisor_col_device', 'default_text': 'نام وسیله', 'text_fa': 'نام وسیله', 'text_en': 'Device Name'},
+            {'key': 'advisor_col_power', 'default_text': 'توان (وات)', 'text_fa': 'توان (وات)', 'text_en': 'Power (Watt)'},
+            {'key': 'advisor_col_qty', 'default_text': 'تعداد', 'text_fa': 'تعداد', 'text_en': 'Quantity'},
+            {'key': 'advisor_col_hours', 'default_text': 'ساعت کار', 'text_fa': 'ساعت کار', 'text_en': 'Hours'},
+            {'key': 'advisor_col_remove', 'default_text': 'حذف', 'text_fa': 'حذف', 'text_en': 'Remove'},
+            {'key': 'advisor_system_phase', 'default_text': 'فاز سیستم', 'text_fa': 'فاز سیستم', 'text_en': 'System Phase'},
+            {'key': 'advisor_phase_1', 'default_text': 'تک فاز', 'text_fa': 'تک فاز', 'text_en': 'Single Phase'},
+            {'key': 'advisor_phase_3', 'default_text': 'سه فاز', 'text_fa': 'سه فاز', 'text_en': 'Three Phase'},
+            {'key': 'advisor_battery_voltage', 'default_text': 'ولتاژ باتری', 'text_fa': 'ولتاژ باتری', 'text_en': 'Battery Voltage'},
+            {'key': 'advisor_volt', 'default_text': 'ولت', 'text_fa': 'ولت', 'text_en': 'Volt'},
+            {'key': 'advisor_backup_hours', 'default_text': 'ساعت پشتیبان', 'text_fa': 'ساعت پشتیبان', 'text_en': 'Backup Hours'},
+            {'key': 'advisor_safety_margin', 'default_text': 'ضریب اطمینان', 'text_fa': 'ضریب اطمینان', 'text_en': 'Safety Margin'},
+            {'key': 'advisor_efficiency', 'default_text': 'راندمان سیستم', 'text_fa': 'راندمان سیستم', 'text_en': 'System Efficiency'},
+            {'key': 'advisor_power_factor', 'default_text': 'ضریب توان', 'text_fa': 'ضریب توان', 'text_en': 'Power Factor'},
+            {'key': 'advisor_dod', 'default_text': 'عمق تخلیه باتری', 'text_fa': 'عمق تخلیه باتری', 'text_en': 'Depth of Discharge'},
+            {'key': 'advisor_total_load', 'default_text': 'توان کل بارها', 'text_fa': 'توان کل بارها', 'text_en': 'Total Load Power'},
+            {'key': 'advisor_inverter_power', 'default_text': 'توان اینورتر پیشنهادی', 'text_fa': 'توان اینورتر پیشنهادی', 'text_en': 'Recommended Inverter Power'},
+            {'key': 'advisor_total_energy', 'default_text': 'انرژی کل مورد نیاز', 'text_fa': 'انرژی کل مورد نیاز', 'text_en': 'Total Required Energy'},
+            {'key': 'advisor_battery_capacity', 'default_text': 'حداقل ظرفیت باتری', 'text_fa': 'حداقل ظرفیت باتری', 'text_en': 'Min Battery Capacity'},
+            {'key': 'advisor_item', 'default_text': 'کالا', 'text_fa': 'کالا', 'text_en': 'Item'},
+            {'key': 'advisor_error_min_appliances', 'default_text': 'حداقل یک وسیله مصرفی وارد کنید.', 'text_fa': 'حداقل یک وسیله مصرفی وارد کنید.', 'text_en': 'Please enter at least one appliance.'},
         ]
 
         created_count = 0

@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه هوشمند محاسبات و انتخاب تجهیزات برق اضطراری</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        indigo: {
+                            50: '#f4f5f8',
+                            100: '#e5e7f1',
+                            200: '#cbd0e3',
+                            300: '#a3abc9',
+                            400: '#7580aa',
+                            500: '#525e8f',
+                            600: '#3e4878',
+                            700: '#313861',
+                            850: '#1d1e41',
+                            900: '#282a5b', // رنگ اول لوگو (سرمه‌ای تیره برند)
+                            950: '#1b1c3e',
+                        },
+                        emerald: {
+                            50: '#f0f9f4',
+                            100: '#dbf1e3',
+                            200: '#bce4cb',
+                            300: '#8fceaa',
+                            400: '#61b786', // رنگ سوم لوگو (سبز ملایم برند)
+                            500: '#61b786',
+                            600: '#4fa575',
+                            700: '#3f845d',
+                            800: '#35694c',
+                            900: '#2d5740',
+                        },
+                        amber: {
+                            50: '#f0f7fa',
+                            100: '#e0f0f7',
+                            200: '#c0e4f2',
+                            300: '#9cd2e8',
+                            400: '#72bcdb', // رنگ دوم لوگو (آبی روشن برند)
+                            500: '#72bcdb',
+                            600: '#5ba9c8',
+                            700: '#448ea9',
+                            800: '#356e83',
+                            900: '#274f5f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome برای آیکون‌ها -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800&display=swap');
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* اسکرول‌بار سفارشی */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-800 transition-colors duration-200">
+
+    <!-- نوتیفیکیشن اختصاصی جایگزین alert -->
+    <div id="toast" class="fixed top-5 left-5 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700">
+        <span id="toast-icon" class="text-emerald-400"><i class="fas fa-check-circle"></i></span>
+        <span id="toast-text" class="text-sm font-medium">عملیات با موفقیت انجام شد</span>
+    </div>
+
+    <!-- مودال تأیید بومی (جایگزین دکمه confirm مرورگر) -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl p-6 border border-slate-100">
+            <div class="flex items-center gap-3 text-rose-600 mb-4">
+                <i class="fas fa-exclamation-triangle text-2xl"></i>
+                <h4 class="text-base font-bold">تأیید عملیات پاکسازی</h4>
+            </div>
+            <p class="text-xs text-slate-600 mb-6 leading-relaxed">
+                آیا از پاک کردن تمامی اطلاعات وارد شده، بارهای مصرفی پروژه و کاتالوگ‌های آپلود شده به طور کامل اطمینان دارید؟ این عمل غیر قابل بازگشت است.
+            </p>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeConfirmModal()" class="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition">انصراف</button>
+                <button onclick="executeResetApp()" class="px-4 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl transition shadow-md">بله، پاکسازی شود</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال پیش‌نمایش تصویر پیش‌فاکتور نهایی -->
+    <div id="invoice-preview-modal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl w-full max-w-4xl max-h-[92vh] overflow-hidden shadow-2xl flex flex-col">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fas fa-file-invoice text-indigo-600"></i> پیش‌نمایش پروپوزال و فاکتور تصویری تولیدشده
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">تصویر گرافیکی با کیفیت عالی آماده اشتراک‌گذاری با کارفرما یا مشتری</p>
+                </div>
+                <button onclick="closeInvoicePreviewModal()" class="h-8 w-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 transition flex items-center justify-center">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto flex-grow flex items-center justify-center bg-slate-100">
+                <div class="max-w-full border shadow-xl bg-white p-2 rounded-xl">
+                    <img id="invoice-preview-img" src="" alt="پیش‌نمایش پیش‌فاکتور" class="max-h-[58vh] mx-auto rounded">
+                </div>
+            </div>
+            
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row gap-3 justify-between items-center">
+                <span class="text-xs text-slate-500"><i class="fas fa-lightbulb text-amber-500"></i> پیشنهاد: برای ذخیره سریع در تلفن همراه، انگشت خود را روی تصویر نگه دارید و ذخیره کنید.</span>
+                <div class="flex gap-3">
+                    <button onclick="closeInvoicePreviewModal()" class="px-5 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 rounded-xl transition">بستن</button>
+                    <button onclick="downloadBOMImage()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-2">
+                        <i class="fas fa-download"></i> دانلود تصویر باکیفیت (PNG)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="min-h-screen flex flex-col">
+        <!-- هدر برنامه -->
+        <header class="bg-gradient-to-r from-indigo-950 via-indigo-900 to-slate-950 text-white shadow-xl">
+            <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20">
+                        <i class="fas fa-solar-panel text-3xl text-amber-400 animate-pulse"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">سامانه محاسبات فنی و تطبیق ابعادی تجهیزات</h1>
+                        <p class="text-xs sm:text-sm text-indigo-200 mt-1">طراحی الکتریکال تک‌فاز/سه‌فاز، ممیزی جریان و فیلتر فیزیکی کاتالوگ شما</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        <span class="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        محاسبات تک‌فاز و سه‌فاز هوشمند
+                    </span>
+                    <button onclick="showConfirmModal()" class="px-3.5 py-2 text-xs font-bold text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-600 rounded-xl transition duration-200 border border-rose-500/20 flex items-center gap-2">
+                        <i class="fas fa-trash-alt"></i> پاکسازی داده‌ها
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- بدنه اصلی -->
+        <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- ستون سمت راست: آپلود کاتالوگ اکسل/CSV و وارد کردن بارهای مصرفی -->
+            <div class="lg:col-span-7 space-y-8">
+                
+                <!-- بخش ۱: آپلود فایل کاتالوگ کالاها -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fas fa-file-csv text-indigo-600"></i> ۱. بارگذاری کاتالوگ محصولات (فایل CSV)
+                        </h2>
+                        <span class="text-xs text-indigo-600 font-semibold cursor-pointer underline hover:text-indigo-800" onclick="showHelpModal()">
+                            راهنمای فیلدهای کاتالوگ؟
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+                        فایل کاتالوگ خود را با پسوند <code class="bg-slate-100 px-1 py-0.5 rounded text-rose-600 font-bold">CSV</code> بارگذاری کنید یا جهت سهولت بررسی و تست ممیزی ابعادی و فاز دکمه تست سریع کاتالوگ نمونه را فشار دهید.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- آپلودر شیت ۱ -->
+                        <div class="border-2 border-dashed border-slate-200 hover:border-indigo-500 rounded-xl p-4 transition text-center cursor-pointer relative group bg-slate-50/50">
+                            <input type="file" id="csv-file-1" accept=".csv" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="handleFileUpload(this, 1)">
+                            <div class="space-y-2 py-2" id="upload-box-1">
+                                <i class="fas fa-cloud-upload-alt text-2xl text-slate-400 group-hover:text-indigo-500 transition"></i>
+                                <p class="text-xs font-semibold text-slate-700">بارگذاری کاتالوگ اصلی (Pharma)</p>
+                                <p class="text-[10px] text-slate-400" id="file-info-1">انتخاب فایل اول</p>
+                            </div>
+                        </div>
+
+                        <!-- آپلودر شیت ۲ -->
+                        <div class="border-2 border-dashed border-slate-200 hover:border-indigo-500 rounded-xl p-4 transition text-center cursor-pointer relative group bg-slate-50/50">
+                            <input type="file" id="csv-file-2" accept=".csv" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="handleFileUpload(this, 2)">
+                            <div class="space-y-2 py-2" id="upload-box-2">
+                                <i class="fas fa-cloud-upload-alt text-2xl text-slate-400 group-hover:text-indigo-500 transition"></i>
+                                <p class="text-xs font-semibold text-slate-700">بارگذاری کاتالوگ تکمیلی (UPS)</p>
+                                <p class="text-[10px] text-slate-400" id="file-info-2">انتخاب فایل دوم</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- دکمه ویژه فعال‌سازی دیتای آزمایشی بدون نیاز به بارگذاری فایل -->
+                    <div class="mt-4 flex flex-col sm:flex-row gap-3 items-center justify-between border-t border-slate-100 pt-4">
+                        <span class="text-xs text-slate-500">آیا فایلی برای تست در دسترس ندارید؟</span>
+                        <button type="button" onclick="loadSampleCatalog()" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-xl transition duration-150 flex items-center gap-1.5 border border-indigo-200/50">
+                            <i class="fas fa-magic"></i> بارگذاری هوشمند کاتالوگ نمونه جهت تست فوری
+                        </button>
+                    </div>
+
+                    <!-- وضعیت بانک اطلاعاتی لود شده -->
+                    <div id="db-status" class="mt-4 hidden p-3 bg-indigo-50 rounded-xl border border-indigo-100 flex items-center justify-between text-xs text-indigo-800">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-database text-indigo-600 animate-pulse"></i>
+                            <span id="db-summary-text">تعداد کل تجهیزات شناسایی شده: ۰ کالا</span>
+                        </div>
+                        <button onclick="toggleCatalogPreview()" class="text-indigo-600 hover:text-indigo-950 font-bold underline">مشاهده کاتالوگ و جزئیات ابعاد</button>
+                    </div>
+                </section>
+
+                <!-- بخش ۲: لیست مصرف‌کننده‌ها -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fas fa-plug text-amber-500"></i> ۲. تعیین بارهای مصرفی پروژه (برآورد جریان و توان)
+                        </h2>
+                        <div class="w-full sm:w-auto">
+                            <select id="preset-appliances" class="w-full sm:w-auto text-xs bg-slate-100 border-none rounded-lg p-2.5 text-slate-700 focus:ring-2 focus:ring-indigo-500" onchange="addPresetAppliance()">
+                                <option value="">➕ انتخاب سریع مصرف‌کننده پیش‌فرض...</option>
+                                <option value="lamp|15|1phase|watts|لامپ کم مصرف LED">لامپ کم مصرف LED (۱۵ وات)</option>
+                                <option value="tv|120|1phase|watts|تلویزیون و رسیور">تلویزیون و رسیور (۱۲۰ وات)</option>
+                                <option value="pc|250|1phase|watts|کامپیوتر رومیزی">کامپیوتر رومیزی (۲۵۰ وات)</option>
+                                <option value="fridge|300|1phase|watts|یخچال معمولی">یخچال معمولی (۳۰۰ وات)</option>
+                                <option value="modem|15|1phase|watts|مودم اینترنت">مودم اینترنت (۱۵ وات)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- جدول بارهای وارد شده -->
+                    <div class="overflow-x-auto border border-slate-100 rounded-xl mb-4">
+                        <table class="w-full text-right text-[11px] sm:text-xs">
+                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold">
+                                <tr>
+                                    <th class="p-3">نام وسیله</th>
+                                    <th class="p-3">شبکه الکتریکی</th>
+                                    <th class="p-3">نوع ورودی</th>
+                                    <th class="p-3">مقدار ورودی (W / A)</th>
+                                    <th class="p-3">تعداد</th>
+                                    <th class="p-3">ساعت کار</th>
+                                    <th class="p-3">توان معادل (W)</th>
+                                    <th class="p-3 text-center">حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appliance-list-body">
+                                <tr id="empty-row" class="text-center text-slate-400">
+                                    <td colspan="8" class="p-6">هنوز هیچ وسیله مصرفی اضافه نکرده‌اید.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button onclick="addNewBlankRow()" class="w-full py-2.5 border-2 border-dashed border-indigo-200 hover:border-indigo-500 text-indigo-600 hover:text-indigo-800 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2">
+                        <i class="fas fa-plus"></i> افزودن ردیف دستی جدید
+                    </button>
+                </section>
+
+                <!-- بخش ۳: پارامترهای فنی سیستم و ابعاد فیزیکی -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+                    <h2 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <i class="fas fa-sliders-h text-indigo-600"></i> ۳. تنظیم پارامترهای فنی و شروط محیطی نصب
+                    </h2>
+                    <p class="text-xs text-slate-400 mb-4">
+                        جهت تطبیق فیلترها و کالیبره‌سازی محاسبات ابعادی و شبکه فاز، پارامترهای مدنظر را در دو زبانه زیر تنظیم کنید:
+                    </p>
+
+                    <!-- تب انتخاب نوع فیلترها (فنی / ابعادی فیزیکی) -->
+                    <div class="flex gap-2 mb-4 border-b border-slate-100 pb-2">
+                        <button onclick="switchParamTab('electrical')" id="tab-param-electrical" class="px-4 py-2 rounded-lg text-xs font-bold bg-indigo-600 text-white transition flex items-center gap-1.5">
+                            <i class="fas fa-bolt"></i> فیلترهای فنی و شبکه فاز
+                        </button>
+                        <button onclick="switchParamTab('physical')" id="tab-param-physical" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:bg-indigo-50 transition flex items-center gap-1.5 border border-transparent hover:border-slate-200">
+                            <i class="fas fa-ruler-combined text-amber-500"></i> فیلترهای ابعاد فیزیکی و محل نصب
+                            <span id="active-phys-badge" class="hidden h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+                        </button>
+                    </div>
+
+                    <!-- پانل فیلترهای الکتریکی و شبکه فاز -->
+                    <div id="param-electrical-panel" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">فاز کلی سیستم برق پشتیبان</label>
+                            <select id="system-phase" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-bold text-indigo-700 focus:ring-2 focus:ring-indigo-500" onchange="runCalculations()">
+                                <option value="1phase">تک فاز (Single Phase - 220V)</option>
+                                <option value="3phase">سه فاز (Three Phase - 380V) ⚡</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">ولتاژ نامی سیستم باتری</label>
+                            <select id="system-voltage" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500" onchange="runCalculations()">
+                                <option value="auto">هوشمند (بهترین انتخاب)</option>
+                                <option value="12">12 ولت (سیستم کوچک)</option>
+                                <option value="24">24 ولت (سیستم متوسط)</option>
+                                <option value="48">48 ولت (سیستم بزرگ)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">ساعت برق‌دهی مورد نیاز (Backup)</label>
+                            <div class="relative">
+                                <input type="number" id="backup-hours" value="4" min="0.5" step="0.5" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 pr-3 pl-8 text-left font-mono" oninput="runCalculations()">
+                                <span class="absolute left-3 top-2.5 text-slate-400 text-[10px]">ساعت</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">ضریب اطمینان اینورتر</label>
+                            <div class="relative">
+                                <input type="number" id="safety-margin" value="25" min="0" max="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 pr-3 pl-8 text-left font-mono" oninput="runCalculations()">
+                                <span class="absolute left-3 top-2.5 text-slate-400 text-[10px]">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">نوع تکنولوژی باتری هدف</label>
+                            <select id="battery-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500" onchange="updateDoD()">
+                                <option value="gel">سیلد اسید / ژل (سرب اسیدی)</option>
+                                <option value="lithium">لیتیومی (LiFePO4)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">حداکثر عمق تخلیه باتری (DoD)</label>
+                            <div class="relative">
+                                <input type="number" id="dod-percentage" value="50" min="10" max="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 pr-3 pl-8 text-left font-mono" oninput="runCalculations()">
+                                <span class="absolute left-3 top-2.5 text-slate-400 text-[10px]">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">راندمان عملکرد سیستم کل</label>
+                            <div class="relative">
+                                <input type="number" id="system-efficiency" value="85" min="10" max="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 pr-3 pl-8 text-left font-mono" oninput="runCalculations()">
+                                <span class="absolute left-3 top-2.5 text-slate-400 text-[10px]">%</span>
+                            </div>
+                        </div>
+                        <!-- کنترلرهای مهندسی جدید اضافه شده به هسته سیستم -->
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">ضریب توان سیستم (Power Factor)</label>
+                            <input type="number" id="power-factor" value="0.8" min="0.4" max="1.0" step="0.05" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 pr-3 pl-8 text-left font-mono" oninput="runCalculations()">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">ضریب استهلاک باتری (Aging Factor)</label>
+                            <select id="battery-aging" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500" onchange="runCalculations()">
+                                <option value="1.0">بدون ضریب زاپاس (۱۰۰٪ ظرفیت نامی)</option>
+                                <option value="1.2" selected>ضریب استهلاک ۲۰٪ (پیشنهاد استاندارد ۱.۲)</option>
+                                <option value="1.3">ضریب استهلاک ۳۰٪ (سخت‌گیرانه ۱.۳)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- پانل فیلترهای فیزیکی -->
+                    <div id="param-physical-panel" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 hidden">
+                        <div class="col-span-1 sm:col-span-2 md:col-span-3 bg-amber-50 p-3 rounded-xl border border-amber-100 text-[11px] text-amber-800">
+                            <i class="fas fa-info-circle"></i> <strong>توجه ابعادی:</strong> با تغییر مشخصات زیر کاتالوگ شما به صورت هوشمند بر حسب عرض، طول و وزن مجاز فیلتر می‌شود.
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">شکل فیزیکی نصب دستگاه</label>
+                            <select id="filter-installation-mode" class="w-full bg-slate-100 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 font-medium" onchange="runCalculations()">
+                                <option value="all">🔍 بدون محدودیت (همه مدل‌ها)</option>
+                                <option value="wall">دیواری (Wall Mounted)</option>
+                                <option value="wheel">چرخ‌دار (Wheel/Ground)</option>
+                                <option value="ground">ثابت زمینی (Ground)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">حداکثر عرض مجاز (Width)</label>
+                            <div class="relative">
+                                <input type="number" id="max-width" placeholder="مثلا ۴۰۰" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 pr-3 pl-12 text-left font-mono" oninput="runCalculations()">
+                                <span class="absolute left-3 top-2.5 text-slate-400 text-[10px]">میلی‌متر</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">حداکثر ارتفاع مجاز (Height)</label>
+                            <div class="relative">
+                                <input type="number" id="max-height" placeholder="مثلا ۶۰۰" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 pr-3 pl-12 text-left font-mono" oninput="runCalculations()">
+                                <span class="absolute left-3 top-2.5 text-slate-400 text-[10px]">میلی‌متر</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">حداکثر عمق مجاز (Depth)</label>
+                            <div class="relative">
+                                <input type="number" id="max-depth" placeholder="مثلا ۲۵۰" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 pr-3 pl-12 text-left font-mono" oninput="runCalculations()">
+                                <span class="absolute left-3 top-2.5 text-slate-400 text-[10px]">میلی‌متر</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">حداکثر وزن مجاز کالا</label>
+                            <div class="relative">
+                                <input type="number" id="max-weight" placeholder="مثلا ۳۵" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-indigo-500 pr-3 pl-12 text-left font-mono" oninput="runCalculations()">
+                                <span class="absolute left-3 top-2.5 text-slate-400 text-[10px]">کیلوگرم</span>
+                            </div>
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="clearPhysicalFilters()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 border border-slate-200">
+                                <i class="fas fa-undo"></i> ریست شروط ابعادی
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ستون سمت چپ: نتایج محاسبات فنی و تطبیق هوشمند -->
+            <div class="lg:col-span-5 space-y-8">
+                
+                <!-- بخش ۴: کارت هوشمند خلاصه محاسبات مهندسی -->
+                <section class="bg-slate-900 text-white p-6 rounded-3xl shadow-xl relative overflow-hidden">
+                    <div class="absolute -top-10 -left-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl"></div>
+                    <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-amber-500/10 rounded-full blur-2xl"></div>
+
+                    <h2 class="text-base font-bold text-slate-200 mb-4 flex items-center justify-between border-b border-white/10 pb-3">
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-calculator text-amber-400"></i> نتایج دقیق مهندسی سیستم
+                        </span>
+                        <span id="active-system-phase-badge" class="text-[10px] bg-indigo-800 text-indigo-200 px-2 py-0.5 rounded-full font-mono">تک‌فاز ۲۲۰V</span>
+                    </h2>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- توان کل مصرفی -->
+                        <div class="bg-white/5 p-3.5 rounded-2xl border border-white/5">
+                            <span class="block text-[10px] text-slate-400">مجموع توان بارهای همزمان</span>
+                            <span class="text-lg font-black text-white" id="res-total-watt">۰ <span class="text-xs font-normal text-slate-300">W</span></span>
+                        </div>
+                        <!-- توان اینورتر پیشنهادی -->
+                        <div class="bg-white/5 p-3.5 rounded-2xl border border-white/5">
+                            <span class="block text-[10px] text-amber-300">توان اینورتر با ضریب ایمنی</span>
+                            <span class="text-lg font-black text-amber-400" id="res-inverter-watt">۰ <span class="text-xs font-normal text-amber-200">W</span></span>
+                        </div>
+                        <!-- انرژی کل روزانه -->
+                        <div class="bg-white/5 p-3.5 rounded-2xl border border-white/5 col-span-2">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] text-slate-400">کل انرژی مورد نیاز در زمان قطع برق</span>
+                                <span class="text-[10px] text-slate-400" id="calc-formula-energy">0W × 0h</span>
+                            </div>
+                            <span class="text-lg font-black text-indigo-300" id="res-total-energy">۰ <span class="text-xs font-normal text-slate-300">Wh</span></span>
+                        </div>
+                        <!-- ظرفیت باتری پیشنهادی -->
+                        <div class="bg-indigo-950/40 p-4 rounded-2xl border border-indigo-500/20 col-span-2 flex justify-between items-center">
+                            <div>
+                                <span class="block text-[10px] text-indigo-300">حداقل ظرفیت باتری مورد نیاز (با ضریب استهلاک)</span>
+                                <span class="text-xl font-black text-emerald-400 mt-1 block" id="res-battery-ah">۰ <span class="text-xs font-normal text-emerald-300">Ah</span></span>
+                            </div>
+                            <div class="text-left">
+                                <span class="inline-block px-2.5 py-1 bg-indigo-500/20 rounded-lg text-[10px] text-indigo-300 border border-indigo-500/30" id="res-voltage-badge">ولتاژ نامی: ۴۸ ولت</span>
+                            </div>
+                        </div>
+                        <!-- خروجی خورشیدی پیشنهادی -->
+                        <div class="bg-white/5 p-3.5 rounded-2xl border border-white/5 col-span-2">
+                            <span class="block text-[10px] text-amber-300">توان پنل خورشیدی حمایتی پیشنهادی</span>
+                            <span class="text-base font-bold text-amber-200" id="res-solar-pv">۰ <span class="text-xs font-normal text-slate-300">W</span></span>
+                        </div>
+                    </div>
+
+                    <!-- آکاردئون نمایش فرمول‌های محاسباتی مهندسی به صورت لاتک استاندارد -->
+                    <details class="mt-4 bg-white/5 rounded-xl border border-white/10 text-xs text-slate-300">
+                        <summary class="p-3 cursor-pointer select-none font-semibold flex items-center justify-between">
+                            <span>شفاف‌سازی فرمول‌ها و ممیزی محاسبات تک‌فاز / سه‌فاز</span>
+                            <i class="fas fa-chevron-down text-[10px]"></i>
+                        </summary>
+                        <div class="p-3 border-t border-white/10 space-y-3 bg-slate-950/40 leading-relaxed font-mono text-[11px] text-left">
+                            <p class="text-amber-300">Single Phase $I$ to $P$: $P = V \times I \times \cos\phi$</p>
+                            <p class="text-amber-300">Three Phase $I$ to $P$: $P = \sqrt{3} \times V \times I \times \cos\phi$</p>
+                            <p class="text-indigo-300">$P_{\text{load}} = \sum (Power_i \times Qty_i)$</p>
+                            <p class="text-indigo-300">$P_{\text{inverter}} = P_{\text{load}} \times (1 + \frac{\text{Safety\_Margin}}{100})$</p>
+                            <p class="text-emerald-300">$\text{Energy (Wh)} = P_{\text{load}} \times \text{Backup\_Hours}$</p>
+                            <p class="text-emerald-300">$\text{Battery (Ah)} = \frac{\text{Energy}}{V_{\text{sys}} \times \frac{\text{DoD}}{100} \times \frac{\text{Efficiency}}{100}} \times \text{Aging\_Factor}$</p>
+                        </div>
+                    </details>
+                </section>
+
+                <!-- بخش ۵: تطبیق هوشمند کالاها و پیشنهادات خرید -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+                    <h2 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <i class="fas fa-magic text-emerald-600"></i> کاتالوگ منطبق با شروط فیزیکی و فاز شما
+                    </h2>
+                    <p class="text-xs text-slate-500 mb-4">
+                        محصولاتی که فاز خروجی، بارهای الکتریکی و شروط ابعادی تعیین‌شده فضای شما را نقض نمی‌کنند:
+                    </p>
+
+                    <!-- تب‌های انتخاب دسته‌بندی کالاها -->
+                    <div class="flex gap-2 mb-4 border-b border-slate-100 pb-2">
+                        <button onclick="switchMatchTab('inverters')" id="tab-inverters" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 transition">اینورترها و یو‌پی‌اس‌ها</button>
+                        <button onclick="switchMatchTab('chargers')" id="tab-chargers" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:bg-slate-50 transition">کنترلرها و باتری‌ها</button>
+                    </div>
+
+                    <!-- لیست کالاها -->
+                    <div id="matching-results-container" class="space-y-3 max-h-[350px] overflow-y-auto pr-1">
+                        <div class="text-center py-8 text-slate-400 text-xs">
+                            <i class="fas fa-info-circle text-lg mb-2 block"></i> لطفا ابتدا فایل کاتالوگ را در بخش ۱ آپلود نمایید یا دکمه بارگذاری نمونه را فشار دهید.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- بخش ۶: سبد سفارش و خروجی فاکتور نهایی -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+                    <h2 class="text-base font-bold text-slate-900 mb-3 flex items-center justify-between">
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-shopping-cart text-indigo-600"></i> سبد تجهیزات منتخب شما (BOM)
+                        </span>
+                        <span id="bom-count-badge" class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-0.5 rounded-full font-bold">۰ قلم کالا</span>
+                    </h2>
+
+                    <!-- لیست اقلام فاکتور/BOM -->
+                    <div class="border border-slate-100 rounded-xl overflow-hidden mb-4 bg-slate-50/50">
+                        <table class="w-full text-right text-xs">
+                            <thead class="bg-slate-100 text-slate-600 font-semibold">
+                                <tr>
+                                    <th class="p-2">برند / مدل</th>
+                                    <th class="p-2">ابعاد / فاز و توان</th>
+                                    <th class="p-2 text-center">تعداد</th>
+                                    <th class="p-2 text-center">حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bom-table-body">
+                                <tr id="bom-empty-row" class="text-center text-slate-400">
+                                    <td colspan="4" class="p-4 text-[11px]">اقلام کاتالوگ را با فشردن دکمه «➕ افزودن به سبد» در بالا به این جدول بیفزایید.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- بخش جدید: فرم اطلاعات خریدار و محل نصب پروژه -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/70 mb-4 space-y-3">
+                        <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5 border-b border-slate-200 pb-2">
+                            <i class="fas fa-id-card text-indigo-500"></i> مشخصات کارفرما، لوگو و محل نصب (جهت درج در فاکتور تصویری)
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">نام مشتری / کارفرما:</label>
+                                <input type="text" id="client-name" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs focus:ring-2 focus:ring-indigo-500" placeholder="مثلاً: جناب آقای مهندس احمدی">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">شماره تماس:</label>
+                                <input type="text" id="client-phone" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs focus:ring-2 focus:ring-indigo-500 text-left font-mono" placeholder="۰۹۱۲xxxxxxx">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">آدرس دقیق محل نصب کالا:</label>
+                                <input type="text" id="client-address" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs focus:ring-2 focus:ring-indigo-500" placeholder="مثلاً: تهران، بلوار میرداماد، کلینیک طب درمان، واحد ۳">
+                            </div>
+                            <!-- فیلد آپلود لوگو برای حل دائمی خطای CORS محلی در تمام مرورگرها -->
+                            <div class="sm:col-span-2">
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">لوگوی اختصاصی شرکت شما (PNG/JPG):</label>
+                                <div class="relative border border-dashed border-indigo-200 hover:border-indigo-500 rounded-xl p-2.5 bg-white transition text-center cursor-pointer">
+                                    <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="handleLogoUpload(this)">
+                                    <p class="text-xs text-indigo-700 font-semibold" id="logo-upload-text">
+                                        <i class="fas fa-image mr-1"></i> انتخاب تصویر لوگو (اجرای کاملاً آفلاین بدون خطای Taint/CORS)
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- یادداشت برای گزارش خروجی -->
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">توضیحات فضا، چیدمان یا نام کارفرما:</label>
+                        <textarea id="project-note" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs focus:ring-2 focus:ring-indigo-500" placeholder="مثلاً: نصب در کابینت داروخانه با محدودیت ارتفاع ۵۰ سانتی‌متر..."></textarea>
+                    </div>
+
+                    <!-- دکمه‌های جدید پیش‌نمایش و دانلود پیش‌فاکتور تصویری -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button onclick="previewInvoiceImage()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 border border-slate-300">
+                            <i class="fas fa-eye text-indigo-600"></i> مشاهده پیش‌نمایش فاکتور 📋
+                        </button>
+                        <button onclick="downloadBOMImage()" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition duration-200 flex items-center justify-center gap-2">
+                            <i class="fas fa-file-image"></i> دانلود مستقیم فاکتور (PNG) 🖼️
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+        
+        <!-- پاورقی -->
+        <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-center text-xs mt-12">
+            <p>تمامی محاسبات ابعادی، فاز و جریان بر اساس مراجع معتبر مهندسی و به صورت کاملاً محلی در مرورگر شما پردازش می‌شوند.</p>
+        </footer>
+    </div>
+
+    <!-- مودال نمایش پیش‌نمایش کاتالوگ بارگذاری شده -->
+    <div id="catalog-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl w-full max-w-6xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fas fa-list-alt text-indigo-600"></i> مشخصات فنی، ابعادی و فاز کاتالوگ بارگذاری شده
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">تجهیزات شناسایی شده به همراه ولتاژ، جریان، تعداد فازها و ابعاد فیزیکی</p>
+                </div>
+                <button onclick="toggleCatalogPreview()" class="h-8 w-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 transition flex items-center justify-center">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto flex-grow">
+                <!-- فیلتر سریع کاتالوگ در مودال -->
+                <div class="flex flex-col sm:flex-row gap-3 mb-4">
+                    <input type="text" id="catalog-search" placeholder="جستجو در برند، مدل، فاز..." class="flex-grow bg-slate-100 rounded-xl px-4 py-2 text-xs border-none focus:ring-2 focus:ring-indigo-500" oninput="filterCatalogGrid()">
+                    <select id="catalog-type-filter" class="bg-slate-100 rounded-xl px-4 py-2 text-xs border-none focus:ring-2 focus:ring-indigo-500" onchange="filterCatalogGrid()">
+                        <option value="all">همه دسته‌بندی‌ها</option>
+                        <option value="inverter">اینورترها و UPS</option>
+                        <option value="charger">کنترلر شارژر و باتری‌ها</option>
+                    </select>
+                </div>
+
+                <div class="overflow-x-auto border border-slate-100 rounded-xl">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-100 text-slate-700 font-bold sticky top-0">
+                            <tr>
+                                <th class="p-3">ردیف</th>
+                                <th class="p-3">برند</th>
+                                <th class="p-3">دسته</th>
+                                <th class="p-3">مدل</th>
+                                <th class="p-3">توان نامی</th>
+                                <th class="p-3">سیستم فاز</th>
+                                <th class="p-3">شکل نصب</th>
+                                <th class="p-3">ابعاد (W×H×D)</th>
+                                <th class="p-3">وزن</th>
+                                <th class="p-3">ولتاژ باتری</th>
+                            </tr>
+                        </thead>
+                        <tbody id="catalog-grid-body">
+                            <!-- به صورت داینامیک پر می‌شود -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال راهنمای فرمت فایل -->
+    <div id="help-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl p-6">
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 mb-3">
+                <i class="fas fa-info-circle text-indigo-600"></i> راهنمای ستون‌های ابعادی، فاز و فیزیکی کاتالوگ
+            </h3>
+            <div class="space-y-3 text-xs text-slate-600 leading-relaxed max-h-[60vh] overflow-y-auto pl-1">
+                <p>موتور تطبیق ابعادی و سیستم فاز به طور خودکار ستون‌های زیر را با الگوهای زیر در فایل‌های CSV مطابقت می‌دهد:</p>
+                
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2">
+                    <p class="font-bold text-slate-700">⚡ تعداد فاز خروجی (Output Phase):</p>
+                    <p class="text-slate-500">ستون‌هایی نظیر: <code class="bg-indigo-100 px-1 rounded text-indigo-700">Output Phase</code>، <code class="bg-indigo-100 px-1 rounded text-indigo-700">فاز خروجی</code>، <code class="bg-indigo-100 px-1 rounded text-indigo-700">Phase</code> (سیستم واژه‌های 'سه فاز'، 'تک فاز'، '3-phase' یا '1-phase' را تشخیص می‌دهد)</p>
+
+                    <p class="font-bold text-slate-700">📐 عرض (Width):</p>
+                    <p class="text-slate-500">ستون‌هایی نظیر: <code class="bg-indigo-100 px-1 rounded text-indigo-700">Width</code>، <code class="bg-indigo-100 px-1 rounded text-indigo-700">width (mm)</code>، <code class="bg-indigo-100 px-1 rounded text-indigo-700">عرض</code></p>
+                    
+                    <p class="font-bold text-slate-700">📐 ارتفاع (Height):</p>
+                    <p class="text-slate-500">ستون‌هایی نظیر: <code class="bg-indigo-100 px-1 rounded text-indigo-700">Height</code>، <code class="bg-indigo-100 px-1 rounded text-indigo-700">ارتفاع</code></p>
+                    
+                    <p class="font-bold text-slate-700">📐 عمق یا طول (Depth / Length):</p>
+                    <p class="text-slate-500">ستون‌هایی نظیر: <code class="bg-indigo-100 px-1 rounded text-indigo-700">Depth</code>، <code class="bg-indigo-100 px-1 rounded text-indigo-700">Length</code>، <code class="bg-indigo-100 px-1 rounded text-indigo-700">عمق</code>، <code class="bg-indigo-100 px-1 rounded text-indigo-700">طول</code></p>
+                    
+                    <p class="font-bold text-slate-700">⚖️ وزن خالص (Weight):</p>
+                    <p class="text-slate-500">ستون‌هایی نظیر: <code class="bg-indigo-100 px-1 rounded text-indigo-700">net Weight</code>، <code class="bg-indigo-100 px-1 rounded text-indigo-700">Weight</code>، <code class="bg-indigo-100 px-1 rounded text-indigo-700">وزن</code></p>
+
+                    <p class="font-bold text-slate-700">🔧 شکل نصب (Installation mode):</p>
+                    <p class="text-slate-500">ستون‌هایی نظیر: <code class="bg-indigo-100 px-1 rounded text-indigo-700">Installation mode</code>، <code class="bg-indigo-100 px-1 rounded text-indigo-700">نوع نصب / شکل نصب</code></p>
+                </div>
+            </div>
+            <button onclick="showHelpModal()" class="w-full mt-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition text-xs">متوجه شدم</button>
+        </div>
+    </div>
+
+    <!-- مودال دیتاشیت کامل تجهیز -->
+    <div id="datasheet-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl w-full max-w-4xl max-h-[88vh] overflow-hidden shadow-2xl flex flex-col">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-gradient-to-l from-emerald-50 to-white">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fas fa-file-alt text-emerald-600"></i> <span id="ds-title">دیتاشیت کامل تجهیز</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1" id="ds-subtitle">مشخصات فنی کامل استخراج شده از فایل کاتالوگ</p>
+                </div>
+                <button onclick="closeDatasheetModal()" class="h-8 w-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 transition flex items-center justify-center">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-grow bg-slate-50/50">
+                <div class="overflow-x-auto border border-slate-200 rounded-xl bg-white">
+                    <table class="w-full text-right text-xs">
+                        <tbody id="ds-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="closeDatasheetModal()" class="px-5 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 rounded-xl transition">بستن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- جاوا اسکریپت سامانه محاسبات و تحلیل گر بانک اطلاعاتی -->
+    <script>
+        // بانک اطلاعاتی تجهیزات استخراج شده از فایل‌های اکسل/CSV
+        let catalogDatabase = [];
+        // سبد اقلام انتخابی (Bill of Materials - BOM)
+        let selectedBOM = [];
+        
+        // اصلاح مصرف‌کننده پیش‌فرض و خروج کامل دستگاه سه‌فاز از بارهای اولیه
+        let appliances = [
+            { id: 1, name: 'لامپ‌های روشنایی کم مصرف', phase: '1phase', inputMode: 'watts', value: 150, qty: 10, hours: 8, watt: 150 },
+            { id: 2, name: 'کامپیوترهای مانیتورینگ حساس', phase: '1phase', inputMode: 'watts', value: 250, qty: 2, hours: 6, watt: 500 }
+        ];
+        
+        let currentMatchTab = 'inverters';
+        let customLogoBase64 = null; // برای ذخیره لوگوی آپلودی به صورت دیتا URL امن
+
+        window.onload = function() {
+            renderAppliances();
+            runCalculations();
+        }
+
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const text = document.getElementById('toast-text');
+            
+            text.textContent = message;
+            if (isSuccess) {
+                icon.innerHTML = '<i class="fas fa-check-circle text-emerald-400"></i>';
+                toast.classList.remove('border-rose-500/30');
+                toast.classList.add('border-emerald-500/30');
+            } else {
+                icon.innerHTML = '<i class="fas fa-exclamation-circle text-rose-500"></i>';
+                toast.classList.remove('border-emerald-500/30');
+                toast.classList.add('border-rose-500/30');
+            }
+            
+            toast.classList.remove('-translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('-translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
+        // کنترلر بارگذاری آفلاین فایل لوگوی اختصاصی کارفرما
+        function handleLogoUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                customLogoBase64 = e.target.result;
+                document.getElementById('logo-upload-text').innerHTML = `
+                    <span class="text-emerald-600 font-bold">
+                        <i class="fas fa-check-circle mr-1"></i> لوگوی اختصاصی با موفقیت ثبت شد
+                    </span>
+                `;
+                showToast("لوگوی اختصاصی شما ثبت شد. اکنون در پیش‌فاکتور استفاده می‌شود.");
+                runCalculations();
+            };
+            reader.onerror = function() {
+                showToast("خطا در خواندن فایل لوگو. مجدداً تلاش کنید.", false);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // توابع جایگزین confirm برای پاکسازی داده‌ها بدون استفاده از alert/confirm مرورگر
+        function showConfirmModal() {
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+        }
+
+        function executeResetApp() {
+            closeConfirmModal();
+            catalogDatabase = [];
+            selectedBOM = [];
+            appliances = [];
+            customLogoBase64 = null;
+            document.getElementById('csv-file-1').value = '';
+            document.getElementById('csv-file-2').value = '';
+            document.getElementById('file-info-1').textContent = 'فایل اول را انتخاب کنید';
+            document.getElementById('file-info-2').textContent = 'فایل دوم را انتخاب کنید';
+            document.getElementById('db-status').classList.add('hidden');
+            document.getElementById('client-name').value = '';
+            document.getElementById('client-phone').value = '';
+            document.getElementById('client-address').value = '';
+            document.getElementById('project-note').value = '';
+            document.getElementById('logo-upload-text').innerHTML = `<i class="fas fa-image mr-1"></i> انتخاب تصویر لوگو (اجرای کاملاً آفلاین بدون خطای Taint/CORS)`;
+            clearPhysicalFilters();
+            
+            renderAppliances();
+            runCalculations();
+            updateBOMTable();
+            showToast("اطلاعات برنامه کاملاً پاکسازی شد.", false);
+        }
+
+        // سوئیچ زبانه فیلتر الکتریکال یا فیزیکی در بخش ۳
+        function switchParamTab(tab) {
+            const btnElec = document.getElementById('tab-param-electrical');
+            const btnPhys = document.getElementById('tab-param-physical');
+            const panelElec = document.getElementById('param-electrical-panel');
+            const panelPhys = document.getElementById('param-physical-panel');
+
+            if (tab === 'electrical') {
+                btnElec.className = "px-4 py-2 rounded-lg text-xs font-bold bg-indigo-600 text-white transition flex items-center gap-1.5";
+                btnPhys.className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-50 transition flex items-center gap-1.5 border border-transparent hover:border-slate-200";
+                panelElec.classList.remove('hidden');
+                panelPhys.classList.add('hidden');
+            } else {
+                btnElec.className = "px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-50 transition flex items-center gap-1.5 border border-transparent hover:border-slate-200";
+                btnPhys.className = "px-4 py-2 rounded-lg text-xs font-bold bg-indigo-600 text-white transition flex items-center gap-1.5";
+                panelElec.classList.add('hidden');
+                panelPhys.classList.remove('hidden');
+            }
+        }
+
+        // ریست کردن فیلترهای ابعاد فیزیکی
+        function clearPhysicalFilters() {
+            document.getElementById('filter-installation-mode').value = 'all';
+            document.getElementById('max-width').value = '';
+            document.getElementById('max-height').value = '';
+            document.getElementById('max-depth').value = '';
+            document.getElementById('max-weight').value = '';
+            document.getElementById('active-phys-badge').classList.add('hidden');
+            runCalculations();
+        }
+
+        function toggleCatalogPreview() {
+            const modal = document.getElementById('catalog-modal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                renderCatalogGrid(catalogDatabase);
+            }
+        }
+
+        function showHelpModal() {
+            const modal = document.getElementById('help-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        // مپ کردن خودکار ستون‌های متغیر در فایل اکسل/CSV به فیلدهای استاندارد
+        function normalizeParsedCSV(rows) {
+            if (rows.length < 2) return [];
+            
+            // تمیز کردن کلیدهای هدر شیت
+            const header = rows[0].map(h => h.trim().toLowerCase());
+            
+            const findColumnIndex = (keywords) => {
+                return header.findIndex(title => 
+                    keywords.some(keyword => title.includes(keyword.toLowerCase()))
+                );
+            };
+
+            // تعریف الگوهای جستجو بر اساس ساختار هر دو شیت
+            const idxBrand = findColumnIndex(['brand', 'برند', 'سازنده']);
+            const idxModel = findColumnIndex(['model', 'مدل', 'کالا', 'نام']);
+            const idxPower = findColumnIndex(['nominal power', 'rated power', 'توان خروجی واقعی', 'توان خروجی ظاهری', 'توان کل', 'rated power - w', 'power']);
+            const idxVolt = findColumnIndex(['v battery', 'nominal battery voltage', 'ولتاژ نامی باتری', 'ولتاژ باتری', 'battery']);
+            const idxCategory = findColumnIndex(['category', 'دسته اصلی محصول', 'نوع عملکرد', 'دسته', 'type', 'نوع کالا']);
+            const idxPhase = findColumnIndex(['phase', 'فاز', 'خروجی فاز', 'تعداد فاز']);
+            
+            // ستون‌های مربوط به ابعاد و نحوه نصب
+            const idxInstallation = findColumnIndex(['installation mode', 'نصب', 'شکل نصب', 'نوع نصب', 'طراحی بدنه', 'نصب (دیواری)', 'طریقه نصب']);
+            const idxWidth = findColumnIndex(['width', 'عرض']);
+            const idxHeight = findColumnIndex(['height', 'ارتفاع']);
+            const idxDepth = findColumnIndex(['depth', 'طول', 'عمق', 'length']);
+            const idxWeight = findColumnIndex(['weight', 'وزن', 'net weight']);
+
+            let extractedProducts = [];
+
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                // بررسی خالی بودن سطر
+                if (row.length < 2 || !row[idxModel === -1 ? 0 : idxModel]) continue; 
+
+                let brand = idxBrand !== -1 ? row[idxBrand] : 'سایر';
+                let model = idxModel !== -1 ? row[idxModel] : row[1] || 'نامشخص';
+                let rawPower = idxPower !== -1 ? row[idxPower] : '';
+                let rawVolt = idxVolt !== -1 ? row[idxVolt] : '';
+                let category = idxCategory !== -1 ? row[idxCategory] : 'تجهیزات برق اضطراری';
+                let rawPhase = idxPhase !== -1 ? row[idxPhase] : '';
+                
+                // جزئیات ابعادی
+                let installation = idxInstallation !== -1 ? row[idxInstallation] : '-';
+                let rawWidth = idxWidth !== -1 ? row[idxWidth] : '';
+                let rawHeight = idxHeight !== -1 ? row[idxHeight] : '';
+                let rawDepth = idxDepth !== -1 ? row[idxDepth] : '';
+                let rawWeight = idxWeight !== -1 ? row[idxWeight] : '';
+
+                // سیستم پیشرفته استخراج عدد با قابلیت تحلیل واحد kW و کیلووات
+                const extractNumberAndCheckKW = (val) => {
+                    if (!val) return { num: 0, isKW: false };
+                    let str = String(val).toLowerCase();
+                    // تشخیص واحد کیلووات در مقادیر کاتالوگ
+                    let isKW = str.includes('kw') || str.includes('کیلووات') || str.includes('ک.و');
+                    let num = parseFloat(str.replace(/[^0-9.]/g, ''));
+                    return { num: isNaN(num) ? 0 : num, isKW };
+                };
+
+                const extractNumberOnly = (val) => {
+                    if (!val) return 0;
+                    let num = parseFloat(String(val).replace(/[^0-9.]/g, ''));
+                    return isNaN(num) ? 0 : num;
+                };
+
+                let powerObj = extractNumberAndCheckKW(rawPower);
+                let powerWatt = powerObj.isKW ? powerObj.num * 1000 : powerObj.num;
+
+                let width = extractNumberOnly(rawWidth) || 0;
+                let height = extractNumberOnly(rawHeight) || 0;
+                let depth = extractNumberOnly(rawDepth) || 0;
+                let weight = extractNumberOnly(rawWeight) || 0;
+
+                // استخراج ولتاژ باتری نامی به عنوان آرایه
+                let voltString = String(rawVolt);
+                let voltages = voltString.match(/\d+/g) ? voltString.match(/\d+/g).map(Number) : [];
+
+                // ممیزی فاز خروجی دستگاه
+                let phaseString = String(rawPhase).toLowerCase();
+                let unifiedPhase = '1phase'; // پیش فرض تک فاز
+                if (phaseString.includes('سه') || phaseString.includes('3') || phaseString.includes('three')) {
+                    unifiedPhase = '3phase';
+                }
+
+                // دسته‌بندی پیشرفته و یکپارچه کالاها
+                let unifiedCategory = 'inverter'; 
+                let lowerCat = category.toLowerCase();
+                let lowerModel = model.toLowerCase();
+                if (lowerCat.includes('باتری') || lowerCat.includes('battery') || lowerModel.includes('battery') || lowerModel.includes('باتری')) {
+                    unifiedCategory = 'charger'; 
+                } else if (lowerCat.includes('کنترل') || lowerCat.includes('charger') || lowerCat.includes('mppt') || lowerCat.includes('شارژ')) {
+                    unifiedCategory = 'charger';
+                }
+
+                extractedProducts.push({
+                    id: 'prod_' + Math.random().toString(36).substr(2, 9),
+                    brand: brand.trim(),
+                    model: model.trim(),
+                    category: category.trim(),
+                    unifiedCategory: unifiedCategory,
+                    power: powerWatt,
+                    voltages: voltages,
+                    voltString: voltString || 'متغیر',
+                    phase: unifiedPhase, 
+                    installation: installation.trim(),
+                    width: width,
+                    height: height,
+                    depth: depth,
+                    weight: weight,
+                    rawData: rows[0].map((header, idx) => ({ field: header.trim(), value: (row[idx] || '').trim() }))
+                });
+            }
+
+            return extractedProducts;
+        }
+
+        // مفسر بومی و قوی فایل‌های CSV با پشتیبانی آفلاین و کاملاً مستقل
+        function parseCSVText(text) {
+            let p = '', c = '', r = [];
+            let q = false;
+            let row = [''];
+            for (let i = 0; i < text.length; i++) {
+                c = text[i];
+                if (q) {
+                    if (c === '"' && text[i + 1] === '"') {
+                        p += '"';
+                        i++;
+                    } else if (c === '"') {
+                        q = false;
+                    } else {
+                        p += c;
+                    }
+                } else {
+                    if (c === '"') {
+                        q = true;
+                    } else if (c === ',') {
+                        row.push(p);
+                        p = '';
+                    } else if (c === '\n' || (c === '\r' && text[i + 1] === '\n')) {
+                        row.push(p);
+                        r.push(row);
+                        row = [''];
+                        p = '';
+                        if (c === '\r') i++;
+                    } else if (c === '\r') {
+                        row.push(p);
+                        r.push(row);
+                        row = [''];
+                        p = '';
+                    } else {
+                        p += c;
+                    }
+                }
+            }
+            if (p || row.length > 1) {
+                row.push(p);
+                r.push(row);
+            }
+            return r;
+        }
+        // هندلر اختصاصی بارگذاری فایل کاتالوگ
+        function handleFileUpload(input, sheetNumber) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const text = e.target.result;
+                    const parsedRows = parseCSVText(text);
+                    const products = normalizeParsedCSV(parsedRows);
+
+                    if (products.length === 0) {
+                        showToast(`خطا: نتوانستیم کالایی از فایل ${sheetNumber} استخراج کنیم. ستون‌ها را بررسی کنید.`, false);
+                        return;
+                    }
+
+                    catalogDatabase = catalogDatabase.concat(products);
+
+                    const fileInfoEl = document.getElementById(`file-info-${sheetNumber}`);
+                    fileInfoEl.innerHTML = `<span class="text-emerald-600 font-bold"><i class="fas fa-check"></i> ${file.name.substring(0, 15)}... (${products.length} کالا)</span>`;
+                    
+                    const uploadBox = document.getElementById(`upload-box-${sheetNumber}`);
+                    uploadBox.classList.add('bg-emerald-50/20', 'border-emerald-500');
+
+                    document.getElementById('db-status').classList.remove('hidden');
+                    document.getElementById('db-summary-text').textContent = `تعداد کل تجهیزات کاتالوگ شما: ${catalogDatabase.length} کالا`;
+
+                    showToast(`با موفقیت ${products.length} کالا از شیت ${sheetNumber} استخراج شد!`);
+                    
+                    runCalculations();
+                } catch (error) {
+                    console.error(error);
+                    showToast("خطا در پردازش فایل. مطمئن شوید فرمت فایل CSV است.", false);
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        // بارگذاری دیتای کاتالوگ آزمایشی نمونه (برای تست سریع سیستم تطبیق ابعادی بدون نیاز به آپلود فایل)
+        function loadSampleCatalog() {
+            const sampleData = [
+                { id: 's1', brand: 'Faratel', model: 'SDC3000X-RT', category: 'UPS هوشمند تک فاز', unifiedCategory: 'inverter', power: 3000, voltages: [48], voltString: '48', phase: '1phase', installation: 'دیواری/رک‌مونت', width: 440, height: 88, depth: 450, weight: 15 },
+                { id: 's2', brand: 'Faratel', model: 'SDC1500X-RT', category: 'UPS تک فاز اداری', unifiedCategory: 'inverter', power: 1500, voltages: [24], voltString: '24', phase: '1phase', installation: 'دیواری', width: 400, height: 80, depth: 350, weight: 10 },
+                { id: 's3', brand: 'APC', model: 'Smart-UPS 5kVA', category: 'اینورتر دائم کار مانیتورینگ', unifiedCategory: 'inverter', power: 4500, voltages: [48, 96], voltString: '48/96', phase: '1phase', installation: 'ثابت زمینی', width: 480, height: 130, depth: 660, weight: 54 },
+                { id: 's4', brand: 'Growatt', model: 'SP-10K-3Phase', category: 'اینورتر خورشیدی صنعتی', unifiedCategory: 'inverter', power: 10000, voltages: [96, 120], voltString: '96/120', phase: '3phase', installation: 'چرخ‌دار پکیجی', width: 550, height: 850, depth: 400, weight: 92 },
+                { id: 's5', brand: 'SMA', model: 'Tripower 15kW', category: 'اینورتر سه فاز تجاری', unifiedCategory: 'inverter', power: 15000, voltages: [380], voltString: '380', phase: '3phase', installation: 'ثابت زمینی', width: 665, height: 690, depth: 265, weight: 59 },
+                { id: 's6', brand: 'Tesla', model: 'Powerwall 2', category: 'پک باتری و شارژر دیواری', unifiedCategory: 'charger', power: 5000, voltages: [48], voltString: '48', phase: '1phase', installation: 'دیواری', width: 755, height: 1150, depth: 147, weight: 114 },
+                { id: 's7', brand: 'Saba Battery', model: '12V 100Ah Gel', category: 'باتری سیلد اسید ژل', unifiedCategory: 'charger', power: 0, voltages: [12], voltString: '12', phase: '1phase', installation: 'کابینتی زمینی', width: 330, height: 220, depth: 170, weight: 30 },
+                { id: 's8', brand: 'EPEVER', model: 'Tracer 40A MPPT', category: 'شارژر کنترلر خورشیدی', unifiedCategory: 'charger', power: 1000, voltages: [12, 24, 48], voltString: '12/24/48', phase: '1phase', installation: 'دیواری', width: 252, height: 180, depth: 63, weight: 3 }
+            ];
+
+            catalogDatabase = sampleData;
+            document.getElementById('db-status').classList.remove('hidden');
+            document.getElementById('db-summary-text').textContent = `تعداد کل تجهیزات کاتالوگ فرضی (آزمایشی): ${catalogDatabase.length} کالا بارگذاری شد.`;
+            
+            showToast("کاتالوگ آزمایشی با موفقیت فعال شد. اکنون با تغییر فیلترهای فیزیکی و توان کالاها را فیلتر کنید.");
+            runCalculations();
+        }
+
+        function switchMatchTab(tabName) {
+            currentMatchTab = tabName;
+            document.getElementById('tab-inverters').className = tabName === 'inverters' 
+                ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 transition" 
+                : "px-3 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:bg-slate-50 transition";
+            
+            document.getElementById('tab-chargers').className = tabName === 'chargers' 
+                ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 transition" 
+                : "px-3 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:bg-slate-50 transition";
+            
+            renderMatchingSuggestions();
+        }
+
+        function addPresetAppliance() {
+            const select = document.getElementById('preset-appliances');
+            const val = select.value;
+            if (!val) return;
+
+            const [key, rawValue, phase, inputMode, name] = val.split('|');
+            const numericVal = parseFloat(rawValue);
+
+            const newApp = {
+                id: Date.now() + Math.random(),
+                name: name,
+                phase: phase,
+                inputMode: inputMode,
+                value: numericVal,
+                qty: 1,
+                hours: 4,
+                watt: 0
+            };
+
+            newApp.watt = calculateWatts(newApp);
+
+            appliances.push(newApp);
+            renderAppliances();
+            runCalculations();
+            select.value = "";
+            showToast(`دستگاه «${name}» با موفقیت اضافه شد`);
+        }
+
+        function addNewBlankRow() {
+            const newApp = {
+                id: Date.now() + Math.random(),
+                name: 'مصرف کننده جدید',
+                phase: '1phase',
+                inputMode: 'watts',
+                value: 100,
+                qty: 1,
+                hours: 2,
+                watt: 100
+            };
+            appliances.push(newApp);
+            renderAppliances();
+            runCalculations();
+        }
+
+        function removeAppliance(id) {
+            appliances = appliances.filter(item => item.id !== id);
+            renderAppliances();
+            runCalculations();
+        }
+
+        // فرمول محاسباتی مجهز به متغیر داینامیک Power Factor
+        function calculateWatts(app) {
+            let val = app.value || 0;
+            if (app.inputMode === 'watts') {
+                return Math.round(val);
+            } else {
+                const pf = parseFloat(document.getElementById('power-factor').value) || 0.8; 
+                if (app.phase === '3phase') {
+                    return Math.round(1.732 * 380 * val * pf);
+                } else {
+                    return Math.round(220 * val * pf);
+                }
+            }
+        }
+
+        function updateApplianceField(id, field, value) {
+            const index = appliances.findIndex(item => item.id === id);
+            if (index === -1) return;
+
+            if (field === 'name') {
+                appliances[index].name = value;
+            } else if (field === 'phase' || field === 'inputMode') {
+                appliances[index][field] = value;
+                appliances[index].watt = calculateWatts(appliances[index]);
+            } else {
+                appliances[index][field] = parseFloat(value) || 0;
+                if (field === 'value') {
+                    appliances[index].watt = calculateWatts(appliances[index]);
+                }
+            }
+            
+            const rowTotalEl = document.getElementById(`row-total-${id}`);
+            if (rowTotalEl) {
+                const total = appliances[index].watt * appliances[index].qty;
+                rowTotalEl.textContent = total.toLocaleString() + ' W';
+            }
+
+            runCalculations();
+        }
+
+        function renderAppliances() {
+            const tbody = document.getElementById('appliance-list-body');
+            tbody.innerHTML = '';
+
+            if (appliances.length === 0) {
+                tbody.innerHTML = `
+                    <tr id="empty-row" class="text-center text-slate-400">
+                        <td colspan="8" class="p-6">هنوز هیچ وسیله مصرفی اضافه نکرده‌اید.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            appliances.forEach(app => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-100 hover:bg-slate-50/50 transition";
+                tr.innerHTML = `
+                    <td class="p-2">
+                        <input type="text" value="${app.name}" oninput="updateApplianceField(${app.id}, 'name', this.value)" class="w-full bg-transparent focus:bg-white border-none focus:ring-1 focus:ring-indigo-500 rounded p-1 text-xs font-semibold text-slate-800">
+                    </td>
+                    <td class="p-2">
+                        <select onchange="updateApplianceField(${app.id}, 'phase', this.value)" class="bg-slate-100 border-none rounded p-1 text-[11px] font-bold text-slate-700">
+                            <option value="1phase" ${app.phase === '1phase' ? 'selected' : ''}>تک فاز (220V)</option>
+                            <option value="3phase" ${app.phase === '3phase' ? 'selected' : ''}>سه فاز (380V) ⚡</option>
+                        </select>
+                    </td>
+                    <td class="p-2">
+                        <select onchange="updateApplianceField(${app.id}, 'inputMode', this.value)" class="bg-indigo-50 border-none rounded p-1 text-[11px] text-indigo-800 font-semibold">
+                            <option value="watts" ${app.inputMode === 'watts' ? 'selected' : ''}>توان (W)</option>
+                            <option value="amps" ${app.inputMode === 'amps' ? 'selected' : ''}>جریان (A)</option>
+                        </select>
+                    </td>
+                    <td class="p-2">
+                        <input type="number" value="${app.value}" min="0.1" step="0.1" oninput="updateApplianceField(${app.id}, 'value', this.value)" class="w-16 bg-transparent focus:bg-white border-none focus:ring-1 focus:ring-indigo-500 rounded p-1 text-xs text-center font-bold text-indigo-700">
+                    </td>
+                    <td class="p-2">
+                        <input type="number" value="${app.qty}" min="1" oninput="updateApplianceField(${app.id}, 'qty', this.value)" class="w-12 bg-transparent focus:bg-white border-none focus:ring-1 focus:ring-indigo-500 rounded p-1 text-xs text-center font-semibold">
+                    </td>
+                    <td class="p-2">
+                        <input type="number" value="${app.hours}" min="0.1" max="24" step="0.5" oninput="updateApplianceField(${app.id}, 'hours', this.value)" class="w-12 bg-transparent focus:bg-white border-none focus:ring-1 focus:ring-indigo-500 rounded p-1 text-xs text-center font-semibold">
+                    </td>
+                    <td class="p-2 font-bold text-slate-700" id="row-total-${app.id}">
+                        ${(app.watt * app.qty).toLocaleString()} W
+                    </td>
+                    <td class="p-2 text-center">
+                        <button onclick="removeAppliance(${app.id})" class="text-rose-500 hover:text-rose-700 p-1 rounded-lg hover:bg-rose-50 transition">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateDoD() {
+            const batteryType = document.getElementById('battery-type').value;
+            const dodInput = document.getElementById('dod-percentage');
+            if (batteryType === 'gel') {
+                dodInput.value = 50; 
+            } else {
+                dodInput.value = 80; 
+            }
+            runCalculations();
+        }
+
+        let calculatedRequiredInverterW = 0;
+        let calculatedRequiredBatteryAh = 0;
+        let calculatedVoltage = 12;
+        let calculatedSystemPhase = '1phase';
+
+        function runCalculations() {
+            let totalLoadW = 0;
+            let dailyEnergyWh = 0;
+            let hasThreePhaseLoad = false;
+
+            // بازنویسی و اعمال توان مجدد به تمام بارهای مصرفی به خاطر احتمال تغییر Power Factor
+            appliances.forEach(app => {
+                app.watt = calculateWatts(app);
+                const load = app.watt * app.qty;
+                totalLoadW += load;
+                dailyEnergyWh += load * app.hours;
+                if (app.phase === '3phase') {
+                    hasThreePhaseLoad = true;
+                }
+            });
+
+            const sysPhaseSelect = document.getElementById('system-phase');
+            if (hasThreePhaseLoad && sysPhaseSelect.value === '1phase') {
+                sysPhaseSelect.value = '3phase';
+                showToast("سیستم به دلیل شناسایی دستگاه سه‌فاز، به حالت «سه‌فاز» تغییر یافت.", true);
+            }
+            
+            calculatedSystemPhase = sysPhaseSelect.value;
+            const phaseBadge = document.getElementById('active-system-phase-badge');
+            if (calculatedSystemPhase === '3phase') {
+                phaseBadge.textContent = "سه‌فاز ۳۸۰V ⚡";
+                phaseBadge.className = "text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded-full font-bold";
+            } else {
+                phaseBadge.textContent = "تک‌فاز ۲۲۰V";
+                phaseBadge.className = "text-[10px] bg-slate-700 text-slate-100 px-2 py-0.5 rounded-full";
+            }
+
+            const safetyMargin = parseFloat(document.getElementById('safety-margin').value) || 0;
+            const requiredInverterW = Math.round(totalLoadW * (1 + safetyMargin / 100));
+
+            let sysVoltSelect = document.getElementById('system-voltage').value;
+            let finalVoltage = 12;
+            if (sysVoltSelect === 'auto') {
+                if (requiredInverterW > 3000) {
+                    finalVoltage = 48;
+                } else if (requiredInverterW > 1200) {
+                    finalVoltage = 24;
+                } else {
+                    finalVoltage = 12;
+                }
+            } else {
+                finalVoltage = parseInt(sysVoltSelect);
+            }
+
+            const backupHours = parseFloat(document.getElementById('backup-hours').value) || 1;
+            const dod = parseFloat(document.getElementById('dod-percentage').value) || 50;
+            const efficiency = parseFloat(document.getElementById('system-efficiency').value) || 85;
+            const agingFactor = parseFloat(document.getElementById('battery-aging').value) || 1.2;
+
+            const requiredEnergyWh = totalLoadW * backupHours;
+            const usableBatteryFactor = finalVoltage * (dod / 100) * (efficiency / 100);
+            
+            // اعمال دقیق محاسباتی ضریب استهلاک و فرسودگی باتری
+            const requiredBatteryAh = usableBatteryFactor > 0 ? Math.round((requiredEnergyWh / usableBatteryFactor) * agingFactor) : 0;
+
+            calculatedRequiredInverterW = requiredInverterW;
+            calculatedRequiredBatteryAh = requiredBatteryAh;
+            calculatedVoltage = finalVoltage;
+
+            document.getElementById('res-total-watt').innerHTML = `${totalLoadW.toLocaleString()} <span class="text-xs font-normal text-slate-400">W</span>`;
+            document.getElementById('res-inverter-watt').innerHTML = `${requiredInverterW.toLocaleString()} <span class="text-xs font-normal text-amber-200">W</span>`;
+            
+            document.getElementById('calc-formula-energy').textContent = `${totalLoadW}W × ${backupHours}h`;
+            document.getElementById('res-total-energy').innerHTML = `${requiredEnergyWh.toLocaleString()} <span class="text-xs font-normal text-slate-300">Wh</span>`;
+            
+            document.getElementById('res-battery-ah').innerHTML = `${requiredBatteryAh.toLocaleString()} <span class="text-xs font-normal text-emerald-300">Ah</span>`;
+            document.getElementById('res-voltage-badge').textContent = `ولتاژ نامی: ${finalVoltage} ولت`;
+            
+            const solarPvEl = document.getElementById('res-solar-pv');
+            if (solarPvEl) {
+                const estimatedPv = Math.round((requiredEnergyWh * 1.25) / 5);
+                solarPvEl.innerHTML = `${estimatedPv.toLocaleString()} <span class="text-xs font-normal text-slate-400">W (تقریبی)</span>`;
+            }
+
+            updatePhysicalFilterIndicator();
+            renderMatchingSuggestions();
+        }
+
+        // بررسی فعال بودن فیلترهای ابعاد فیزیکی جهت نمایش نقطه هشدار قرمز رنگ در تب مربوطه
+        function updatePhysicalFilterIndicator() {
+            const hasWidth = document.getElementById('max-width').value !== '';
+            const hasHeight = document.getElementById('max-height').value !== '';
+            const hasDepth = document.getElementById('max-depth').value !== '';
+            const hasWeight = document.getElementById('max-weight').value !== '';
+            const hasInst = document.getElementById('filter-installation-mode').value !== 'all';
+            const badge = document.getElementById('active-phys-badge');
+
+            if (badge) {
+                if (hasWidth || hasHeight || hasDepth || hasWeight || hasInst) {
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+        }
+
+        function renderMatchingSuggestions() {
+            const container = document.getElementById('matching-results-container');
+            container.innerHTML = '';
+
+            if (catalogDatabase.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-400 text-xs">
+                        <i class="fas fa-info-circle text-lg mb-2 block"></i> کاتالوگ تجهیزات خالی است! لطفاً ابتدا فایل کاتالوگ را بارگذاری کنید یا بر روی دکمه «بارگذاری کاتالوگ نمونه» در بخش ۱ کلیک کنید.
+                    </div>
+                `;
+                return;
+            }
+
+            const filterInstMode = document.getElementById('filter-installation-mode').value;
+            const maxW = parseFloat(document.getElementById('max-width').value) || Infinity;
+            const maxH = parseFloat(document.getElementById('max-height').value) || Infinity;
+            const maxD = parseFloat(document.getElementById('max-depth').value) || Infinity;
+            const maxWeight = parseFloat(document.getElementById('max-weight').value) || Infinity;
+
+            let filteredList = [];
+
+            if (currentMatchTab === 'inverters') {
+                filteredList = catalogDatabase.filter(item => {
+                    const matchCategory = item.unifiedCategory === 'inverter';
+                    const matchPower = item.power >= calculatedRequiredInverterW;
+                    const matchVolt = (item.voltages.length === 0 || item.voltages.includes(calculatedVoltage));
+                    const matchPhase = (item.phase === calculatedSystemPhase);
+                    
+                    let matchInstall = true;
+                    if (filterInstMode !== 'all') {
+                        const installStr = item.installation.toLowerCase();
+                        if (filterInstMode === 'wall') {
+                            matchInstall = installStr.includes('wall') || installStr.includes('دیواری');
+                        } else if (filterInstMode === 'wheel') {
+                            matchInstall = installStr.includes('wheel') || installStr.includes('چرخ');
+                        } else if (filterInstMode === 'ground') {
+                            matchInstall = installStr.includes('ground') || installStr.includes('زمینی') || installStr.includes('ثابت');
+                        }
+                    }
+
+                    const matchSize = (item.width === 0 || item.width <= maxW) &&
+                                      (item.height === 0 || item.height <= maxH) &&
+                                      (item.depth === 0 || item.depth <= maxD) &&
+                                      (item.weight === 0 || item.weight <= maxWeight);
+
+                    return matchCategory && matchPower && matchVolt && matchPhase && matchInstall && matchSize;
+                });
+
+                filteredList.sort((a, b) => a.power - b.power);
+            } else {
+                filteredList = catalogDatabase.filter(item => {
+                    const matchCategory = item.unifiedCategory !== 'inverter';
+                    const matchVolt = (item.voltages.length === 0 || item.voltages.includes(calculatedVoltage));
+                    
+                    let matchInstall = true;
+                    if (filterInstMode !== 'all') {
+                        const installStr = item.installation.toLowerCase();
+                        if (filterInstMode === 'wall') {
+                            matchInstall = installStr.includes('wall') || installStr.includes('دیواری');
+                        } else if (filterInstMode === 'wheel') {
+                            matchInstall = installStr.includes('wheel') || installStr.includes('چرخ');
+                        } else if (filterInstMode === 'ground') {
+                            matchInstall = installStr.includes('ground') || installStr.includes('زمینی') || installStr.includes('ثابت');
+                        }
+                    }
+
+                    const matchSize = (item.width === 0 || item.width <= maxW) &&
+                                      (item.height === 0 || item.height <= maxH) &&
+                                      (item.depth === 0 || item.depth <= maxD) &&
+                                      (item.weight === 0 || item.weight <= maxWeight);
+
+                    return matchCategory && matchVolt && matchInstall && matchSize;
+                });
+            }
+
+            if (filteredList.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-rose-500 text-xs bg-rose-50/50 rounded-xl p-4 border border-dashed border-rose-200">
+                        <i class="fas fa-search-minus text-rose-400 text-lg mb-2 block"></i> 
+                        تجهیزی با شروط ابعادی، مشخصات الکتریکال یا <strong>شبکه ${calculatedSystemPhase === '3phase' ? 'سه‌فاز' : 'تک‌فاز'}</strong> در کاتالوگ تطبیق پیدا نکرد! 
+                        <br><span class="text-[10px] text-slate-500 mt-1 block">(شروط فیزیکی، فاز سیستم یا توان‌ها را مجدداً بررسی یا ریست کنید)</span>
+                    </div>
+                `;
+                return;
+            }
+
+            const topMatches = filteredList.slice(0, 5);
+            topMatches.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "p-3.5 bg-slate-50 rounded-xl border border-slate-200 hover:border-indigo-400 transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3";
+                
+                let voltBadge = item.voltString !== '-' ? `${item.voltString} ولت` : 'نامشخص';
+                let powerInfo = item.power > 0 ? `${item.power.toLocaleString()} وات` : 'نامشخص';
+                let phaseLabel = item.phase === '3phase' ? 'سه‌فاز ۳۸۰V' : 'تک‌فاز ۲۲۰V';
+
+                let dimsText = "";
+                if (item.width > 0 && item.height > 0) {
+                    dimsText = `ابعاد: ${item.width}×${item.height}${item.depth > 0 ? '×' + item.depth : ''} میلی‌متر`;
+                } else {
+                    dimsText = "ابعاد فیزیکی: نامشخص در کاتالوگ";
+                }
+                if (item.weight > 0) {
+                    dimsText += ` | وزن: ${item.weight} کیلوگرم`;
+                }
+
+                card.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 text-[10px] rounded-md font-bold">${item.brand}</span>
+                            <span class="text-xs font-bold text-slate-900">${item.model}</span>
+                            <span class="px-1.5 py-0.5 bg-amber-100 text-amber-800 text-[9px] rounded font-bold">${phaseLabel}</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500">دسته: ${item.category} | ولتاژ باتری: ${voltBadge} | توان: ${powerInfo}</p>
+                        <p class="text-[10px] text-indigo-600"><i class="fas fa-arrows-alt"></i> ${dimsText}</p>
+                        ${item.installation && item.installation !== '-' ? `<p class="text-[10px] text-emerald-600"><i class="fas fa-tools"></i> نحوه نصب: ${item.installation}</p>` : ''}
+                    </div>
+                    <div class="flex gap-2 shrink-0 w-full sm:w-auto">
+                        <button onclick="showDatasheet('${item.id}')" class="flex-1 sm:flex-none px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1.5">
+                            <i class="fas fa-file-alt"></i> دیتاشیت
+                        </button>
+                        <button onclick="addEquipmentToBOM('${item.id}')" class="flex-1 sm:flex-none px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1.5">
+                            <i class="fas fa-plus"></i> افزودن به سبد
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addEquipmentToBOM(id) {
+            const item = catalogDatabase.find(p => p.id === id);
+            if (!item) return;
+
+            const existing = selectedBOM.find(p => p.productId === id);
+            if (existing) {
+                existing.qty++;
+            } else {
+                selectedBOM.push({
+                    productId: id,
+                    brand: item.brand,
+                    model: item.model,
+                    category: item.category,
+                    power: item.power,
+                    voltString: item.voltString,
+                    phase: item.phase,
+                    width: item.width,
+                    height: item.height,
+                    depth: item.depth,
+                    qty: 1
+                });
+            }
+
+            updateBOMTable();
+            showToast(`کالای «${item.brand} - ${item.model}» به سبد قطعات افزوده شد.`);
+        }
+
+        function updateBOMQty(productId, newQty) {
+            const item = selectedBOM.find(p => p.productId === productId);
+            if (!item) return;
+
+            item.qty = parseInt(newQty) || 1;
+            updateBOMTable();
+        }
+
+        function removeBOMItem(productId) {
+            selectedBOM = selectedBOM.filter(p => p.productId !== productId);
+            updateBOMTable();
+            showToast("کالا از سبد قطعات حذف گردید.", false);
+        }
+
+        function updateBOMTable() {
+            const tbody = document.getElementById('bom-table-body');
+            const badge = document.getElementById('bom-count-badge');
+            
+            tbody.innerHTML = '';
+            badge.textContent = `${selectedBOM.length} قلم کالا`;
+
+            if (selectedBOM.length === 0) {
+                tbody.innerHTML = `
+                    <tr id="bom-empty-row" class="text-center text-slate-400">
+                        <td colspan="4" class="p-4 text-[11px]">اقلام کاتالوگ را با فشردن دکمه «➕ افزودن به سبد» در بالا به این جدول بیفزایید.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            selectedBOM.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-100 text-xs";
+                
+                let phaseLabel = item.phase === '3phase' ? '۳ فاز' : 'تک‌فاز';
+                let detailText = item.power > 0 ? `${item.power.toLocaleString()}W (${phaseLabel})` : `(${phaseLabel})`;
+                if (item.width > 0 && item.height > 0) {
+                    detailText += ` | ${item.width}×${item.height}mm`;
+                }
+
+                tr.innerHTML = `
+                    <td class="p-2">
+                        <span class="font-bold text-slate-900 block">${item.model}</span>
+                        <span class="text-[10px] text-slate-400">${item.brand} - ${item.category}</span>
+                    </td>
+                    <td class="p-2 font-medium text-slate-600">${detailText}</td>
+                    <td class="p-2 text-center">
+                        <input type="number" value="${item.qty}" min="1" onchange="updateBOMQty('${item.productId}', this.value)" class="w-12 text-center bg-slate-100 rounded border-none p-1 text-xs font-semibold">
+                    </td>
+                    <td class="p-2 text-center">
+                        <button onclick="removeBOMItem('${item.productId}')" class="text-rose-500 hover:text-rose-700 p-1">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderCatalogGrid(dataList) {
+            const tbody = document.getElementById('catalog-grid-body');
+            tbody.innerHTML = '';
+
+            if (dataList.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="p-8 text-center text-slate-400">هیچ فایلی هنوز آپلود نشده است.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            dataList.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-100 hover:bg-slate-50 transition text-[11px]";
+                
+                let sizeStr = "-";
+                if (item.width > 0 && item.height > 0) {
+                    sizeStr = `${item.width}×${item.height}${item.depth > 0 ? '×' + item.depth : ''} mm`;
+                }
+                let phaseLabel = item.phase === '3phase' ? 'سه‌فاز ۳۸۰V' : 'تک‌فاز ۲۲۰V';
+
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-500">${index + 1}</td>
+                    <td class="p-3 font-bold text-indigo-700">${item.brand}</td>
+                    <td class="p-3 text-slate-600">${item.category}</td>
+                    <td class="p-3 font-mono font-bold text-slate-900">${item.model}</td>
+                    <td class="p-3 font-semibold text-amber-600">${item.power > 0 ? item.power.toLocaleString() + ' W' : '-'}</td>
+                    <td class="p-3 font-bold text-indigo-600">${phaseLabel}</td>
+                    <td class="p-3 font-medium text-slate-600">${item.installation}</td>
+                    <td class="p-3 font-mono text-indigo-600">${sizeStr}</td>
+                    <td class="p-3 font-semibold text-slate-500">${item.weight > 0 ? item.weight + ' kg' : '-'}</td>
+                    <td class="p-3 text-slate-600 font-mono">${item.voltString}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterCatalogGrid() {
+            const searchQuery = document.getElementById('catalog-search').value.toLowerCase();
+            const typeFilter = document.getElementById('catalog-type-filter').value;
+
+            let filtered = catalogDatabase.filter(item => {
+                const matchText = item.model.toLowerCase().includes(searchQuery) || 
+                                  item.brand.toLowerCase().includes(searchQuery) ||
+                                  item.category.toLowerCase().includes(searchQuery) ||
+                                  item.installation.toLowerCase().includes(searchQuery);
+                
+                let matchType = true;
+                if (typeFilter === 'inverter') {
+                    matchType = item.unifiedCategory === 'inverter';
+                } else if (typeFilter === 'charger') {
+                    matchType = item.unifiedCategory !== 'inverter';
+                }
+
+                return matchText && matchType;
+            });
+
+            renderCatalogGrid(filtered);
+        }
+
+        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            let currentY = y;
+            for (let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                let metrics = context.measureText(testLine);
+                let testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    context.fillText(line, x, currentY);
+                    line = words[n] + ' ';
+                    currentY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            context.fillText(line, x, currentY);
+            return currentY;
+        }
+
+        function drawFallbackLogo(ctx, x, y) {
+            // رسم یک لوگوی هندسی بسیار باکلاس با کدهای برند به عنوان جایگزین لوگوی فیزیکی
+            ctx.save();
+            ctx.translate(x, y);
+
+            // پس‌زمینه دایره‌ای سرمه‌ای تیره
+            ctx.fillStyle = '#282a5b';
+            ctx.beginPath();
+            ctx.arc(0, 0, 24, 0, Math.PI * 2);
+            ctx.fill();
+
+            // رینگ خارجی آبی روشن
+            ctx.strokeStyle = '#72bcdb';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(0, 0, 21, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // رسم یک خورشید/انرژی پاک و صاعقه در مرکز با رنگ سبز ملایم
+            ctx.fillStyle = '#61b786';
+            ctx.beginPath();
+            ctx.moveTo(-4, -12);
+            ctx.lineTo(6, -2);
+            ctx.lineTo(0, 2);
+            ctx.lineTo(8, 12);
+            ctx.lineTo(-2, 2);
+            ctx.lineTo(2, -2);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // تابع کمکی ترسیم مستطیل منحنی شکل (Rounded Rectangle) برای ارائه‌های شکیل‌تر
+        function drawRoundRect(ctx, x, y, width, height, radius, fillStyle, strokeStyle, lineWidth) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            
+            if (fillStyle) {
+                ctx.fillStyle = fillStyle;
+                ctx.fill();
+            }
+            if (strokeStyle) {
+                ctx.strokeStyle = strokeStyle;
+                ctx.lineWidth = lineWidth || 1;
+                ctx.stroke();
+            }
+        }
+
+        // موتور گرافیکی جدید پیش‌فاکتور لوکس با رفع ۱۰۰٪ خطاهای امنیتی CORS و Tainted Canvas در اجرای آفلاین دسکتاپ
+        function generateInvoiceCanvas(callback, forceNoImage = false) {
+            
+            const handleDraw = (loadedLogo) => {
+                const canvas = document.createElement('canvas');
+                const scale = 2; // وضوح فوق‌العاده بالا برای چاپ عالی (High-DPI Retina)
+                
+                const clientName = document.getElementById('client-name').value.trim() || 'نامشخص / ثبت نشده';
+                const clientPhone = document.getElementById('client-phone').value.trim() || 'نامشخص / ثبت نشده';
+                const clientAddress = document.getElementById('client-address').value.trim() || 'ثبت نشده است';
+                const noteText = document.getElementById('project-note').value.trim();
+                const bomLength = selectedBOM.length;
+                
+                // محاسبه خودکار و کاملاً داینامیک ارتفاع تصویر نهایی جهت جلوگیری از بریدگی
+                let calculatedBaseHeight = 770 + (bomLength > 0 ? bomLength * 45 : 60);
+                if (noteText) calculatedBaseHeight += 110;
+                if (clientAddress.length > 60) calculatedBaseHeight += 35;
+                
+                const baseWidth = 800;
+                const baseHeight = calculatedBaseHeight;
+                
+                canvas.width = baseWidth * scale;
+                canvas.height = baseHeight * scale;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.scale(scale, scale);
+                
+                // ۱. پس‌زمینه کلی مدرن (گرم و ملایم)
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, baseWidth, baseHeight);
+                
+                // ۲. ترسیم نوارهای حاشیه‌ای کلاسیک برندینگ به شکل کرو دار لوکس
+                ctx.strokeStyle = '#f1f5f9';
+                ctx.lineWidth = 1;
+                drawRoundRect(ctx, 10, 10, baseWidth - 20, baseHeight - 20, 24, null, '#f1f5f9', 1);
+                
+                ctx.strokeStyle = '#282a5b'; // کادر تیره سرمه‌ای برند
+                ctx.lineWidth = 3;
+                drawRoundRect(ctx, 14, 14, baseWidth - 28, baseHeight - 28, 20, null, '#282a5b', 3);
+                
+                // نوار بالای صفحه با پالت رنگ‌های لوگوی کارفرما به شکل قرص‌های رنگی کرو دار
+                ctx.fillStyle = '#282a5b'; // رنگ ۱
+                drawRoundRect(ctx, 20, 20, baseWidth - 40, 10, 5, '#282a5b');
+                ctx.fillStyle = '#72bcdb'; // رنگ ۲
+                drawRoundRect(ctx, 24, 33, baseWidth - 48, 4, 2, '#72bcdb');
+                ctx.fillStyle = '#61b786'; // رنگ ۳
+                drawRoundRect(ctx, 28, 40, baseWidth - 56, 4, 2, '#61b786');
+
+                // ۳. هدر لوکس به سبک اسناد مالی مهندسی تراز اول
+                ctx.textBaseline = 'middle';
+                ctx.direction = 'rtl';
+                ctx.textAlign = 'right';
+                
+                // درج عناوین هدر با رنگ اول لوگو
+                ctx.fillStyle = '#282a5b';
+                ctx.font = "bold 22px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText("پروپوزال فنی و پیش‌فاکتور مهندسی", baseWidth - 190, 80);
+                
+                ctx.fillStyle = '#64748b';
+                ctx.font = "500 12px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText("سیستم تأمین انرژی پشتیبان و ممیزی ابعاد فیزیکی", baseWidth - 190, 110);
+
+                // ترسیم لوگو در بالا راست (در صورت وجود لود می‌شود، در غیر این‌صورت وکتور بک‌آپ ترسیم می‌گردد)
+                if (loadedLogo && !forceNoImage) {
+                    try {
+                        ctx.drawImage(loadedLogo, baseWidth - 140, 55, 110, 75);
+                    } catch (e) {
+                        drawFallbackLogo(ctx, baseWidth - 85, 90);
+                    }
+                } else {
+                    drawFallbackLogo(ctx, baseWidth - 85, 90);
+                }
+
+                // اطلاعات تاریخ و شناسه در سمت چپ هدر
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#282a5b';
+                ctx.font = "bold 12px 'Vazirmatn', 'Tahoma', sans-serif";
+                const jalaliDate = new Date().toLocaleDateString('fa-IR');
+                ctx.fillText(`تاریخ تنظیم پروپوزال: ${jalaliDate}`, 40, 70);
+                
+                ctx.fillStyle = '#61b786'; // رنگ تاییدیه سبز ملایم لوگو
+                ctx.font = "bold 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText(`شماره ارجاع رسمی: ERP-${Math.floor(100000 + Math.random() * 900000)}`, 40, 95);
+                ctx.fillStyle = '#72bcdb';
+                ctx.fillText("وضعیت تحلیل: منطبق و نهایی شده ✔", 40, 115);
+
+                // کشیدن جداکننده افقی شیک زیر هدر
+                ctx.strokeStyle = '#e2e8f0';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(30, 150);
+                ctx.lineTo(baseWidth - 30, 150);
+                ctx.stroke();
+
+                // ۴. کارت اطلاعات کارفرما و مشخصات لوکیشن پروژه با گوشه‌های کاملا گرد (منحنی)
+                const clientY = 165;
+                ctx.textAlign = 'right';
+                
+                // ترسیم کارت خمیده لوکس کارفرما با سایه ملایم و مدرن
+                ctx.save();
+                ctx.shadowColor = "rgba(0, 0, 0, 0.03)";
+                ctx.shadowBlur = 8;
+                ctx.shadowOffsetY = 4;
+                drawRoundRect(ctx, 30, clientY, baseWidth - 60, 95, 12, '#f8fafc', '#cbd0e3', 1);
+                ctx.restore();
+                
+                // خط تزیینی خمیده سرمه‌ای در حاشیه سمت راست اطلاعات کارفرما
+                ctx.fillStyle = '#282a5b';
+                drawRoundRect(ctx, baseWidth - 35, clientY + 5, 5, 85, 2.5, '#282a5b');
+                
+                ctx.fillStyle = '#64748b';
+                ctx.font = "bold 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText(`نام کارفرما / خریدار:`, baseWidth - 55, clientY + 25);
+                ctx.fillStyle = '#282a5b';
+                ctx.font = "bold 13px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText(clientName, baseWidth - 165, clientY + 25);
+                
+                ctx.fillStyle = '#64748b';
+                ctx.font = "bold 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText(`تلفن تماس:`, 300, clientY + 25);
+                ctx.fillStyle = '#1e293b';
+                ctx.font = "bold 12px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText(clientPhone, 210, clientY + 25);
+                
+                ctx.fillStyle = '#64748b';
+                ctx.font = "bold 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText(`محل دقیق نصب پروژه:`, baseWidth - 55, clientY + 60);
+                ctx.fillStyle = '#334155';
+                ctx.font = "normal 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                wrapText(ctx, clientAddress, baseWidth - 165, clientY + 60, 560, 18);
+
+                // ۵. نمایش داشبورد تله‌متری مهندسی روی فاکتور
+                const paramHeaderY = clientY + 115;
+                
+                // نوار هدر با لبه‌های دایره‌ای شیک
+                drawRoundRect(ctx, 30, paramHeaderY, baseWidth - 60, 28, 8, '#282a5b');
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = "bold 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText("مشخصات مهندسی شبکه برق محاسبه‌شده سیستم", baseWidth - 45, paramHeaderY + 14);
+                
+                const cardW = (baseWidth - 90) / 4;
+                const cardH = 75;
+                const cardY = paramHeaderY + 38;
+                
+                const totalWattText = document.getElementById('res-total-watt').textContent.trim();
+                const inverterWattText = document.getElementById('res-inverter-watt').textContent.trim();
+                const batteryAhText = document.getElementById('res-battery-ah').textContent.trim();
+                
+                const dataCards = [
+                    { label: 'توان کل تجهیزات فعال', val: totalWattText, color: '#f8fafc', border: '#cbd0e3', indicator: '#72bcdb' },
+                    { label: 'توان اینورتر ممیزی شده', val: inverterWattText, color: '#f0f9f4', border: '#bce4cb', indicator: '#61b786' },
+                    { label: 'حداقل ظرفیت باتری لازم', val: batteryAhText, color: '#f8fafc', border: '#cbd0e3', indicator: '#282a5b' },
+                    { label: 'ولتاژ اسمی شبکه DC', val: `${calculatedVoltage} ولت`, color: '#f8fafc', border: '#cbd0e3', indicator: '#282a5b' }
+                ];
+                
+                dataCards.forEach((card, idx) => {
+                    const cardX = baseWidth - 30 - (idx * (cardW + 10)) - cardW;
+                    
+                    // ایجاد سایه بسیار ملایم در پشت هر کارت تله‌متری جهت عمق دادن به فاکتور
+                    ctx.save();
+                    ctx.shadowColor = "rgba(0, 0, 0, 0.05)";
+                    ctx.shadowBlur = 6;
+                    ctx.shadowOffsetY = 3;
+                    drawRoundRect(ctx, cardX, cardY, cardW, cardH, 10, card.color, card.border, 1);
+                    ctx.restore();
+                    
+                    // خط نشانگر بالا با گوشه‌های گرد مینیاتوری بر اساس پالت رنگی
+                    drawRoundRect(ctx, cardX + 5, cardY, cardW - 10, 4, 2, card.indicator);
+                    
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = "bold 9px 'Vazirmatn', 'Tahoma', sans-serif";
+                    ctx.fillText(card.label, cardX + (cardW / 2), cardY + 24);
+                    
+                    ctx.fillStyle = '#282a5b';
+                    ctx.font = "bold 14px 'Vazirmatn', 'Tahoma', sans-serif";
+                    ctx.fillText(card.val, cardX + (cardW / 2), cardY + 52);
+                });
+                
+                // اطلاعات فرعی مهندسی سیستم خروجی
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#475569';
+                ctx.font = "bold 10px 'Vazirmatn', 'Tahoma', sans-serif";
+                const backupHrs = document.getElementById('backup-hours').value;
+                const systemPhaseLabel = calculatedSystemPhase === '3phase' ? 'سه فاز (380V) ⚡' : 'تک فاز (220V)';
+                const dodVal = document.getElementById('dod-percentage').value;
+                const agingVal = document.getElementById('battery-aging').value;
+                const pfVal = document.getElementById('power-factor').value;
+                ctx.fillText(`پشتیبان‌گیری: ${backupHrs} ساعت | فاز: ${systemPhaseLabel} | عمق دشارژ: ${dodVal}% | ضریب استهلاک: ${agingVal} | ضریب توان: ${pfVal}`, baseWidth - 40, cardY + 95);
+
+                // ۶. ساخت جدول اقلام سفارش نهایی کاتالوگ شما (BOM) با استراکچر کاملا منحنی
+                const tableY = cardY + 115;
+                const tableContainerHeight = 28 + (bomLength === 0 ? 45 : bomLength * 40);
+                
+                // ترسیم بدنه و کادر خارجی جدول به صورت کارت لبه‌گرد کلی
+                drawRoundRect(ctx, 30, tableY, baseWidth - 60, tableContainerHeight, 12, '#ffffff', '#cbd0e3', 1);
+                
+                // هدر جدول با گوشه‌های بالایی گرد شده مدرن (رنگ سرمه‌ای برند)
+                ctx.save();
+                ctx.beginPath();
+                const r = 12; // شعاع خمش لبه‌ها
+                ctx.moveTo(30 + r, tableY);
+                ctx.lineTo(30 + baseWidth - 60 - r, tableY);
+                ctx.quadraticCurveTo(30 + baseWidth - 60, tableY, 30 + baseWidth - 60, tableY + r);
+                ctx.lineTo(30 + baseWidth - 60, tableY + 28);
+                ctx.lineTo(30, tableY + 28);
+                ctx.lineTo(30, tableY + r);
+                ctx.quadraticCurveTo(30, tableY, 30 + r, tableY);
+                ctx.closePath();
+                ctx.fillStyle = '#282a5b';
+                ctx.fill();
+                ctx.restore();
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = "bold 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText("ردیف", baseWidth - 55, tableY + 14);
+                ctx.fillText("عنوان کالای کاتالوگ منطبق", baseWidth - 110, tableY + 14);
+                ctx.fillText("برند / سازنده", baseWidth - 360, tableY + 14);
+                ctx.fillText("ابعاد فیزیکی و فاز", baseWidth - 510, tableY + 14);
+                ctx.fillText("تعداد", baseWidth - 730, tableY + 14);
+                
+                let rowY = tableY + 28;
+                if (bomLength === 0) {
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.font = "italic 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                    ctx.textAlign = 'center';
+                    ctx.fillText("هیچ تجهیزاتی در سبد سفارش فاکتور اضافه نگردیده است.", baseWidth / 2, rowY + 26);
+                    rowY += 45;
+                } else {
+                    selectedBOM.forEach((item, idx) => {
+                        // تفکیک رنگی سطرها به شکل ملایم و یک در میان
+                        if (idx % 2 !== 0) {
+                            ctx.fillStyle = '#f8fafc';
+                            // رسم پس‌زمینه سطرها با لبه‌های کمی گرد درون کادر جدول
+                            if (idx === bomLength - 1) {
+                                // آخرین ردیف برای تناسب با انحنای پایینی جدول به صورت نیمه‌خمیده ترسیم می‌شود
+                                drawRoundRect(ctx, 31, rowY, baseWidth - 62, 40, 11, '#f8fafc');
+                            } else {
+                                ctx.fillRect(31, rowY, baseWidth - 62, 40);
+                            }
+                        }
+                        
+                        // رسم خط‌های تفکیک افقی ردیف‌ها
+                        if (idx < bomLength - 1) {
+                            ctx.strokeStyle = '#e2e8f0';
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(30, rowY + 40);
+                            ctx.lineTo(baseWidth - 30, rowY + 40);
+                            ctx.stroke();
+                        }
+                        
+                        ctx.fillStyle = '#1e293b';
+                        ctx.textAlign = 'right';
+                        
+                        ctx.font = "normal 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                        ctx.fillText(String(idx + 1), baseWidth - 55, rowY + 22);
+                        
+                        ctx.font = "bold 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                        ctx.fillStyle = '#282a5b';
+                        ctx.fillText(`${item.model}`, baseWidth - 110, rowY + 22);
+                        
+                        ctx.font = "semibold 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                        ctx.fillStyle = '#64748b';
+                        ctx.fillText(item.brand, baseWidth - 360, rowY + 22);
+                        
+                        let phaseLabel = item.phase === '3phase' ? '۳ فاز' : 'تک‌فاز';
+                        let detailText = item.power > 0 ? `${item.power.toLocaleString()}W (${phaseLabel})` : `(${phaseLabel})`;
+                        if (item.width > 0 && item.height > 0) {
+                            detailText += ` | ${item.width}×${item.height} mm`;
+                        }
+                        ctx.fillText(detailText, baseWidth - 510, rowY + 22);
+                        
+                        ctx.font = "bold 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                        ctx.fillStyle = '#61b786'; // رنگ سبز برند برای تعداد موفق
+                        ctx.fillText(`${item.qty} دستگاه`, baseWidth - 730, rowY + 22);
+                        
+                        rowY += 40;
+                    });
+                }
+                
+                // ۷. یادداشت فنی و ملاحظات چیدمان ابعادی نصب به صورت باکس کاملاً منحنی سبز برند
+                if (noteText) {
+                    const noteStartY = rowY + 15;
+                    drawRoundRect(ctx, 30, noteStartY, baseWidth - 60, 75, 10, '#f0f9f4', '#61b786', 1);
+                    
+                    // نوار تزیینی لبه گرد داخلی
+                    ctx.fillStyle = '#61b786';
+                    drawRoundRect(ctx, baseWidth - 35, noteStartY + 5, 5, 65, 2.5, '#61b786');
+                    
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = '#2d5740';
+                    ctx.font = "bold 10px 'Vazirmatn', 'Tahoma', sans-serif";
+                    ctx.fillText("ملاحظات فنی و شرایط فیزیکی فضای نصب دستگاه:", baseWidth - 45, noteStartY + 20);
+                    
+                    ctx.fillStyle = '#35694c';
+                    ctx.font = "normal 10px 'Vazirmatn', 'Tahoma', sans-serif";
+                    wrapText(ctx, noteText, baseWidth - 45, noteStartY + 40, 700, 16);
+                    rowY += 90;
+                }
+                
+                // ۸. بخش ویژه دکوراتیو جهت امضاء و تایید کارشناس با گوشه‌های گرد و خط چین لوکس
+                const signY = rowY + 15;
+                ctx.save();
+                ctx.strokeStyle = '#cbd0e3';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([5, 5]); // استایل خط چین شیک برای بخش امضا
+                
+                // کادر امضاها به صورت خمیده دکوراتیو
+                drawRoundRect(ctx, 30, signY, 220, 80, 8, null, '#cbd0e3', 1.5); // کادر امضای مهندس
+                drawRoundRect(ctx, baseWidth - 250, signY, 220, 80, 8, null, '#cbd0e3', 1.5); // کادر امضای کارفرما
+                ctx.restore();
+                
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#282a5b';
+                ctx.font = "bold 10px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText("امضاء و مهر کارشناس رسمی ممیزی", 140, signY + 20);
+                ctx.fillText("امضاء و تأیید نهایی کارفرما", baseWidth - 140, signY + 20);
+                
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = "normal 9px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText("[ محل امضا و مهر شرکت ]", 140, signY + 55);
+                ctx.fillText("[ صحت اطلاعات فوق تایید می‌شود ]", baseWidth - 140, signY + 55);
+
+                // ۹. پاورقی رسمی سیستم
+                const footerStartY = baseHeight - 65;
+                ctx.fillStyle = '#f8fafc';
+                ctx.fillRect(20, footerStartY, baseWidth - 40, 1);
+                
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#64748b';
+                ctx.font = "normal 10px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText("این گزارش محاسباتی و ممیزی ابعادی فیزیکی کاملاً به صورت داینامیک از فایل کاتالوگ شما استخراج شده است.", baseWidth - 45, footerStartY + 22);
+                ctx.fillText("سند فوق بر پایه کدهای رنگی برند و مراجع فنی برق اضطراری تنظیم و ارزش رسمی محاسباتی دارد.", baseWidth - 45, footerStartY + 38);
+                
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#282a5b';
+                ctx.font = "bold 11px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText("سامانه هوشمند ممیزی ابعاد و شبکه فاز برق پشتیبان", 45, footerStartY + 25);
+                ctx.fillStyle = '#72bcdb';
+                ctx.font = "normal 9px 'Vazirmatn', 'Tahoma', sans-serif";
+                ctx.fillText("طراحی گرافیکی منطبق بر تم اختصاصی - ERP v3.0", 45, footerStartY + 40);
+                
+                callback(canvas);
+            };
+
+            // ۱. اولویت اول: استفاده از لوگوی آپلود شده کاربر (به دلیل کارکرد ۱۰۰٪ مطمئن، آفلاین و بدون هیچ باگ CORS)
+            if (customLogoBase64 && !forceNoImage) {
+                const logoImg = new Image();
+                logoImg.onload = () => handleDraw(logoImg);
+                logoImg.onerror = () => handleDraw(null);
+                logoImg.src = customLogoBase64;
+                return;
+            }
+
+            // ۲. بررسی پروتکل محلی: اگر صفحه مستقیماً از روی هارد دسکتاپ باز شده (file://)، اصلاً لوگوی محلی logo.png را لود نمی‌کنیم.
+            // این ترفند هوشمند مانع از چاپ خطاهای CORS قرمز رنگ در کنسول توسعه‌دهنده شما می‌شود.
+            const isLocalProtocol = window.location.protocol === 'file:';
+            if (isLocalProtocol || forceNoImage) {
+                handleDraw(null); // رندر سریع و فوری با لوگوی وکتور بومی بدون تداخل
+                return;
+            }
+
+            // ۳. حالت سرور محلی (Local Server): اگر روی سرور مجازی هستید، اقدام به لود تصویر می‌کند.
+            const logoImg = new Image();
+            logoImg.crossOrigin = "anonymous";
+            logoImg.src = 'logo.png';
+
+            let hasLoaded = false;
+            logoImg.onload = () => {
+                if (!hasLoaded) {
+                    hasLoaded = true;
+                    handleDraw(logoImg);
+                }
+            };
+            logoImg.onerror = () => {
+                if (!hasLoaded) {
+                    hasLoaded = true;
+                    handleDraw(null);
+                }
+            };
+
+            // تایم‌اوت محافظتی لود تصویر در شبکه
+            setTimeout(() => {
+                if (!hasLoaded) {
+                    hasLoaded = true;
+                    handleDraw(null);
+                }
+            }, 1200);
+        }
+
+        // عملکرد دکمه پیش‌نمایش آنلاین پیش‌فاکتور گرافیکی مجهز به مکانیسم خودترمیمی در مقابله با Tainted Canvas
+        function previewInvoiceImage() {
+            if (selectedBOM.length === 0) {
+                showToast("خطا: سبد قطعات شما خالی است. لطفاً ابتدا کالایی اضافه کنید.", false);
+                return;
+            }
+            
+            showToast("در حال تولید فاکتور گرافیکی با کیفیت عالی...");
+            
+            const exportCanvas = (forceNoImg) => {
+                generateInvoiceCanvas(function(canvas) {
+                    try {
+                        const dataUrl = canvas.toDataURL('image/png');
+                        const previewImg = document.getElementById('invoice-preview-img');
+                        previewImg.src = dataUrl;
+                        
+                        document.getElementById('invoice-preview-modal').classList.remove('hidden');
+                        showToast("پیش‌نمایش گرافیکی پیش‌فاکتور با موفقیت تولید شد.");
+                    } catch (err) {
+                        console.error("Canvas export failed (CORS/Taint):", err);
+                        if (!forceNoImg) {
+                            // تلاش مجدد بدون تصویر لوگوی خارجی برای حل خطای Tainted Canvas مرورگر
+                            showToast("رندر مجدد فاکتور بدون لوگوی تصویری به دلیل محدودیت‌های امنیتی مرورگر...", false);
+                            exportCanvas(true);
+                        } else {
+                            showToast("خطای امنیتی بوم نقاشی در مرورگر شما. لطفاً فایل را تحت سرور محلی اجرا کنید.", false);
+                        }
+                    }
+                }, forceNoImg);
+            };
+            
+            exportCanvas(false);
+        }
+
+        function closeInvoicePreviewModal() {
+            document.getElementById('invoice-preview-modal').classList.add('hidden');
+        }
+
+        // دانلود اتوماتیک فایل فاکتور به صورت تصویر PNG مجهز به مکانیسم خودترمیمی در مقابله با Tainted Canvas
+        function downloadBOMImage() {
+            if (selectedBOM.length === 0) {
+                showToast("خطا: سبد قطعات شما خالی است و امکان دانلود تصویر وجود ندارد.", false);
+                return;
+            }
+            
+            showToast("در حال رندر و بسته‌بندی نهایی فاکتور...");
+            
+            const exportCanvas = (forceNoImg) => {
+                generateInvoiceCanvas(function(canvas) {
+                    try {
+                        const dataUrl = canvas.toDataURL('image/png');
+                        
+                        const clientName = document.getElementById('client-name').value.trim() || 'Client';
+                        const filename = `Proposal_BOM_${clientName}_${new Date().toISOString().slice(0,10)}.png`;
+                        
+                        const link = document.createElement("a");
+                        link.setAttribute("href", dataUrl);
+                        link.setAttribute("download", filename);
+                        link.style.visibility = 'hidden';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        showToast("تصویر پیش‌فاکتور لوکس با کیفیت بالا (PNG) دانلود شد! 🎉");
+                    } catch (err) {
+                        console.error("Canvas download failed (CORS/Taint):", err);
+                        if (!forceNoImg) {
+                            // تلاش مجدد بدون تصویر لوگوی خارجی برای حل خطای Tainted Canvas مرورگر
+                            showToast("تلاش مجدد برای خروجی ایمن بدون لوگوی فایل محلی به دلیل خطای CORS...", false);
+                            exportCanvas(true);
+                        } else {
+                            showToast("خطای امنیتی مرورگر در پردازش نهایی تصویر بوم.", false);
+                        }
+                    }
+                }, forceNoImg);
+            };
+            
+            exportCanvas(false);
+        }
+
+        // نمایش دیتاشیت کامل تجهیز بر اساس داده‌های خام CSV
+        function showDatasheet(productId) {
+            const item = catalogDatabase.find(p => p.id === productId);
+            if (!item) return;
+
+            document.getElementById('ds-title').textContent = `${item.brand} — ${item.model}`;
+            document.getElementById('ds-subtitle').textContent = item.category;
+
+            const tbody = document.getElementById('ds-table-body');
+            tbody.innerHTML = '';
+
+            if (item.rawData && item.rawData.length > 0) {
+                item.rawData.forEach((field, idx) => {
+                    const val = field.value || '-';
+                    const tr = document.createElement('tr');
+                    tr.className = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/80';
+                    tr.innerHTML = `
+                        <td class="p-3 font-bold text-slate-700 border-b border-slate-100 w-[45%]">${field.field}</td>
+                        <td class="p-3 text-slate-900 border-b border-slate-100 font-medium">${val}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="2" class="p-8 text-center text-slate-400">
+                            <i class="fas fa-info-circle text-lg mb-2 block"></i>
+                            داده خامی برای این تجهیز موجود نیست. احتمالاً از کاتالوگ نمونه آزمایشی استفاده شده است.
+                        </td>
+                    </tr>
+                `;
+            }
+
+            document.getElementById('datasheet-modal').classList.remove('hidden');
+        }
+
+        function closeDatasheetModal() {
+            document.getElementById('datasheet-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

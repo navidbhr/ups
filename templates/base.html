@@ -27,22 +27,28 @@
             theme: {
                 extend: {
                     colors: {
+                        background: '#61b786',
                         primary: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            200: '#bae6fd',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
+                            50: '#ebedf3',
+                            100: '#d5d9e7',
+                            200: '#abb3cf',
+                            300: '#818db7',
+                            400: '#57679f',
+                            500: '#282a5b', /* Primary Dark Blue */
+                            600: '#22244e',
+                            700: '#1b1d40',
+                            800: '#151733',
+                            900: '#0e1026',
                         },
                         accent: {
-                            500: '#f59e0b',
-                            600: '#d97706',
-                            700: '#b45309',
+                            50: '#edf7fb',
+                            100: '#dbf0f7',
+                            200: '#b7e1ef',
+                            300: '#93d2e7',
+                            400: '#72bcdb', /* Light Blue */
+                            500: '#5a9dbd',
+                            600: '#467d97',
+                            700: '#355e73',
                         }
                     },
                     fontFamily: {
@@ -113,7 +119,7 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #61b786;
         }
 
         .dark ::-webkit-scrollbar-track {
@@ -121,17 +127,17 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #0ea5e9;
+            background: #282a5b;
             border-radius: 5px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #0284c7;
+            background: #1b1d40;
         }
 
         /* Gradient Text */
         .gradient-text {
-            background: linear-gradient(135deg, #0ea5e9, #f59e0b);
+            background: linear-gradient(135deg, #282a5b, #72bcdb);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -145,7 +151,7 @@
         }
 
         .dark .glass {
-            background: rgba(31, 41, 55, 0.5);
+            background: rgba(40, 42, 91, 0.5); /* Adapted to Dark Blue */
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -159,7 +165,7 @@
         }
 
         header.scrolled .header-bg {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(97, 183, 134, 0.95); /* Adapted to Green background */
             backdrop-filter: blur(20px);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
@@ -177,7 +183,7 @@
 
     {% block extra_css %}{% endblock %}
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+<body class="bg-background dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
 
 <!-- Dark Mode Toggle Button (Fixed) -->
 <button id="theme-toggle"
@@ -230,6 +236,11 @@
                     {% get_text 'menu_products' as menu_products_val %}{{ menu_products_val|default:'محصولات' }}
                     <span class="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
                 </a>
+                <a href="{% url 'product_advisor' %}?lang={{ current_lang }}"
+                    class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0 font-medium">
+                    {% get_text 'menu_advisor' as menu_advisor_val %}{{ menu_advisor_val|default:'مشاور محصول' }}
+                    <span class="absolute -bottom-1 right-0 w-0 h-0.5 bg-primary-500 group-hover:w-full transition-all duration-300"></span>
+                </a>
                 <a href="{% url 'article_list' %}?lang={{ current_lang }}"
                    class="text-xs sm:text-sm md:text-base hover:text-primary-500 transition-colors duration-300 relative group whitespace-nowrap flex-shrink-0 font-medium">
                     {% get_text 'menu_articles' as menu_articles_val %}{{ menu_articles_val|default:'مقالات' }}
@@ -252,7 +263,7 @@
                 <!-- Search Field - Desktop Only -->
                 <div class="relative hidden lg:block" id="header-search-container">
                     <input type="text" id="header-search-input" placeholder="{% get_text 'search_placeholder' %}"
-                           class="w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 px-4 py-2 pr-10 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white dark:focus:bg-gray-900 transition-all duration-300 shadow-sm"
+                           class="w-32 sm:w-40 md:w-48 lg:w-56 xl:w-64 px-4 py-2 pr-10 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-background dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white dark:focus:bg-gray-900 transition-all duration-300 shadow-sm"
                            autocomplete="off">
                     <svg class="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none"
                          stroke="currentColor" viewBox="0 0 24 24">
@@ -275,7 +286,7 @@
 
                         <!-- Products Section -->
                         <div id="search-products-section" class="hidden">
-                            <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
+                            <div class="px-4 py-2 bg-background dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
                                 <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400">
                                     {% get_text 'menu_products' as sp_val %}{{ sp_val|default:'محصولات' }}</h4>
                             </div>
@@ -284,7 +295,7 @@
 
                         <!-- Categories Section -->
                         <div id="search-categories-section" class="hidden">
-                            <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
+                            <div class="px-4 py-2 bg-background dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
                                 <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400">
                                     {% get_text 'menu_categories' as sc_val %}{{ sc_val|default:'دسته‌بندی‌ها' }}</h4>
                             </div>
@@ -293,7 +304,7 @@
 
                         <!-- Articles Section -->
                         <div id="search-articles-section" class="hidden">
-                            <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
+                            <div class="px-4 py-2 bg-background dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
                                 <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400">
                                     {% get_text 'menu_articles' as sa_val %}{{ sa_val|default:'مقالات' }}</h4>
                             </div>
@@ -302,7 +313,7 @@
 
                         <!-- Projects Section -->
                         <div id="search-projects-section" class="hidden">
-                            <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
+                            <div class="px-4 py-2 bg-background dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
                                 <h4 class="text-xs font-bold text-gray-500 dark:text-gray-400">
                                     {% get_text 'menu_projects' as sj_val %}{{ sj_val|default:'پروژه‌ها' }}</h4>
                             </div>
@@ -327,7 +338,7 @@
 
                 <!-- Theme Toggle Button - Desktop Only -->
                 <button id="header-theme-toggle"
-                        class="hidden lg:flex p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-500 transition-all shadow-sm"
+                        class="hidden lg:flex p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-background dark:hover:bg-gray-700 hover:text-primary-500 transition-all shadow-sm"
                         title="{% get_text 'toggle_theme' as htt_val %}{{ htt_val|default:'تغییر تم' }}">
                     <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
@@ -352,7 +363,7 @@
 
             <!-- Hamburger Button (Mobile Only) - Using inline onclick to survive AJAX replacements -->
             <button id="mobile-menu-btn"
-                    class="flex 2xl:hidden p-2.5 rounded-xl bg-gray-100/50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 transition-colors border border-gray-200/50 dark:border-gray-700/50 relative z-50 flex-shrink-0"
+                    class="flex 2xl:hidden p-2.5 rounded-xl bg-background dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 transition-colors border border-gray-200/50 dark:border-gray-700/50 relative z-50 flex-shrink-0"
                     onclick="openMobileMenu()">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
@@ -374,7 +385,7 @@
          class="fixed top-0 bottom-0 rtl:right-0 ltr:left-0 w-[85vw] max-w-sm bg-white dark:bg-gray-900 z-[50] transform rtl:translate-x-full ltr:-translate-x-full transition-transform duration-300 ease-out lg:hidden flex flex-col shadow-2xl overflow-hidden border-l border-gray-200 dark:border-gray-800">
 
         <!-- Drawer Header -->
-        <div class="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
+        <div class="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800 bg-background dark:bg-gray-900/50">
     <span class="font-bold text-lg text-gray-900 dark:text-white">
         {% get_text 'mobile_menu_title' as mmt_val %}{{ mmt_val|default:'منوی دسترسی' }}
     </span>
@@ -393,7 +404,7 @@
             <!-- Mobile Search -->
             <div class="relative w-full group">
                 <input type="text" id="mobile-search-input" placeholder="{% get_text 'search_placeholder' %}"
-                       class="w-full pl-4 pr-11 py-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all shadow-sm"
+                       class="w-full pl-4 pr-11 py-3 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-background dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all shadow-sm"
                        autocomplete="off">
                 <svg class="w-5 h-5 absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-primary-500 transition-colors"
                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -431,6 +442,15 @@
                     </svg>
                     {% get_text 'menu_products' as mmp_val %}{{ mmp_val|default:'محصولات' }}
                 </a>
+                <a href="{% url 'product_advisor' %}?lang={{ current_lang }}"
+                   class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all group">
+                    <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-500 transition-colors" fill="none"
+                         stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    {% get_text 'menu_advisor' as mma2_val %}{{ mma2_val|default:'مشاور محصول' }}
+                </a>
                 <a href="{% url 'article_list' %}?lang={{ current_lang }}"
                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-all group">
                     <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-500 transition-colors" fill="none"
@@ -462,7 +482,7 @@
         </div>
 
         <!-- Drawer Footer (Settings & CTA) -->
-        <div class="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-900/80 space-y-4">
+        <div class="p-5 border-t border-gray-100 dark:border-gray-800 bg-background dark:bg-gray-900/80 space-y-4">
             <div class="grid grid-cols-2 gap-3">
                 <!-- Mobile Language Selector - Added logic to clean body overflow on change -->
                 <select onchange="document.body.style.overflow=''; changeLanguage(this.value)"
@@ -475,7 +495,7 @@
 
                 <!-- Mobile Theme Toggle -->
                 <button id="mobile-theme-toggle"
-                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors shadow-sm">
+                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-background dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors shadow-sm">
                     <svg class="w-4 h-4 dark:hidden text-amber-500" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
                     </svg>
@@ -607,7 +627,7 @@
                     {% if main_branch.map_iframe %}
                         <!-- اضافه کردن کلاس‌های کنترل iframe در اینجا -->
                         <div class="rounded-xl overflow-hidden h-40 md:h-48 border-2 border-gray-800 hover:border-primary-500 transition-colors [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-0">
-                            {{ main_branch.map_iframe|safe }}
+                            {{ main_branch.map_iframe|safe_map_iframe }}
                         </div>
                     {% else %}
                         <div class="bg-gray-800 rounded-xl h-40 md:h-48 flex items-center justify-center border-2 border-dashed border-gray-700">

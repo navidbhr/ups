@@ -96,7 +96,7 @@ def site_settings(request):
         'footer_copyright',
         'main_branch', 'send_message',
         'menu_home', 'menu_categories', 'menu_products', 'menu_articles', 'menu_projects',
-        'menu_contact',
+        'menu_contact', 'menu_advisor',
         'search_placeholder', 'no_results', 'faq_title', 'faq_subtitle', 'faq_empty',
         'agents_title', 'agents_subtitle', 'agents_map_link', 'agents_empty',
         'mobile_menu_title',

@@ -158,7 +158,7 @@
                     {% if branch.map_iframe %}
                     <!-- با کلاس map-wrapper و ارتفاع‌های دلخواه، نقشه را کاملاً کنترل می‌کنیم -->
                     <div class="mt-6 rounded-xl overflow-hidden h-48 sm:h-64 map-wrapper">
-                        {{ branch.map_iframe|safe }}
+                        {{ branch.map_iframe|safe_map_iframe }}
                     </div>
                     {% endif %}
                 </div>

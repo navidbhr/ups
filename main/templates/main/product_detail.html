@@ -85,11 +85,21 @@
                 
                 <!-- Price Section -->
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl mb-6">
-                    {% if product.show_price and product.base_price > 0 %}
-                    <div class="flex items-center justify-between mb-4">
+                    {% with prices=product.display_prices %}
+                    {% if prices %}
+                    <div class="flex items-start justify-between gap-4 mb-4">
                         <span class="text-gray-600 dark:text-gray-400">قیمت:</span>
-                        <div class="text-3xl font-bold gradient-text">
-                            {{ product.base_price|intcomma }} {{ product.currency.symbol }}
+                        <div class="space-y-3 text-left">
+                            {% for price in prices %}
+                            <div>
+                                {% if price.label %}
+                                <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">{{ price.label }}</div>
+                                {% endif %}
+                                <div class="text-2xl md:text-3xl font-bold gradient-text">
+                                    {{ price.amount|floatformat:"0"|intcomma }} {{ price.currency.symbol }}
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                     {% else %}
@@ -97,6 +107,7 @@
                         <span class="text-gray-600 dark:text-gray-400 text-lg">برای اطلاع از قیمت تماس بگیرید</span>
                     </div>
                     {% endif %}
+                    {% endwith %}
                     
                     <!-- CTA Buttons -->
                     <div class="grid grid-cols-2 gap-4">
@@ -290,16 +301,25 @@
                     <h3 class="text-lg font-bold mb-2 text-gray-900 dark:text-white">{{ related.name }}</h3>
                     <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">{{ related.short_description }}</p>
                     
-                    <div class="flex items-center justify-between">
-                        {% if related.show_price and related.base_price > 0 %}
-                        <div class="text-primary-500 font-bold text-lg">
-                            {{ related.base_price|intcomma }} {{ related.currency.symbol }}
+                    <div class="flex items-start justify-between gap-3">
+                        {% with prices=related.display_prices %}
+                        {% if prices %}
+                        <div class="flex flex-col gap-1">
+                            {% for price in prices %}
+                            <div class="text-primary-500 font-bold text-lg leading-7">
+                                {% if price.label %}
+                                <span class="block text-xs font-medium text-gray-500 dark:text-gray-400">{{ price.label }}</span>
+                                {% endif %}
+                                {{ price.amount|floatformat:"0"|intcomma }} {{ price.currency.symbol }}
+                            </div>
+                            {% endfor %}
                         </div>
                         {% else %}
                         <div class="text-gray-500 text-sm">تماس بگیرید</div>
                         {% endif %}
+                        {% endwith %}
                         
-                        <a href="{% url 'product_detail' related.slug %}" class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-bold">
+                        <a href="{% url 'product_detail' related.slug %}" class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-bold flex-shrink-0">
                             جزئیات
                         </a>
                     </div>
@@ -329,9 +349,18 @@
                     <div>
                         <h4 class="font-bold text-gray-900 dark:text-white">{{ product.name }}</h4>
                         <p class="text-sm text-gray-600 dark:text-gray-400">کد محصول: {{ product.sku }}</p>
-                        {% if product.show_price and product.base_price > 0 %}
-                        <p class="text-primary-500 font-bold mt-1">{{ product.base_price|intcomma }} {{ product.currency.symbol }}</p>
+                        {% with prices=product.display_prices %}
+                        {% if prices %}
+                        <div class="mt-1 space-y-1">
+                            {% for price in prices %}
+                            <p class="text-primary-500 font-bold">
+                                {% if price.label %}<span class="text-xs text-gray-500 dark:text-gray-400">{{ price.label }}: </span>{% endif %}
+                                {{ price.amount|floatformat:"0"|intcomma }} {{ price.currency.symbol }}
+                            </p>
+                            {% endfor %}
+                        </div>
                         {% endif %}
+                        {% endwith %}
                     </div>
                 </div>
             </div>

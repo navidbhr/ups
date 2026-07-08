@@ -267,6 +267,13 @@ class Category(TimeStampedModel):
         return self.title
 
 
+class _LegacyProductPrice:
+    def __init__(self, amount, currency):
+        self.amount = amount
+        self.currency = currency
+        self.label = ''
+
+
 class Product(TimeStampedModel):
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products',
                                  verbose_name=_("دسته‌بندی"))
@@ -297,6 +304,45 @@ class Product(TimeStampedModel):
 
     def __str__(self):
         return f"{self.name} ({self.sku})"
+
+    @property
+    def display_prices(self):
+        if not self.show_price:
+            return []
+
+        if hasattr(self, '_prefetched_objects_cache') and 'prices' in self._prefetched_objects_cache:
+            product_prices = self._prefetched_objects_cache['prices']
+        else:
+            product_prices = self.prices.select_related('currency').all()
+
+        visible_prices = [
+            price for price in product_prices
+            if price.is_active and price.amount and price.amount > 0
+        ]
+        if visible_prices:
+            return visible_prices
+
+        if self.base_price and self.base_price > 0:
+            return [_LegacyProductPrice(self.base_price, self.currency)]
+
+        return []
+
+
+class ProductPrice(TimeStampedModel):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='prices', verbose_name=_("محصول"))
+    amount = models.DecimalField(max_digits=15, decimal_places=2, verbose_name=_("مبلغ"))
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT, verbose_name=_("واحد پولی"))
+    label = models.CharField(max_length=100, blank=True, verbose_name=_("عنوان قیمت"))
+    is_active = models.BooleanField(default=True, verbose_name=_("فعال؟"))
+    order = models.PositiveIntegerField(default=0, verbose_name=_("ترتیب نمایش"))
+
+    class Meta:
+        ordering = ['order', 'id']
+        verbose_name = _("قیمت محصول")
+        verbose_name_plural = _("قیمت‌های محصول")
+
+    def __str__(self):
+        return f"{self.product.name} - {self.amount} {self.currency.symbol}"
 
 
 class ProductImage(TimeStampedModel):
@@ -712,3 +758,58 @@ class HomeSlider(models.Model):
         }
         text = getattr(self, field_map.get(lang_code, 'subtitle_fa'), None)
         return text or self.subtitle_fa or ''
+
+
+class AdvisorSetting(TimeStampedModel):
+    title_fa = models.CharField(max_length=200, default="مشاور محصول", verbose_name=_("عنوان (فارسی)"))
+    title_en = models.CharField(max_length=200, default="Product Advisor", blank=True, verbose_name=_("Title (English)"))
+    subtitle_fa = models.TextField(default="نیاز خود را مشخص کنید تا بهترین محصول را به شما پیشنهاد دهیم", verbose_name=_("زیرعنوان (فارسی)"))
+    subtitle_en = models.TextField(blank=True, verbose_name=_("Subtitle (English)"))
+    
+    categories = models.ManyToManyField(Category, blank=True, verbose_name=_("دسته‌بندی‌های مجاز برای مشاور"))
+    
+    default_backup_hours = models.FloatField(default=4, verbose_name=_("ساعت پشتیبان پیش‌فرض"))
+    default_safety_margin = models.FloatField(default=25, verbose_name=_("ضریب اطمینان پیش‌فرض (%)"))
+    default_efficiency = models.FloatField(default=85, verbose_name=_("راندمان پیش‌فرض (%)"))
+    default_battery_voltage = models.FloatField(default=48, verbose_name=_("ولتاژ باتری پیش‌فرض"))
+    default_power_factor = models.FloatField(default=0.8, verbose_name=_("ضریب توان پیش‌فرض"))
+    default_dod = models.FloatField(default=50, verbose_name=_("حداکثر عمق تخلیه پیش‌فرض (DoD %)"))
+    
+    power_spec_keys = models.CharField(max_length=500, default="توان,قدرت,power,VA,W", help_text="کلیدهای مشخصات فنی که برای تشخیص توان استفاده می‌شوند (با کاما جدا کنید)", verbose_name=_("کلیدهای توان در مشخصات"))
+    meta_title = models.CharField(max_length=60, null=True, blank=True, verbose_name=_("عنوان سئو"))
+    meta_description = models.CharField(max_length=160, null=True, blank=True, verbose_name=_("توضیحات متا"))
+    
+    # Text configs
+    section_application_title = models.CharField(max_length=200, default="نوع کاربری و بودجه", verbose_name=_("عنوان بخش نوع کاربری"))
+    section_appliances_title = models.CharField(max_length=200, default="بارهای مصرفی", verbose_name=_("عنوان بخش بارهای مصرفی"))
+    section_technical_title = models.CharField(max_length=200, default="تنظیمات فنی", verbose_name=_("عنوان بخش تنظیمات فنی"))
+    section_results_title = models.CharField(max_length=200, default="نتایج محاسبات", verbose_name=_("عنوان بخش نتایج"))
+    section_recommendations_title = models.CharField(max_length=200, default="محصولات پیشنهادی", verbose_name=_("عنوان بخش پیشنهادات"))
+    
+    submit_btn_text = models.CharField(max_length=200, default="محاسبه و نمایش محصولات پیشنهادی", verbose_name=_("متن دکمه ارسال"))
+    add_row_btn_text = models.CharField(max_length=200, default="افزودن ردیف دستی", verbose_name=_("متن دکمه افزودن ردیف"))
+    preset_label = models.CharField(max_length=200, default="افزودن مصرف‌کننده پیش‌فرض...", verbose_name=_("متن پیش‌تنظیم"))
+    no_appliances_msg = models.CharField(max_length=200, default="هیچ وسیله‌ای اضافه نشده است. از منوی بالا اضافه کنید.", verbose_name=_("پیام خالی بودن بارها"))
+    no_results_msg = models.CharField(max_length=200, default="محصولی مطابق با نیاز شما یافت نشد.", verbose_name=_("پیام عدم نتیجه"))
+    no_results_hint = models.CharField(max_length=200, default="مقادیر دیگری را امتحان کنید یا با ما تماس بگیرید.", verbose_name=_("راهنمای عدم نتیجه"))
+    empty_state_title = models.CharField(max_length=200, default="منتظر محاسبات شماست!", verbose_name=_("عنوان حالت خالی"))
+    empty_state_msg = models.CharField(max_length=200, default="بارهای مصرفی خود را در سمت راست وارد کنید و دکمه محاسبه را بزنید.", verbose_name=_("متن حالت خالی"))
+    select_placeholder = models.CharField(max_length=200, default="-- انتخاب کنید --", verbose_name=_("متن انتخاب کنید"))
+    
+    application_office_label = models.CharField(max_length=200, default="اداری / محل کار", verbose_name=_("برچسب کاربری اداری"))
+    application_home_label = models.CharField(max_length=200, default="خانگی / منزل", verbose_name=_("برچسب کاربری خانگی"))
+    application_server_label = models.CharField(max_length=200, default="سرور / دیتاسنتر", verbose_name=_("برچسب کاربری سرور"))
+    application_industrial_label = models.CharField(max_length=200, default="صنعتی / کارگاهی", verbose_name=_("برچسب کاربری صنعتی"))
+    
+    is_active = models.BooleanField(default=True, verbose_name=_("فعال"))
+    
+    class Meta:
+        verbose_name = _("تنظیمات مشاور محصول")
+        verbose_name_plural = _("تنظیمات مشاور محصول")
+    
+    def __str__(self):
+        return self.title_fa
+
+    @classmethod
+    def get_settings(cls):
+        return cls.objects.first()

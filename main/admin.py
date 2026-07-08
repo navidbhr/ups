@@ -1,9 +1,11 @@
 from django.contrib import admin
+from django.db.models import Prefetch
 from .models import (
     Category, Product, ProductImage, SpecificationGroup,
-    ProductSpecification, ProductDocument, Currency, SiteSettings,
+    ProductPrice, ProductSpecification, ProductDocument, Currency, SiteSettings,
     BlogCategory, Partner, FAQ, Agent, Project, ConsultationRequest, Article,
-    Branch, PageTranslation, HomepageImage, HomeSlider, ProductConsultationRequest, StaticText, ContactMessage
+    Branch, PageTranslation, HomepageImage, HomeSlider, ProductConsultationRequest, StaticText, ContactMessage,
+    AdvisorSetting,
 )
 
 
@@ -26,14 +28,19 @@ class ProductDocumentInline(admin.TabularInline):
     # کلاس collapse حذف شد
 
 
+class ProductPriceInline(admin.TabularInline):
+    model = ProductPrice
+    extra = 1
+
+
 # --- Admins ---
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'sku', 'category', 'base_price', 'is_in_stock', 'updated_at')
+    list_display = ('name', 'sku', 'category', 'base_price', 'price_summary', 'is_in_stock', 'updated_at')
     list_filter = ('category', 'is_in_stock', 'currency')
     search_fields = ('name', 'sku')
     readonly_fields = ('slug',)
-    inlines = [ProductImageInline, ProductSpecificationInline, ProductDocumentInline]
+    inlines = [ProductPriceInline, ProductImageInline, ProductSpecificationInline, ProductDocumentInline]
     fieldsets = (
         ('اطلاعات اصلی', {'fields': ('category', 'name', 'slug', 'sku', 'is_in_stock', 'warranty_months')}),
         ('قیمت‌گذاری', {'fields': ('base_price', 'currency', 'show_price')}),
@@ -41,6 +48,22 @@ class ProductAdmin(admin.ModelAdmin):
         ('سئو و محتوا', {'fields': ('short_description', 'full_description', 'meta_title', 'meta_description'),
                          'classes': ('collapse',)}),
     )
+    change_list_template = "admin/product_change_list.html"
+
+    @admin.display(description='قیمت‌ها')
+    def price_summary(self, obj):
+        prices = obj.display_prices
+        if not prices:
+            return 'تماس بگیرید'
+        return '، '.join(f'{price.amount:g} {price.currency.symbol}' for price in prices)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('category', 'currency').prefetch_related(
+            Prefetch(
+                'prices',
+                queryset=ProductPrice.objects.filter(is_active=True).select_related('currency').order_by('order', 'id'),
+            )
+        )
 
 
 @admin.register(SiteSettings)
@@ -194,3 +217,23 @@ admin.site.register(BlogCategory)
 admin.site.register(Category)
 admin.site.register(Currency)
 admin.site.register(SpecificationGroup)
+
+
+@admin.register(AdvisorSetting)
+class AdvisorSettingAdmin(admin.ModelAdmin):
+    fieldsets = (
+        ('عنوان و توضیحات', {'fields': ('title_fa', 'title_en', 'subtitle_fa', 'subtitle_en')}),
+        ('دسته‌بندی‌ها', {'fields': ('categories',), 'description': 'اگر خالی باشد همه دسته‌بندی‌ها نمایش داده می‌شوند.'}),
+        ('مقادیر پیش‌فرض محاسبات', {'fields': ('default_backup_hours', 'default_safety_margin', 'default_efficiency',
+                                                   'default_battery_voltage', 'default_power_factor', 'default_dod')}),
+        ('تنظیمات توان', {'fields': ('power_spec_keys',)}),
+        ('عنوان بخش‌ها', {'fields': ('section_application_title', 'section_appliances_title', 'section_technical_title',
+                                       'section_results_title', 'section_recommendations_title')}),
+        ('متن دکمه‌ها و پیام‌ها', {'fields': ('submit_btn_text', 'add_row_btn_text', 'preset_label',
+                                               'no_appliances_msg', 'no_results_msg', 'no_results_hint',
+                                               'empty_state_title', 'empty_state_msg', 'select_placeholder')}),
+        ('برچسب‌های نوع کاربری', {'fields': ('application_office_label', 'application_home_label',
+                                              'application_server_label', 'application_industrial_label')}),
+        ('سئو', {'fields': ('meta_title', 'meta_description'), 'classes': ('collapse',)}),
+        ('وضعیت', {'fields': ('is_active',)}),
+    )

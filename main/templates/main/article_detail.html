@@ -61,7 +61,7 @@
                 
                 <!-- Article Content -->
                 <div class="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
-                    {{ article.display_content|safe }}
+                    {{ article.display_content|sanitize_html }}
                 </div>
                 
                 <!-- Back to Articles Button -->

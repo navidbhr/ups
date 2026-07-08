@@ -29,7 +29,7 @@ body {
     font-family: 'IRANSans', Tahoma, sans-serif;
     direction: rtl;
     text-align: right;
-    background-color: #f4f6f9;
+    background-color: #61b786;
     color: #333;
     line-height: 1.6;
 }
@@ -54,7 +54,7 @@ header nav {
 .logo span {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #0056b3;
+    color: #282a5b;
 }
 
 header ul {
@@ -71,7 +71,7 @@ header ul li a {
 }
 
 header ul li a:hover {
-    color: #0056b3;
+    color: #282a5b;
 }
 
 /* --- Footer --- */
@@ -133,7 +133,7 @@ footer {
 .logo span {
     font-size: 1.8rem;
     font-weight: 900;
-    color: #003d82;
+    color: #282a5b;
 }
 
 /* --- Nav Links & Hover Animation --- */
@@ -161,12 +161,12 @@ footer {
     height: 2px;
     bottom: 0;
     right: 0;
-    background-color: #ff9800;
+    background-color: #72bcdb;
     transition: width 0.3s ease;
 }
 
 .nav-links > li > a:hover {
-    color: #ff9800;
+    color: #72bcdb;
 }
 
 .nav-links > li > a:hover::after {
@@ -211,13 +211,13 @@ footer {
 
 .dropdown-menu li a:hover {
     background: #f9f9f9;
-    color: #003d82;
+    color: #282a5b;
     padding-right: 25px; /* انیمیشن حرکت به چپ موقع هاور */
 }
 
 /* --- CTA Button --- */
 .cta-call {
-    background-color: #ff9800;
+    background-color: #72bcdb;
     color: #fff;
     padding: 10px 20px;
     border-radius: 5px;
@@ -227,7 +227,7 @@ footer {
 }
 
 .cta-call:hover {
-    background-color: #e68a00;
+    background-color: #5a9dbd;
     transform: scale(1.05);
 }
 
@@ -245,7 +245,7 @@ footer {
     display: block;
     width: 25px;
     height: 3px;
-    background-color: #003d82;
+    background-color: #282a5b;
     transition: all 0.3s;
 }
 
@@ -307,7 +307,7 @@ footer {
     position: absolute;
     width: 40px;
     height: 2px;
-    background: #ff9800;
+    background: #72bcdb;
     bottom: 0;
     right: 0;
 }
@@ -328,7 +328,7 @@ footer {
 }
 
 .footer-col ul li a:hover {
-    color: #ff9800;
+    color: #72bcdb;
     padding-right: 5px;
 }
 
@@ -356,7 +356,7 @@ footer {
 }
 
 .social-links a:hover {
-    background: #ff9800;
+    background: #72bcdb;
     transform: translateY(-3px);
 }
 
@@ -368,7 +368,7 @@ footer {
 }
 
 .contact-col i {
-    color: #ff9800;
+    color: #72bcdb;
 }
 
 .footer-bottom {
