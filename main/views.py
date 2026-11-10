@@ -1,5 +1,6 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.http import JsonResponse
+from django.urls import reverse
 from django.db.models import Prefetch
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
@@ -1032,6 +1033,94 @@ def import_products_excel(request):
     return render(request, 'admin/import_products.html', {'results': results})
 
 
+def advisor_import_excel(request):
+    from .models import AdvisorSetting, AdvisorColumnMapping, AdvisorImportedFile
+
+    context = {
+        'headers': None,
+        'sheet_name': '',
+        'results': [],
+        'mappings': [],
+        'param_choices': AdvisorColumnMapping.PARAM_CHOICES,
+    }
+
+    advisor = AdvisorSetting.get_settings()
+
+    if request.method == 'POST':
+        if request.FILES.get('excel_file'):
+            excel_file = request.FILES['excel_file']
+            sheet_name = request.POST.get('sheet_name', 'Products').strip() or 'Products'
+            has_header = request.POST.get('has_header', 'on') == 'on'
+            try:
+                wb = openpyxl.load_workbook(excel_file, read_only=True, data_only=True)
+                if sheet_name not in wb.sheetnames:
+                    sheet_name = wb.sheetnames[0] if wb.sheetnames else sheet_name
+                ws = wb[sheet_name]
+                first_row = next(ws.iter_rows(min_row=1, max_row=1, values_only=True), None)
+                headers = [str(c).strip() if c is not None and str(c).strip() else f'column_{i+1}'
+                           for i, c in enumerate(first_row)] if first_row else []
+                wb.close()
+                context['headers'] = headers
+                context['sheet_name'] = sheet_name
+
+                if request.POST.get('action') == 'save_mapping' and advisor:
+                    imported = AdvisorImportedFile.objects.create(
+                        advisor=advisor,
+                        file=excel_file,
+                        sheet_name=sheet_name,
+                        has_header=has_header,
+                        notes=request.POST.get('notes', ''),
+                    )
+                    AdvisorImportedFile.objects.exclude(pk=imported.pk).filter(advisor=advisor).update(is_active=False)
+                    imported.is_active = True
+                    imported.save()
+
+                    AdvisorColumnMapping.objects.filter(advisor=advisor).delete()
+                    param_keys = request.POST.getlist('param_key[]')
+                    excel_cols = request.POST.getlist('excel_column[]')
+                    power_flags = request.POST.getlist('is_power_column[]')
+                    order = 0
+                    for i, pk_val in enumerate(param_keys):
+                        if not pk_val:
+                            continue
+                        col = excel_cols[i] if i < len(excel_cols) else ''
+                        if not col:
+                            continue
+                        AdvisorColumnMapping.objects.create(
+                            advisor=advisor,
+                            param_key=pk_val,
+                            excel_column=col,
+                            is_power_column=(str(power_flags[i]) == 'on') if i < len(power_flags) else False,
+                            order=order,
+                        )
+                        order += 1
+                    context['results'].append({'type': 'success', 'message': 'فایل و نگاشت ستون‌ها با موفقیت ذخیره شد.'})
+                    return HttpResponseRedirect(reverse('advisor_import_excel'))
+            except Exception as e:
+                context['results'].append({'type': 'error', 'message': f'خطا در خواندن فایل: {str(e)}'})
+        else:
+            active_file = AdvisorImportedFile.objects.filter(advisor=advisor, is_active=True).first()
+            if active_file:
+                try:
+                    wb = openpyxl.load_workbook(active_file.file.path, read_only=True, data_only=True)
+                    ws = wb[active_file.sheet_name] if active_file.sheet_name in wb.sheetnames else wb[wb.sheetnames[0]]
+                    first_row = next(ws.iter_rows(min_row=1, max_row=1, values_only=True), None)
+                    headers = [str(c).strip() if c is not None and str(c).strip() else f'column_{i+1}'
+                               for i, c in enumerate(first_row)] if first_row else []
+                    wb.close()
+                    context['headers'] = headers
+                    context['sheet_name'] = active_file.sheet_name
+                except Exception as e:
+                    context['results'].append({'type': 'error', 'message': f'خطا در خواندن فایل ذخیره‌شده: {str(e)}'})
+
+    if advisor:
+        context['mappings'] = list(AdvisorColumnMapping.objects.filter(advisor=advisor).order_by('order'))
+        context['active_file'] = AdvisorImportedFile.objects.filter(advisor=advisor, is_active=True).first()
+        context['files'] = AdvisorImportedFile.objects.filter(advisor=advisor).all()[:10]
+
+    return render(request, 'admin/advisor_import_excel.html', context)
+
+
 def product_advisor_view(request):
     from django.utils.translation import get_language
     from django.db.models import Q
@@ -1159,47 +1248,59 @@ def product_advisor_view(request):
             'system_phase': form_data.get('system_phase', '1phase'),
         }
 
-        # --- Product Matching ---
-        qs = Product.objects.filter(is_in_stock=True).select_related('category', 'currency')
+        # --- Determine product source ---
+        use_excel = (
+            advisor_config and advisor_config.mapping_mode == 'excel'
+            and advisor_config.imported_files.filter(is_active=True).exists()
+        )
 
-        # Filter by advisor categories
-        if advisor_config and advisor_config.pk:
-            allowed_cats = advisor_config.categories.all()
-            if allowed_cats.exists():
-                qs = qs.filter(category__in=allowed_cats)
+        if use_excel:
+            recommendations = _recommend_from_excel(
+                advisor_config, inverter_power_va,
+                _parse_decimal(form_data.get('budget_max', '0')),
+                form_data.get('application', ''),
+            )
+        else:
+            qs = Product.objects.filter(is_in_stock=True).select_related('category', 'currency')
 
-        # Filter by budget
-        budget = _parse_decimal(form_data.get('budget_max', '0'))
-        if budget > 0:
-            qs = qs.filter(base_price__lte=budget)
+            # Filter by advisor categories
+            if advisor_config and advisor_config.pk:
+                allowed_cats = advisor_config.categories.all()
+                if allowed_cats.exists():
+                    qs = qs.filter(category__in=allowed_cats)
 
-        # Match by power specs
-        spec_keys_str = advisor_config.power_spec_keys if advisor_config and advisor_config.power_spec_keys else "توان,قدرت,power,VA,W"
-        spec_keys = [k.strip() for k in spec_keys_str.split(',') if k.strip()]
+            # Filter by budget
+            budget = _parse_decimal(form_data.get('budget_max', '0'))
+            if budget > 0:
+                qs = qs.filter(base_price__lte=budget)
 
-        matching_product_ids = set()
-        for key in spec_keys:
-            specs = ProductSpecification.objects.filter(
-                key__icontains=key
-            ).exclude(value__isnull=True).exclude(value='')
-            for spec in specs:
-                try:
-                    spec_val = _parse_decimal(spec.value)
-                    if spec_val > 0 and spec_val >= inverter_power_va * 0.7:
-                        matching_product_ids.add(spec.product_id)
-                except:
-                    pass
+            # Match by power specs
+            spec_keys_str = advisor_config.power_spec_keys if advisor_config and advisor_config.power_spec_keys else "توان,قدرت,power,VA,W"
+            spec_keys = [k.strip() for k in spec_keys_str.split(',') if k.strip()]
 
-        # Also match by name/description containing power values
-        power_str = str(int(inverter_power_va))
-        name_q = Q(name__icontains=power_str) | Q(short_description__icontains=power_str)
-        name_products = Product.objects.filter(name_q, is_in_stock=True).values_list('id', flat=True)
-        matching_product_ids.update(name_products)
+            matching_product_ids = set()
+            for key in spec_keys:
+                specs = ProductSpecification.objects.filter(
+                    key__icontains=key
+                ).exclude(value__isnull=True).exclude(value='')
+                for spec in specs:
+                    try:
+                        spec_val = _parse_decimal(spec.value)
+                        if spec_val > 0 and spec_val >= inverter_power_va * 0.7:
+                            matching_product_ids.add(spec.product_id)
+                    except:
+                        pass
 
-        if matching_product_ids:
-            qs = qs.filter(id__in=matching_product_ids)
+            # Also match by name/description containing power values
+            power_str = str(int(inverter_power_va))
+            name_q = Q(name__icontains=power_str) | Q(short_description__icontains=power_str)
+            name_products = Product.objects.filter(name_q, is_in_stock=True).values_list('id', flat=True)
+            matching_product_ids.update(name_products)
 
-        recommendations = qs.prefetch_related(product_price_prefetch())[:30]
+            if matching_product_ids:
+                qs = qs.filter(id__in=matching_product_ids)
+
+            recommendations = qs.prefetch_related(product_price_prefetch())[:30]
 
     return render(request, 'main/product_advisor.html', {
         'presets': presets,
@@ -1239,3 +1340,93 @@ def _parse_bool(val):
         return val
     s = str(val).strip().lower()
     return s in ('true', '1', 'yes', 'بله', 'فعال')
+
+
+def _recommend_from_excel(advisor_config, inverter_power_va, budget, application):
+    """خواندن ردیف‌های محصول از فایل اکسل آپلود شده و تطبیق با توان محاسباتی."""
+    from .models import AdvisorImportedFile, AdvisorColumnMapping
+
+    active_file = AdvisorImportedFile.objects.filter(advisor=advisor_config, is_active=True).first()
+    if not active_file:
+        return []
+
+    mappings = list(AdvisorColumnMapping.objects.filter(advisor=advisor_config))
+    if not mappings:
+        return []
+
+    col_to_param = {m.excel_column: m.param_key for m in mappings}
+    power_cols = [m.excel_column for m in mappings if m.is_power_column]
+
+    try:
+        wb = openpyxl.load_workbook(active_file.file.path, read_only=True, data_only=True)
+        sheet = active_file.sheet_name if active_file.sheet_name in wb.sheetnames else wb.sheetnames[0]
+        ws = wb[sheet]
+        header_index = {}
+        if active_file.has_header:
+            first = next(ws.iter_rows(min_row=1, max_row=1, values_only=True), None)
+            if first is None:
+                wb.close()
+                return []
+            for i, c in enumerate(first):
+                h = str(c).strip() if c is not None and str(c).strip() else ''
+                if h:
+                    header_index[h] = i
+        else:
+            first = next(ws.iter_rows(min_row=1, max_row=1, values_only=True), None) or []
+            header_index = {f'column_{i+1}': i for i, _ in enumerate(first)}
+
+        available_params = {}
+        for col, idx in header_index.items():
+            param = col_to_param.get(col)
+            if param:
+                available_params[param] = idx
+
+        results = []
+        for row in ws.iter_rows(values_only=True):
+            product = {}
+            for param, idx in available_params.items():
+                if idx < len(row):
+                    product[param] = row[idx]
+
+            matched = False
+            for col in power_cols:
+                idx = header_index.get(col)
+                if idx is None or idx >= len(row):
+                    continue
+                try:
+                    pval = _parse_decimal(row[idx])
+                except Exception:
+                    pval = 0
+                if pval > 0 and pval >= inverter_power_va * 0.7:
+                    matched = True
+                    break
+            if power_cols and not matched:
+                continue
+
+            if budget > 0 and 'price' in product:
+                try:
+                    if _parse_decimal(product.get('price', '0')) > budget:
+                        continue
+                except Exception:
+                    pass
+
+            results.append({
+                'name': str(product.get('name', '')),
+                'sku': str(product.get('sku', '')),
+                'category': product.get('category', '') or '',
+                'price': _parse_decimal(product.get('price', '0')),
+                'currency': product.get('currency', '') or '',
+                'short_description': product.get('short_description', '') or '',
+                'image_url': product.get('image', '') or '',
+                'slug': product.get('slug', '') or '',
+                'display_prices': [{'amount': _parse_decimal(product.get('price', '0')),
+                                    'currency': {'symbol': product.get('currency', '') or ''}}] if product.get('price') else [],
+            })
+            if len(results) >= 30:
+                break
+
+        wb.close()
+    except Exception:
+        return []
+
+    return results

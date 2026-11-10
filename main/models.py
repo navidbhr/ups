@@ -802,7 +802,23 @@ class AdvisorSetting(TimeStampedModel):
     application_industrial_label = models.CharField(max_length=200, default="صنعتی / کارگاهی", verbose_name=_("برچسب کاربری صنعتی"))
     
     is_active = models.BooleanField(default=True, verbose_name=_("فعال"))
-    
+
+    MAPPING_MODE_CHOICES = (
+        ('product', _("جدول محصولات (پیش‌فرض)")),
+        ('excel', _("فایل اکسل آپلود شده")),
+    )
+    mapping_mode = models.CharField(
+        max_length=10, choices=MAPPING_MODE_CHOICES, default='product',
+        verbose_name=_("منبع محصولات پیشنهادی"),
+    )
+    excel_sheet_name = models.CharField(
+        max_length=100, default="Products", blank=True,
+        verbose_name=_("نام شیت اکسل"),
+    )
+    excel_has_header = models.BooleanField(
+        default=True, verbose_name=_("اولین ردیف به عنوان سربرگ"),
+    )
+
     class Meta:
         verbose_name = _("تنظیمات مشاور محصول")
         verbose_name_plural = _("تنظیمات مشاور محصول")
@@ -813,3 +829,57 @@ class AdvisorSetting(TimeStampedModel):
     @classmethod
     def get_settings(cls):
         return cls.objects.first()
+
+
+class AdvisorImportedFile(TimeStampedModel):
+    advisor = models.ForeignKey(
+        AdvisorSetting, on_delete=models.CASCADE, related_name='imported_files',
+        verbose_name=_("تنظیمات مشاور")
+    )
+    file = models.FileField(upload_to='advisor_excel/', verbose_name=_("فایل اکسل محصولات"))
+    sheet_name = models.CharField(max_length=100, default="Products", verbose_name=_("نام شیت"))
+    has_header = models.BooleanField(default=True, verbose_name=_("اولین ردیف سربرگ"))
+    notes = models.TextField(blank=True, verbose_name=_("توضیحات"))
+    is_active = models.BooleanField(default=True, verbose_name=_("فعال (استفاده شود)"))
+
+    class Meta:
+        verbose_name = _("فایل اکسل مشاور")
+        verbose_name_plural = _("فایل‌های اکسل مشاور")
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        return f"{self.file.name} ({self.sheet_name})"
+
+
+class AdvisorColumnMapping(TimeStampedModel):
+    PARAM_CHOICES = (
+        ('name', _("نام محصول")),
+        ('sku', _("کد محصول (SKU)")),
+        ('category', _("دسته‌بندی")),
+        ('price', _("قیمت")),
+        ('currency', _("واحد ارز")),
+        ('power', _("توان (وات/VA)")),
+        ('short_description', _("توضیحات کوتاه")),
+        ('image', _("آدرس تصویر")),
+        ('slug', _("اسلاگ (لینک)")),
+    )
+
+    advisor = models.ForeignKey(
+        AdvisorSetting, on_delete=models.CASCADE, related_name='column_mappings',
+        verbose_name=_("تنظیمات مشاور")
+    )
+    param_key = models.CharField(max_length=40, choices=PARAM_CHOICES, verbose_name=_("پارامتر فرم"))
+    excel_column = models.CharField(max_length=100, verbose_name=_("نام ستون در اکسل"))
+    is_power_column = models.BooleanField(
+        default=False, verbose_name=_("ستون توان محصول"),
+    )
+    order = models.IntegerField(default=0, verbose_name=_("اولویت"))
+
+    class Meta:
+        verbose_name = _("نگاشت ستون اکسل")
+        verbose_name_plural = _("نگاشت ستون‌های اکسل")
+        ordering = ('order', 'param_key')
+        unique_together = (('advisor', 'param_key'),)
+
+    def __str__(self):
+        return f"{self.get_param_key_display()} <- {self.excel_column}"

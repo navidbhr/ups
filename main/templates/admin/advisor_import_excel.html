@@ -1,0 +1,273 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    :root {
+      --ai-primary: #6366f1;
+      --ai-primary-d: #4f46e5;
+      --ai-accent: #8b5cf6;
+      --ai-success: #10b981;
+      --ai-danger: #ef4444;
+      --ai-bg: #f8fafc;
+      --ai-card: #ffffff;
+      --ai-border: #e2e8f0;
+      --ai-text: #1e293b;
+      --ai-muted: #64748b;
+    }
+    .ai-wrap { direction: rtl; text-align: right; max-width: 980px; margin: 0 auto; padding: 28px 20px 60px; font-family: 'IRANSans', Tahoma, sans-serif; color: var(--ai-text); }
+    .ai-wrap * { box-sizing: border-box; }
+
+    /* Banner */
+    .ai-banner {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border-radius: 20px; padding: 28px 32px; color: #fff;
+      display: flex; align-items: center; gap: 20px; margin-bottom: 26px;
+      box-shadow: 0 18px 40px -18px rgba(99,102,241,.6);
+    }
+    .ai-banner .ai-icon {
+      width: 64px; height: 64px; flex-shrink: 0; border-radius: 18px;
+      background: rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center;
+      font-size: 30px;
+    }
+    .ai-banner h1 { font-size: 1.5rem; margin: 0 0 6px; font-weight: 800; }
+    .ai-banner p { margin: 0; font-size: .9rem; opacity: .92; line-height: 1.7; }
+
+    /* Cards */
+    .ai-card {
+      background: var(--ai-card); border: 1px solid var(--ai-border); border-radius: 18px;
+      padding: 24px; margin-bottom: 22px; box-shadow: 0 4px 16px -8px rgba(15,23,42,.08);
+      transition: box-shadow .25s, transform .25s;
+    }
+    .ai-card:hover { box-shadow: 0 10px 30px -12px rgba(15,23,42,.15); }
+    .ai-card-title { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; font-weight: 800; margin: 0 0 18px; color: var(--ai-text); }
+    .ai-card-title i { color: var(--ai-primary); font-size: 1.1rem; }
+
+    /* Upload dropzone */
+    .ai-drop {
+      border: 2px dashed var(--ai-border); border-radius: 16px; padding: 30px 20px; text-align: center;
+      background: var(--ai-bg); cursor: pointer; transition: border-color .2s, background .2s;
+    }
+    .ai-drop:hover, .ai-drop.ai-drag { border-color: var(--ai-primary); background: #eef2ff; }
+    .ai-drop i { font-size: 34px; color: var(--ai-primary); }
+    .ai-drop .ai-fname { display: block; margin-top: 10px; font-weight: 700; color: var(--ai-primary-d); font-size: .95rem; }
+    .ai-drop .ai-hint { display: block; margin-top: 4px; font-size: .8rem; color: var(--ai-muted); }
+    .ai-drop input[type=file] { display: none; }
+
+    .ai-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
+    @media (max-width: 640px){ .ai-grid2 { grid-template-columns: 1fr; } }
+    .ai-field label { display: block; font-size: .82rem; font-weight: 700; color: var(--ai-muted); margin-bottom: 7px; }
+    .ai-field input[type=text] {
+      width: 100%; padding: 11px 13px; border: 1px solid var(--ai-border); border-radius: 11px;
+      font-family: inherit; font-size: .9rem; background: #fff; color: var(--ai-text); transition: border-color .2s, box-shadow .2s;
+    }
+    .ai-field input[type=text]:focus { outline: none; border-color: var(--ai-primary); box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
+    .ai-check { display: flex; align-items: center; gap: 9px; margin-top: 26px; font-size: .9rem; font-weight: 600; color: var(--ai-text); }
+    .ai-check input { width: 18px; height: 18px; accent-color: var(--ai-primary); }
+
+    /* Buttons */
+    .ai-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; border: none;
+      padding: 13px 26px; border-radius: 12px; font-family: inherit; font-size: .95rem; font-weight: 800;
+      cursor: pointer; transition: transform .15s, box-shadow .2s; box-shadow: 0 10px 24px -10px rgba(99,102,241,.7);
+    }
+    .ai-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 30px -12px rgba(99,102,241,.8); }
+    .ai-btn:active { transform: translateY(0); }
+
+    /* Chips */
+    .ai-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+    .ai-chip {
+      background: #eef2ff; color: var(--ai-primary-d); border: 1px solid #c7d2fe;
+      padding: 5px 12px; border-radius: 999px; font-size: .8rem; font-weight: 700;
+    }
+
+    /* Mapping rows */
+    .ai-maprow {
+      display: grid; grid-template-columns: 230px 1fr 120px; align-items: center; gap: 16px;
+      padding: 14px 16px; border: 1px solid var(--ai-border); border-radius: 14px; margin-bottom: 12px;
+      background: #fff; transition: border-color .2s, background .2s;
+    }
+    .ai-maprow.ai-mapped { border-color: #c7d2fe; background: #f5f7ff; }
+    .ai-maprow .ai-param { display: flex; align-items: center; gap: 11px; font-weight: 700; font-size: .92rem; }
+    .ai-maprow .ai-param i { width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px; background: #eef2ff; color: var(--ai-primary); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+    .ai-maprow select {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--ai-border); border-radius: 11px;
+      font-family: inherit; font-size: .9rem; background: #fff; color: var(--ai-text); transition: border-color .2s, box-shadow .2s;
+    }
+    .ai-maprow select:focus { outline: none; border-color: var(--ai-primary); box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
+    .ai-toggle { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: .82rem; font-weight: 700; color: var(--ai-muted); }
+    .ai-switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+    .ai-switch input { opacity: 0; width: 0; height: 0; }
+    .ai-slider { position: absolute; inset: 0; background: #cbd5e1; border-radius: 999px; cursor: pointer; transition: background .2s; }
+    .ai-slider::before { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+    .ai-switch input:checked + .ai-slider { background: var(--ai-primary); }
+    .ai-switch input:checked + .ai-slider::before { transform: translateX(-18px); }
+    @media (max-width: 720px){ .ai-maprow { grid-template-columns: 1fr; gap: 10px; } .ai-toggle { justify-content: flex-start; } }
+
+    /* Alerts */
+    .ai-alert { padding: 13px 18px; border-radius: 12px; margin-top: 16px; font-size: .9rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    .ai-alert.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .ai-alert.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+    /* Files */
+    .ai-filerow { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--ai-border); border-radius: 12px; margin-bottom: 10px; background: #fff; }
+    .ai-filerow i { color: var(--ai-primary); font-size: 1.1rem; }
+    .ai-filerow a { color: var(--ai-primary-d); font-weight: 700; text-decoration: none; font-size: .9rem; }
+    .ai-filerow a:hover { text-decoration: underline; }
+    .ai-filerow .ai-meta { color: var(--ai-muted); font-size: .82rem; }
+    .ai-dot { width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; flex-shrink: 0; }
+    .ai-dot.active { background: var(--ai-success); box-shadow: 0 0 0 4px rgba(16,185,129,.18); }
+    .ai-spacer { margin-right: auto; }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="ai-wrap">
+
+  <div class="ai-banner">
+    <div class="ai-icon"><i class="fas fa-file-excel"></i></div>
+    <div>
+      <h1>ورود اکسل مشاور محصول</h1>
+      <p>فایل اکسل محصولات را آپلود کنید، ستون‌های آن را به پارامترهای فرم مشاور نگاشت کنید، و در تنظیمات مشاور منبع را روی «فایل اکسل آپلود شده» قرار دهید.</p>
+    </div>
+  </div>
+
+  {# Step 1: Upload #}
+  <div class="ai-card">
+    <h2 class="ai-card-title"><i class="fas fa-upload"></i> بارگذاری فایل</h2>
+    <form method="post" enctype="multipart/form-data" id="ai-upload-form">
+      {% csrf_token %}
+      <label class="ai-drop" id="ai-drop">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <span class="ai-fname" id="ai-fname">برای انتخاب فایل اکسل کلیک کنید یا اینجا رها کنید</span>
+        <span class="ai-hint">فرمت‌های xlsx. و xls. پشتیبانی می‌شوند</span>
+        <input type="file" name="excel_file" id="ai-file" accept=".xlsx,.xls">
+      </label>
+
+      <div class="ai-grid2">
+        <div class="ai-field">
+          <label for="sheet_name">نام شیت (Sheet)</label>
+          <input type="text" name="sheet_name" id="sheet_name" value="{{ sheet_name|default:'Products' }}" placeholder="Products">
+        </div>
+        <div class="ai-field">
+          <label for="notes">توضیحات (اختیاری)</label>
+          <input type="text" name="notes" id="notes" placeholder="مثلاً لیست قیمت تابستان ۱۴۰۴">
+        </div>
+      </div>
+      <label class="ai-check">
+        <input type="checkbox" name="has_header" {% if has_header != False %}checked{% endif %}>
+        اولین ردیف به عنوان سربرگ (نام ستون‌ها) در نظر گرفته شود
+      </label>
+
+      <div style="margin-top:20px;">
+        <button type="submit" class="ai-btn"><i class="fas fa-table"></i> خواندن ستون‌ها و ادامه</button>
+      </div>
+    </form>
+  </div>
+
+  {# Step 2: Mapping #}
+  {% if headers %}
+  <div class="ai-card">
+    <h2 class="ai-card-title"><i class="fas fa-project-diagram"></i> نگاشت ستون‌های اکسل به پارامترهای فرم</h2>
+
+    <div style="margin-bottom:18px;">
+      <div class="ai-field" style="margin-bottom:8px;"><label>ستون‌های موجود در شیت «{{ sheet_name }}»:</label></div>
+      <div class="ai-chips">
+        {% for h in headers %}
+        <span class="ai-chip">{{ h }}</span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="save_mapping">
+      <input type="hidden" name="sheet_name" value="{{ sheet_name }}">
+
+      {% for choice in param_choices %}
+      <div class="ai-maprow">
+        <div class="ai-param">
+          <i class="fas fa-{% if choice.0 == 'name' %}tag{% elif choice.0 == 'sku' %}id-card{% elif choice.0 == 'category' %}folder{% elif choice.0 == 'price' %}money-bill-wave{% elif choice.0 == 'currency' %}coins{% elif choice.0 == 'power' %}bolt{% elif choice.0 == 'short_description' %}align-left{% elif choice.0 == 'image' %}image{% elif choice.0 == 'slug' %}link{% else %}circle{% endif %}"></i>
+          <span>{{ choice.1 }}</span>
+          <input type="hidden" name="param_key[]" value="{{ choice.0 }}">
+        </div>
+        <div>
+          <select name="excel_column[]" class="ai-col-select">
+            <option value="">-- انتخاب ستون --</option>
+            {% for h in headers %}
+            <option value="{{ h }}">{{ h }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="ai-toggle">
+          <label class="ai-switch">
+            <input type="checkbox" name="is_power_column[]">
+            <span class="ai-slider"></span>
+          </label>
+          <span>ستون توان</span>
+        </div>
+      </div>
+      {% endfor %}
+
+      <div style="margin-top:20px;">
+        <button type="submit" class="ai-btn"><i class="fas fa-save"></i> ذخیره نگاشت و فعال‌سازی</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  {# Results #}
+  {% if results %}
+  <div class="ai-card">
+    <h2 class="ai-card-title"><i class="fas fa-clipboard-check"></i> نتیجه عملیات</h2>
+    {% for r in results %}
+    <div class="ai-alert {% if r.type == 'success' %}success{% else %}error{% endif %}">
+      <i class="fas fa-{% if r.type == 'success' %}check-circle{% else %}exclamation-triangle{% endif %}"></i>
+      {{ r.message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {# Existing files #}
+  {% if files %}
+  <div class="ai-card">
+    <h2 class="ai-card-title"><i class="fas fa-history"></i> فایل‌های آپلود شده قبلی</h2>
+    {% for f in files %}
+    <div class="ai-filerow">
+      <i class="fas fa-file-excel"></i>
+      <span class="ai-dot {% if f.is_active %}active{% endif %}"></span>
+      <a href="{{ f.file.url }}">{{ f.file.name|default:"فایل" }}</a>
+      <span class="ai-spacer"></span>
+      <span class="ai-meta">شیت: {{ f.sheet_name }} — {{ f.created_at|date:"Y/m/d H:i" }}</span>
+      {% if f.is_active %}<span class="ai-meta" style="color:var(--ai-success);font-weight:800;">فعال</span>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+  (function(){
+    var drop = document.getElementById('ai-drop');
+    var file = document.getElementById('ai-file');
+    var fname = document.getElementById('ai-fname');
+    if (!drop || !file) return;
+    drop.addEventListener('click', function(e){ if (e.target !== file) file.click(); });
+    file.addEventListener('change', function(){ fname.textContent = file.files.length ? file.files[0].name : 'فایلی انتخاب نشده'; });
+    ['dragover','dragenter'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('ai-drag'); }); });
+    ['dragleave','drop'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('ai-drag'); }); });
+    drop.addEventListener('drop', function(e){ if (e.dataTransfer.files.length){ file.files = e.dataTransfer.files; fname.textContent = file.files[0].name; } });
+
+    // highlight mapped rows
+    document.querySelectorAll('.ai-col-select').forEach(function(sel){
+      var row = sel.closest('.ai-maprow');
+      function upd(){ row.classList.toggle('ai-mapped', !!sel.value); }
+      sel.addEventListener('change', upd); upd();
+    });
+  })();
+</script>
+{% endblock %}

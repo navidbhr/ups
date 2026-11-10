@@ -5,8 +5,21 @@ from .models import (
     ProductPrice, ProductSpecification, ProductDocument, Currency, SiteSettings,
     BlogCategory, Partner, FAQ, Agent, Project, ConsultationRequest, Article,
     Branch, PageTranslation, HomepageImage, HomeSlider, ProductConsultationRequest, StaticText, ContactMessage,
-    AdvisorSetting,
+    AdvisorSetting, AdvisorColumnMapping, AdvisorImportedFile,
 )
+
+
+class AdvisorColumnMappingInline(admin.TabularInline):
+    model = AdvisorColumnMapping
+    extra = 1
+    fields = ('param_key', 'excel_column', 'is_power_column', 'order')
+
+
+class AdvisorImportedFileInline(admin.TabularInline):
+    model = AdvisorImportedFile
+    extra = 0
+    fields = ('file', 'sheet_name', 'has_header', 'is_active', 'notes')
+    readonly_fields = ('created_at',)
 
 
 # --- Inlines ---
@@ -221,12 +234,15 @@ admin.site.register(SpecificationGroup)
 
 @admin.register(AdvisorSetting)
 class AdvisorSettingAdmin(admin.ModelAdmin):
+    change_list_template = "admin/advisor_setting_change_list.html"
     fieldsets = (
         ('عنوان و توضیحات', {'fields': ('title_fa', 'title_en', 'subtitle_fa', 'subtitle_en')}),
         ('دسته‌بندی‌ها', {'fields': ('categories',), 'description': 'اگر خالی باشد همه دسته‌بندی‌ها نمایش داده می‌شوند.'}),
         ('مقادیر پیش‌فرض محاسبات', {'fields': ('default_backup_hours', 'default_safety_margin', 'default_efficiency',
                                                    'default_battery_voltage', 'default_power_factor', 'default_dod')}),
         ('تنظیمات توان', {'fields': ('power_spec_keys',)}),
+        ('منبع محصولات پیشنهادی', {'fields': ('mapping_mode', 'excel_sheet_name', 'excel_has_header'),
+                                   'description': 'برای استفاده از فایل اکسل، ابتدا از صفحه <a href="/admin/advisor/import-excel/" target="_blank">ورود اکسل مشاور</a> فایل را آپلود و ستون‌ها را نگاشت کنید، سپس حالت را روی «فایل اکسل آپلود شده» قرار دهید.'}),
         ('عنوان بخش‌ها', {'fields': ('section_application_title', 'section_appliances_title', 'section_technical_title',
                                        'section_results_title', 'section_recommendations_title')}),
         ('متن دکمه‌ها و پیام‌ها', {'fields': ('submit_btn_text', 'add_row_btn_text', 'preset_label',
@@ -237,3 +253,15 @@ class AdvisorSettingAdmin(admin.ModelAdmin):
         ('سئو', {'fields': ('meta_title', 'meta_description'), 'classes': ('collapse',)}),
         ('وضعیت', {'fields': ('is_active',)}),
     )
+    inlines = [AdvisorColumnMappingInline, AdvisorImportedFileInline]
+
+    def response_change(self, request, obj):
+        if '_advisor_import_excel' in request.POST:
+            from django.urls import reverse
+            from django.http import HttpResponseRedirect
+            return HttpResponseRedirect(reverse('advisor_import_excel'))
+        return super().response_change(request, obj)
+
+    def render_change_form(self, request, context, **kwargs):
+        context.update({'show_advisor_import_button': True})
+        return super().render_change_form(request, context, **kwargs)
